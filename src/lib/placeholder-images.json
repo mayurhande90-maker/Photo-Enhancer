@@ -1,3 +1,46 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "Abstract technological background with flowing lines and glowing nodes",
+      "imageUrl": "https://images.unsplash.com/photo-1562575214-da9fcf59b907?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhYnN0cmFjdCUyMHRlY2hub2xvZ3l8ZW58MHx8fHwxNzU5NjU0MDY5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract technology"
+    },
+    {
+      "id": "feature-enhance",
+      "description": "A close-up portrait of a person with dramatic lighting, showcasing enhanced details",
+      "imageUrl": "https://images.unsplash.com/photo-1544124094-8aea0374da93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHBob3RvZ3JhcGh5fGVufDB8fHx8MTc1OTcwNDUyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "portrait photography"
+    },
+    {
+      "id": "feature-background",
+      "description": "A stylish sneaker floating on a plain background, as if the original background was removed",
+      "imageUrl": "https://images.unsplash.com/photo-1667482464027-cdb99bd2d5ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cHJvZHVjdCUyMHBob3RvfGVufDB8fHx8MTc1OTY5MDU0M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "product photo"
+    },
+    {
+      "id": "feature-studio",
+      "description": "A bottle of perfume on a reflective surface with a professional studio background",
+      "imageUrl": "https://images.unsplash.com/photo-1691096674730-2b5fb28b726f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxlY29tbWVyY2UlMjBwcm9kdWN0fGVufDB8fHx8MTc1OTY5MTY2OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ecommerce product"
+    },
+    {
+      "id": "feature-colorize",
+      "description": "A vintage black and white photo of a smiling family, partially colorized to show the transition",
+      "imageUrl": "https://images.unsplash.com/photo-1632223082347-a2f6b07558f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx2aW50YWdlJTIwcGhvdG98ZW58MHx8fHwxNzU5NzMyMTgyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "vintage photo"
+    },
+    {
+      "id": "default-image",
+      "description": "A textured placeholder image with a slight gradient",
+      "imageUrl": "https://images.unsplash.com/photo-1688927415965-f0eb108432bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwbGFjZWhvbGRlciUyMHRleHR1cmV8ZW58MHx8fHwxNzU5NzMyMTgyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "placeholder texture"
+    },
+    {
+      "id": "processed-image",
+      "description": "An abstract, colorful image representing a processed output",
+      "imageUrl": "https://images.unsplash.com/photo-1533158326339-7f3cf2404354?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMGNvbG9yZnVsfGVufDB8fHx8MTc1OTY4MjEwNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract colorful"
+    }
+  ]
 }
