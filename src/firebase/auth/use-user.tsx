@@ -1,30 +1,42 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useUser as useFirebaseAuthUser } from '@/firebase/provider';
+import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/types';
-
-const mockUser: UserProfile = {
-    uid: 'guest-user',
-    email: 'guest@example.com',
-    displayName: 'Guest User',
-    photoURL: null,
-    credits: 100,
-};
 
 
 export function useUser() {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const { user, isUserLoading: isAuthLoading, userError } = useFirebaseAuthUser();
+  const firestore = useFirestore();
 
-  useEffect(() => {
-    // Simulate fetching a user
-    setTimeout(() => {
-        setUser(mockUser);
-        setLoading(false);
-    }, 500)
-  }, []);
+  const userProfileRef = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [user, firestore]);
 
-  return { user, loading, error };
+  const { data: profile, isLoading: isProfileLoading } = useDoc<UserProfile>(userProfileRef);
+
+  const userCreditsRef = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return doc(firestore, `users/${user.uid}/creditBalance/balance`);
+  }, [user, firestore]);
+  
+  const { data: creditsDoc, isLoading: isCreditsLoading } = useDoc<{ credits: number }>(userCreditsRef);
+
+  const isLoading = isAuthLoading || isProfileLoading || isCreditsLoading;
+  
+  if (isLoading || !user || !profile) {
+    return { user: null, loading: isLoading, error: userError };
+  }
+  
+  const userWithProfile: UserProfile = {
+      ...user,
+      ...profile,
+      credits: creditsDoc?.credits ?? 0,
+  };
+
+
+  return { user: userWithProfile, loading: isLoading, error: userError };
 }

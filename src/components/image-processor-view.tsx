@@ -12,8 +12,10 @@ import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal, ShieldAlert } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { useUser } from '@/firebase';
+import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { doc } from 'firebase/firestore';
+import Link from 'next/link';
 
 interface ImageProcessorViewProps {
   featureName: Feature['name'];
@@ -31,7 +33,16 @@ function fileToDataUri(file: File): Promise<string> {
 export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   const feature = features.find((f) => f.name === featureName);
   const { user } = useUser();
+  const firestore = useFirestore();
   const { toast } = useToast();
+
+  const userCreditsRef = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return doc(firestore, `users/${user.uid}/creditBalance/balance`);
+  }, [user, firestore]);
+  
+  const { data: creditsDoc } = useDoc<{ credits: number }>(userCreditsRef);
+
 
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
@@ -53,8 +64,9 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
   const handleProcessImage = async () => {
     if (!originalFile || !user) return;
+    const currentCredits = creditsDoc?.credits ?? 0;
 
-    if (user.credits === undefined || user.credits < feature.creditCost) {
+    if (currentCredits < feature.creditCost) {
         toast({
             title: 'Insufficient Credits',
             description: `You need ${feature.creditCost} credits to use this feature. Please upgrade your plan.`,
@@ -106,7 +118,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
             <ShieldAlert className="h-4 w-4" />
             <AlertTitle>Please Log In</AlertTitle>
             <AlertDescription>
-                You need to be logged in to use this feature.
+                You need to be logged in to use this feature. <Link href="/login" className="font-bold underline">Login now</Link>.
             </AlertDescription>
         </Alert>
     )
@@ -168,7 +180,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
               <div className="flex flex-wrap gap-2">
                 {!isLoading && !processedImageUrl && (
-                  <Button onClick={handleProcessImage} disabled={!user || user.credits < feature.creditCost}>
+                  <Button onClick={handleProcessImage} disabled={!user || (creditsDoc?.credits ?? 0) < feature.creditCost}>
                     Process Image ({feature.creditCost} credit)
                   </Button>
                 )}

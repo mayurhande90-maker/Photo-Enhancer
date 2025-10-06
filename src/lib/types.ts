@@ -1,5 +1,6 @@
 
 import type { LucideIcon } from 'lucide-react';
+import type { User } from 'firebase/auth';
 
 export type Feature = {
   name: string;
@@ -11,12 +12,18 @@ export type Feature = {
   showBeforeAfterSlider: boolean;
 };
 
-export type UserProfile = {
-    uid: string;
-    email: string | null;
-    displayName: string | null;
-    photoURL: string | null;
+export type UserProfile = User & {
     credits: number;
 }
 
-    
+export type GeneratedImage = {
+    id: string;
+    userId: string;
+    originalImageUrl: string;
+    processedImageUrl: string;
+    processingType: string;
+    generationTimestamp: {
+        seconds: number;
+        nanoseconds: number;
+    };
+}

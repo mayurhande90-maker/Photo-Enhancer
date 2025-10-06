@@ -6,7 +6,7 @@ import {
   colorizePhotoAction,
 } from '@/app/actions';
 import type { Feature } from '@/lib/types';
-import { Wand2, Scissors, Camera, Palette } from 'lucide-react';
+import { Wand2, Scissors, Camera, Palette, Image } from 'lucide-react';
 
 export const features: Feature[] = [
   {
@@ -45,6 +45,13 @@ export const features: Feature[] = [
     action: colorizePhotoAction,
     showBeforeAfterSlider: true,
   },
+  {
+    name: 'My Creations',
+    description: 'View all your generated images.',
+    path: '/dashboard/creations',
+    icon: Image,
+    creditCost: 0,
+    action: async () => ({ enhancedPhotoDataUri: '' }), // No action for this view
+    showBeforeAfterSlider: false,
+  },
 ];
-
-    

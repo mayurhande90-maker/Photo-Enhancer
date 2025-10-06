@@ -8,6 +8,7 @@ import { Logo } from '@/components/icons';
 import { FeatureCard } from '@/components/feature-card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Wand2, Scissors, Camera, Palette, Check } from 'lucide-react';
+import { useUser } from '@/firebase';
 
 const features = [
   {
@@ -61,6 +62,7 @@ const pricingTiers = [
 const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
 
 export default function Home() {
+    const { user, isUserLoading } = useUser();
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -70,9 +72,22 @@ export default function Home() {
             <span className="font-bold">Magicpixa</span>
           </Link>
           <div className="flex flex-1 items-center justify-end space-x-4">
-            <Button asChild>
-              <Link href="/dashboard">Go to Dashboard</Link>
-            </Button>
+            {isUserLoading ? (
+                <div className="h-8 w-24 animate-pulse rounded-md bg-muted" />
+            ) : user ? (
+                <Button asChild>
+                    <Link href="/dashboard">Go to Dashboard</Link>
+                </Button>
+            ) : (
+                <div className="flex items-center space-x-2">
+                    <Button variant="ghost" asChild>
+                        <Link href="/login">Login</Link>
+                    </Button>
+                    <Button asChild>
+                        <Link href="/signup">Sign Up</Link>
+                    </Button>
+                </div>
+            )}
           </div>
         </div>
       </header>
