@@ -22,6 +22,7 @@ import { initiateEmailSignUp } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase/provider';
 import { initializeCredits } from '@/firebase/credits';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -37,35 +38,49 @@ export default function SignupPage() {
     e.preventDefault();
     if (!auth || !firestore) return;
     setIsLoading(true);
-    try {
-      const userCredential = await initiateEmailSignUp(auth, email, password);
-      const user = userCredential.user;
-      
-      // Create user profile in Firestore
-      const userRef = doc(firestore, 'users', user.uid);
-      await setDoc(userRef, {
-        uid: user.uid,
-        email: user.email,
-        displayName: displayName,
-        photoURL: user.photoURL,
-      });
 
-      // Initialize credits for new user
-      await initializeCredits(user.uid);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            try {
+                // Create user profile in Firestore
+                const userRef = doc(firestore, 'users', user.uid);
+                await setDoc(userRef, {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: displayName,
+                    photoURL: user.photoURL,
+                });
 
-      toast({
-        title: 'Account Created',
-        description: 'You have been successfully signed up!',
-      });
-      router.push('/dashboard');
-    } catch (error: any) {
-      toast({
-        title: 'Sign Up Failed',
-        description: error.message,
-        variant: 'destructive',
-      });
-      setIsLoading(false);
-    }
+                // Initialize credits for new user
+                await initializeCredits(user.uid);
+
+                toast({
+                    title: 'Account Created',
+                    description: 'You have been successfully signed up!',
+                });
+                router.push('/dashboard');
+            } catch (error: any) {
+                toast({
+                    title: 'Setup Failed',
+                    description: error.message,
+                    variant: 'destructive',
+                });
+            } finally {
+                setIsLoading(false);
+                unsubscribe();
+            }
+        }
+    }, (error) => {
+        toast({
+            title: 'Sign Up Failed',
+            description: error.message,
+            variant: 'destructive',
+        });
+        setIsLoading(false);
+        unsubscribe();
+    });
+
+    initiateEmailSignUp(auth, email, password);
   };
 
   return (

@@ -19,6 +19,7 @@ import { Logo } from '@/components/icons';
 import { useToast } from '@/hooks/use-toast';
 import { initiateEmailSignIn } from '@/firebase';
 import { useAuth } from '@/firebase/provider';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -28,21 +29,27 @@ export default function LoginPage() {
   const { toast } = useToast();
   const auth = useAuth();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!auth) return;
     setIsLoading(true);
-    try {
-      await initiateEmailSignIn(auth, email, password);
-      router.push('/dashboard');
-    } catch (error: any) {
-      toast({
-        title: 'Login Failed',
-        description: error.message,
-        variant: 'destructive',
-      });
-      setIsLoading(false);
-    }
+    
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+            router.push('/dashboard');
+            unsubscribe();
+        }
+    }, (error) => {
+        toast({
+            title: 'Login Failed',
+            description: error.message,
+            variant: 'destructive',
+        });
+        setIsLoading(false);
+        unsubscribe();
+    });
+    
+    initiateEmailSignIn(auth, email, password);
   };
 
   return (
