@@ -7,7 +7,8 @@ import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/ca
 import { Logo } from '@/components/icons';
 import { FeatureCard } from '@/components/feature-card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Wand2, Scissors, Camera, Palette, Check } from 'lucide-react';
+import { Wand2, Scissors, Camera, Palette, Check, Star } from 'lucide-react';
+import { BeforeAfterSlider } from '@/components/before-after-slider';
 
 const features = [
   {
@@ -58,7 +59,30 @@ const pricingTiers = [
   },
 ];
 
-const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
+const testimonials = [
+    {
+      name: 'Sarah L.',
+      title: 'Photographer',
+      quote: "Magicpixa has been a game-changer for my workflow. The photo enhancement tool saves me hours of manual editing, and the results are consistently stunning.",
+      rating: 5,
+    },
+    {
+      name: 'David Chen',
+      title: 'E-commerce Store Owner',
+      quote: "The background removal and photo studio features are incredible. My product shots have never looked better, and my sales have increased by 20%!",
+      rating: 5,
+    },
+    {
+      name: 'Emily R.',
+      title: 'Genealogy Hobbyist',
+      quote: "I'm restoring my family's old photo albums, and the colorization tool is pure magic. Seeing my ancestors in color for the first time was an emotional experience.",
+      rating: 5,
+    },
+]
+
+const heroImageBefore = PlaceHolderImages.find((img) => img.id === 'feature-colorize');
+const heroImageAfter = PlaceHolderImages.find((img) => img.id === 'processed-image');
+
 
 export default function Home() {
   return (
@@ -90,14 +114,11 @@ export default function Home() {
                 <Link href="/dashboard">Enhance Your First Photo</Link>
               </Button>
             </div>
-            <div className="relative h-full min-h-[300px] w-full overflow-hidden rounded-lg shadow-2xl">
-              {heroImage && (
-                <Image
-                  src={heroImage.imageUrl}
-                  alt={heroImage.description}
-                  fill
-                  className="object-cover"
-                  data-ai-hint={heroImage.imageHint}
+            <div className="relative h-[400px] w-full overflow-hidden rounded-lg shadow-2xl">
+              {heroImageBefore && heroImageAfter && (
+                <BeforeAfterSlider
+                  before={heroImageBefore.imageUrl}
+                  after={heroImageAfter.imageUrl}
                 />
               )}
             </div>
@@ -116,7 +137,33 @@ export default function Home() {
             ))}
           </div>
         </section>
-        <section id="pricing" className="container py-8 md:py-12 lg:py-24">
+        <section id="testimonials" className="container py-8 md:py-12 lg:py-24">
+          <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
+            <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-5xl">Loved by Creators Worldwide</h2>
+            <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+              See what our users are saying about Magicpixa.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            {testimonials.map((testimonial) => (
+                <Card key={testimonial.name} className="flex flex-col justify-between">
+                    <CardHeader>
+                        <div className="flex items-center mb-2">
+                            {[...Array(testimonial.rating)].map((_, i) => (
+                                <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                            ))}
+                        </div>
+                        <CardDescription className="text-base text-foreground">"{testimonial.quote}"</CardDescription>
+                    </CardHeader>
+                    <div className="p-6 pt-0">
+                        <p className="font-semibold">{testimonial.name}</p>
+                        <p className="text-sm text-muted-foreground">{testimonial.title}</p>
+                    </div>
+                </Card>
+            ))}
+          </div>
+        </section>
+        <section id="pricing" className="container py-8 md:py-12 lg:py-24 bg-slate-50/50">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
             <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-5xl">Pricing</h2>
             <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
@@ -125,7 +172,7 @@ export default function Home() {
           </div>
           <div className="mt-12 grid gap-8 md:grid-cols-3">
             {pricingTiers.map((tier) => (
-              <Card key={tier.name} className={`flex flex-col ${tier.popular ? 'border-primary shadow-lg' : ''}`}>
+              <Card key={tier.name} className={`flex flex-col bg-card ${tier.popular ? 'border-primary shadow-lg' : ''}`}>
                 <CardHeader>
                   <CardTitle className="flex justify-between items-baseline">
                     {tier.name}
