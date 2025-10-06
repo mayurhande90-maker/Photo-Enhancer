@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Feature } from '@/lib/types';
+import { features } from '@/lib/features';
 import { FileUploader } from '@/components/file-uploader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,7 +13,7 @@ import { Terminal } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 interface ImageProcessorViewProps {
-  feature: Feature;
+  featureName: Feature['name'];
 }
 
 function fileToDataUri(file: File): Promise<string> {
@@ -24,13 +25,19 @@ function fileToDataUri(file: File): Promise<string> {
   });
 }
 
-export function ImageProcessorView({ feature }: ImageProcessorViewProps) {
+export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
+  const feature = features.find((f) => f.name === featureName);
+
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
   const [processedImageUrl, setProcessedImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
+
+  if (!feature) {
+    return <div>Feature not found.</div>;
+  }
 
   const handleFileSelect = (file: File) => {
     setOriginalFile(file);
