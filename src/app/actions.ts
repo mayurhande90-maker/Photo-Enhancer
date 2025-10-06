@@ -2,7 +2,7 @@
 'use server';
 
 import { enhanceFromPrompt } from '@/ai/flows/enhance-from-prompt';
-import { deductCredits } from '@/firebase/credits';
+import { deductCredits } from '@/app/auth/actions';
 import { saveGeneratedImage } from '@/firebase/images';
 
 async function processImageWithAI(

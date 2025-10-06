@@ -16,9 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/firebase/provider';
-import { initiateEmailSignUp, createUserProfileAndCredits } from '@/firebase';
-import { UserCredential, updateProfile } from 'firebase/auth';
+import { signupAction } from '@/app/auth/actions';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -27,37 +25,27 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const auth = useAuth();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!auth) return;
     setIsLoading(true);
 
     try {
-      // 1. Create the user with email and password
-      const userCredential: UserCredential = await initiateEmailSignUp(auth, email, password);
-      const user = userCredential.user;
+      const result = await signupAction({ email, password, displayName });
 
-      if (user) {
-        // 2. Update the user's profile with display name
-        await updateProfile(user, { displayName });
-
-        // 3. Call the server action to create profile document and credits in Firestore
-        await createUserProfileAndCredits(user.uid, {
-          email: user.email!,
-          displayName: displayName || user.email!,
-        });
-
-        toast({
-          title: 'Account Created',
-          description: 'You have been successfully signed up!',
-        });
-        router.push('/dashboard');
+      if (result.error) {
+        throw new Error(result.error);
       }
+
+      toast({
+        title: 'Account Created',
+        description: 'You have been successfully signed up!',
+      });
+      router.push('/dashboard');
+
     } catch (error: any) {
       let description = 'An unknown error occurred.';
-      if (error.code === 'auth/email-already-in-use') {
+      if (error.message.includes('auth/email-already-in-use')) {
         description = 'This email is already in use. Please log in instead.';
       } else if (error.message) {
         description = error.message;
