@@ -8,7 +8,6 @@ import { Logo } from '@/components/icons';
 import { FeatureCard } from '@/components/feature-card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Wand2, Scissors, Camera, Palette, Check } from 'lucide-react';
-import { useUser } from '@/firebase';
 
 const features = [
   {
@@ -62,8 +61,6 @@ const pricingTiers = [
 const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
 
 export default function Home() {
-  const { user, loading } = useUser();
-
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -73,24 +70,9 @@ export default function Home() {
             <span className="font-bold">PhotoCraft AI</span>
           </Link>
           <div className="flex flex-1 items-center justify-end space-x-4">
-            {!loading && (
-              <>
-                {user ? (
-                  <Button asChild>
-                    <Link href="/dashboard">Go to Dashboard</Link>
-                  </Button>
-                ) : (
-                  <>
-                    <Button asChild variant="ghost">
-                      <Link href="/login">Login</Link>
-                    </Button>
-                    <Button asChild>
-                      <Link href="/signup">Sign Up Free</Link>
-                    </Button>
-                  </>
-                )}
-              </>
-            )}
+            <Button asChild>
+              <Link href="/dashboard">Go to Dashboard</Link>
+            </Button>
           </div>
         </div>
       </header>
@@ -105,7 +87,7 @@ export default function Home() {
                 Enhance, remove backgrounds, create stunning product shots, and colorize old photos with a single click. Start with 10 free credits.
               </p>
               <Button asChild size="lg">
-                <Link href="/signup">Enhance Your First Photo</Link>
+                <Link href="/dashboard">Enhance Your First Photo</Link>
               </Button>
             </div>
             <div className="relative h-full min-h-[300px] w-full overflow-hidden rounded-lg shadow-2xl">
@@ -186,5 +168,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

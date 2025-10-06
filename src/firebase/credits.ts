@@ -1,36 +1,29 @@
+
 'use server';
 
-import { doc, updateDoc, increment, getDoc, setDoc } from 'firebase/firestore';
-import { db } from './server';
+// This is a mock implementation since auth is disabled.
+// In a real scenario, this would interact with a database.
+
+let credits = 100;
 
 export async function deductCredits(userId: string, amount: number) {
-  if (!userId) {
-    throw new Error('User not authenticated');
+  if (userId !== 'guest-user') {
+    // In a real app, you might throw an error or handle other users
+    return; 
   }
-  const userRef = doc(db, 'users', userId);
-  try {
-    await updateDoc(userRef, {
-      credits: increment(-amount),
-    });
-  } catch (error) {
-     const userDoc = await getDoc(userRef);
-    if (!userDoc.exists()) {
-        await setDoc(userRef, { credits: 10 - amount });
-    } else {
-        console.error('Error deducting credits:', error);
-        throw new Error('Failed to deduct credits.');
-    }
+  
+  if (credits >= amount) {
+    credits -= amount;
+    console.log(`Deducted ${amount} credits. Remaining: ${credits}`);
+  } else {
+    console.log('Not enough credits to deduct.');
+    throw new Error('Insufficient credits.');
   }
 }
 
 export async function initializeCredits(userId: string) {
-    if (!userId) {
-        throw new Error('User not authenticated');
-    }
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
-
-    if (!userDoc.exists()) {
-        await setDoc(userRef, { credits: 10 });
+    if (userId === 'guest-user') {
+        credits = 100;
+        console.log('Initialized guest credits to 100.');
     }
 }
