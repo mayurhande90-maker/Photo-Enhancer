@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -17,12 +17,11 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/firebase/provider';
+import { useAuth, useFirestore } from '@/firebase/provider';
 import { initiateEmailSignUp } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
-import { useFirestore } from '@/firebase/provider';
 import { initializeCredits } from '@/firebase/credits';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, User } from 'firebase/auth';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -34,53 +33,70 @@ export default function SignupPage() {
   const auth = useAuth();
   const firestore = useFirestore();
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
     if (!auth || !firestore) return;
-    setIsLoading(true);
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            try {
-                // Create user profile in Firestore
-                const userRef = doc(firestore, 'users', user.uid);
-                await setDoc(userRef, {
-                    uid: user.uid,
-                    email: user.email,
-                    displayName: displayName,
-                    photoURL: user.photoURL,
-                });
+      if (user && user.metadata.creationTime === user.metadata.lastSignInTime) {
+        // This is a new user sign up
+        try {
+          // Create user profile in Firestore
+          const userRef = doc(firestore, 'users', user.uid);
+          await setDoc(userRef, {
+            uid: user.uid,
+            email: user.email,
+            displayName: displayName || user.email,
+            photoURL: user.photoURL,
+          });
 
-                // Initialize credits for new user
-                await initializeCredits(user.uid);
+          // Initialize credits for new user
+          await initializeCredits(user.uid);
 
-                toast({
-                    title: 'Account Created',
-                    description: 'You have been successfully signed up!',
-                });
-                router.push('/dashboard');
-            } catch (error: any) {
-                toast({
-                    title: 'Setup Failed',
-                    description: error.message,
-                    variant: 'destructive',
-                });
-            } finally {
-                setIsLoading(false);
-                unsubscribe();
-            }
+          toast({
+            title: 'Account Created',
+            description: 'You have been successfully signed up!',
+          });
+          router.push('/dashboard');
+        } catch (error: any) {
+          toast({
+            title: 'Setup Failed',
+            description: error.message,
+            variant: 'destructive',
+          });
+        } finally {
+          setIsLoading(false);
         }
+      }
     }, (error) => {
+      // This is for listener errors, not signup errors
+      toast({
+        title: 'Authentication Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [auth, firestore, router, toast, displayName]);
+
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!auth) return;
+    setIsLoading(true);
+
+    try {
+      await initiateEmailSignUp(auth, email, password);
+      // The onAuthStateChanged listener will handle the rest
+    } catch (error: any) {
         toast({
             title: 'Sign Up Failed',
             description: error.message,
             variant: 'destructive',
         });
         setIsLoading(false);
-        unsubscribe();
-    });
-
-    initiateEmailSignUp(auth, email, password);
+    }
   };
 
   return (
