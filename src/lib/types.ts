@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 
 export type Feature = {
@@ -6,6 +7,16 @@ export type Feature = {
   path: string;
   icon: LucideIcon;
   creditCost: number;
-  action: (photoDataUri: string) => Promise<{ enhancedPhotoDataUri: string }>;
+  action: (photoDataUri: string, userId: string) => Promise<{ enhancedPhotoDataUri: string }>;
   showBeforeAfterSlider: boolean;
 };
+
+export type UserProfile = {
+    uid: string;
+    email: string | null;
+    displayName: string | null;
+    photoURL: string | null;
+    credits: number;
+}
+
+    

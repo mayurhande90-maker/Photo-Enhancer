@@ -1,8 +1,8 @@
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
 import {
   Sidebar,
   SidebarContent,
@@ -18,10 +18,20 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
 import { features } from '@/lib/features';
-import { MoreHorizontal, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
+import { useUser, useAuth } from '@/firebase';
+import { Skeleton } from './ui/skeleton';
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const { user, loading } = useUser();
+  const auth = useAuth();
+
+  const handleSignOut = () => {
+    if (auth) {
+      auth.signOut();
+    }
+  };
 
   return (
     <Sidebar>
@@ -53,37 +63,55 @@ export function DashboardSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-         <SidebarGroup>
-            <SidebarGroupLabel>My Account</SidebarGroupLabel>
-            <div className="flex flex-col gap-2 text-sm">
+        <SidebarGroup>
+          <SidebarGroupLabel>My Account</SidebarGroupLabel>
+          {loading ? (
+            <div className="space-y-2 p-2">
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          ) : user ? (
+            <>
+              <div className="flex flex-col gap-2 text-sm p-2">
                 <div className="flex justify-between">
                     <span>Credits:</span>
-                    <span className="font-semibold">5 / 500</span>
+                    <span className="font-semibold">{user.credits ?? 0}</span>
                 </div>
-                 <div className="flex justify-between">
+                <div className="flex justify-between">
                     <span>Plan:</span>
                     <span className="font-semibold">Free Trial</span>
                 </div>
-                 <div className="flex justify-between">
-                    <span>Renews:</span>
-                    <span className="font-semibold">N/A</span>
-                </div>
+              </div>
+              <Button size="sm" className="mt-2 w-full bg-accent text-accent-foreground hover:bg-accent/90">Upgrade</Button>
+            </>
+          ) : (
+            <div className="p-2 text-sm text-muted-foreground">
+              <Link href="/login" className="text-primary hover:underline">Log in</Link> to see your account details.
             </div>
-            <Button size="sm" className="mt-4 w-full bg-accent text-accent-foreground hover:bg-accent/90">Upgrade</Button>
+          )}
         </SidebarGroup>
-        <div className="flex w-full items-center justify-between rounded-md p-2 hover:bg-sidebar-accent">
+        {loading ? (
+          <div className="flex items-center gap-2 p-2">
+            <Skeleton className="size-8 rounded-full" />
+            <Skeleton className="h-5 w-20" />
+          </div>
+        ) : user ? (
+          <div className="flex w-full items-center justify-between rounded-md p-2 hover:bg-sidebar-accent">
             <div className="flex items-center gap-2">
-                 <Avatar className="size-8">
-                    <AvatarImage src="https://picsum.photos/seed/avatar/40/40" />
-                    <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-                <span className="text-sm font-medium">User</span>
+              <Avatar className="size-8">
+                {user.photoURL && <AvatarImage src={user.photoURL} />}
+                <AvatarFallback>{user.displayName?.charAt(0) ?? 'U'}</AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium">{user.displayName || 'User'}</span>
             </div>
-            <Button variant="ghost" size="icon" className="size-8">
-                <LogOut className="size-4" />
+            <Button variant="ghost" size="icon" className="size-8" onClick={handleSignOut}>
+              <LogOut className="size-4" />
             </Button>
-        </div>
+          </div>
+        ) : null}
       </SidebarFooter>
     </Sidebar>
   );
 }
+
+    

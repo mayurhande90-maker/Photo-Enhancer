@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -9,8 +10,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { BeforeAfterSlider } from './before-after-slider';
 import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal } from 'lucide-react';
+import { Terminal, ShieldAlert } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { useUser } from '@/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 interface ImageProcessorViewProps {
   featureName: Feature['name'];
@@ -27,6 +30,8 @@ function fileToDataUri(file: File): Promise<string> {
 
 export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   const feature = features.find((f) => f.name === featureName);
+  const { user } = useUser();
+  const { toast } = useToast();
 
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
@@ -47,7 +52,17 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   };
 
   const handleProcessImage = async () => {
-    if (!originalFile) return;
+    if (!originalFile || !user) return;
+
+    if (user.credits === undefined || user.credits < feature.creditCost) {
+        toast({
+            title: 'Insufficient Credits',
+            description: `You need ${feature.creditCost} credits to use this feature. Please upgrade your plan.`,
+            variant: 'destructive',
+        });
+        return;
+    }
+
 
     setIsLoading(true);
     setError(null);
@@ -65,7 +80,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
     try {
       const dataUri = await fileToDataUri(originalFile);
-      const result = await feature.action(dataUri);
+      const result = await feature.action(dataUri, user.uid);
       setProcessedImageUrl(result.enhancedPhotoDataUri);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
@@ -84,6 +99,18 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     setIsLoading(false);
     setProgress(0);
   };
+
+  if (!user) {
+    return (
+        <Alert>
+            <ShieldAlert className="h-4 w-4" />
+            <AlertTitle>Please Log In</AlertTitle>
+            <AlertDescription>
+                You need to be logged in to use this feature.
+            </AlertDescription>
+        </Alert>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -141,7 +168,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
               <div className="flex flex-wrap gap-2">
                 {!isLoading && !processedImageUrl && (
-                  <Button onClick={handleProcessImage}>
+                  <Button onClick={handleProcessImage} disabled={!user || user.credits < feature.creditCost}>
                     Process Image ({feature.creditCost} credit)
                   </Button>
                 )}
@@ -165,3 +192,5 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     </div>
   );
 }
+
+    
