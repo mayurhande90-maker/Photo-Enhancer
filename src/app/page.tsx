@@ -1,5 +1,6 @@
 
 'use client';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -7,15 +8,8 @@ import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/ca
 import { Logo } from '@/components/icons';
 import { FeatureCard } from '@/components/feature-card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Wand2, Scissors, Camera, Palette, Check, Star } from 'lucide-react';
+import { Wand2, Scissors, Camera, Palette, Check, Star, PauseCircle, PlayCircle } from 'lucide-react';
 import { BeforeAfterSlider } from '@/components/before-after-slider';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
 
 const features = [
   {
@@ -118,6 +112,19 @@ const heroSlides = [
 
 
 export default function Home() {
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % heroSlides.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [isPaused]);
+
+  const currentSlide = heroSlides[currentSlideIndex];
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -148,29 +155,33 @@ export default function Home() {
               </Button>
             </div>
             <div className="relative w-full">
-               <Carousel className="w-full" opts={{ loop: true }} plugins={[]}>
-                  <CarouselContent>
-                    {heroSlides.map((slide, index) => (
-                      <CarouselItem key={index}>
-                        <div className="relative h-[400px] w-full overflow-hidden rounded-lg shadow-2xl">
-                          <Card className='h-full'>
-                            {slide.before && slide.after && (
-                              <BeforeAfterSlider
-                                before={slide.before.imageUrl}
-                                after={slide.after.imageUrl}
-                              />
-                            )}
-                             <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-3 py-1.5 text-sm font-semibold text-white">
-                                {slide.title}
-                            </div>
-                          </Card>
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <CarouselPrevious className="left-4" />
-                  <CarouselNext className="right-4" />
-                </Carousel>
+              <div className="relative h-[400px] w-full overflow-hidden rounded-lg shadow-2xl">
+                 {currentSlide.before && currentSlide.after && (
+                   <BeforeAfterSlider
+                     key={currentSlideIndex} // Add key to force re-render
+                     before={currentSlide.before.imageUrl}
+                     after={currentSlide.after.imageUrl}
+                   />
+                 )}
+               </div>
+               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-4 py-2 flex items-center gap-4 text-white">
+                  {heroSlides.map((_, index) => (
+                    <button
+                      key={index}
+                      className={`h-2 w-2 rounded-full transition-colors ${
+                        index === currentSlideIndex ? 'bg-white' : 'bg-white/50 hover:bg-white/75'
+                      }`}
+                      onClick={() => setCurrentSlideIndex(index)}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                  <button onClick={() => setIsPaused(!isPaused)} aria-label={isPaused ? 'Play slideshow' : 'Pause slideshow'}>
+                    {isPaused ? <PlayCircle className="h-4 w-4" /> : <PauseCircle className="h-4 w-4" />}
+                  </button>
+               </div>
+               <div className="absolute top-4 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-4 py-1.5 text-sm font-semibold text-white">
+                  {currentSlide.title}
+                </div>
             </div>
           </div>
         </section>
@@ -269,3 +280,4 @@ export default function Home() {
     </div>
   );
 }
+
