@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -9,13 +10,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { BeforeAfterSlider } from './before-after-slider';
 import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, ShieldAlert } from 'lucide-react';
+import { Terminal, ShieldAlert, Clock } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { doc } from 'firebase/firestore';
-import Link from 'next/link';
-import type { UserProfile } from '@/lib/types';
+import { useDailyQuota } from '@/hooks/use-daily-quota';
+import { formatDistanceToNow } from 'date-fns';
 
 interface ImageProcessorViewProps {
   featureName: Feature['name'];
@@ -32,17 +31,8 @@ function fileToDataUri(file: File): Promise<string> {
 
 export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   const feature = features.find((f) => f.name === featureName);
-  const { user } = useUser();
-  const firestore = useFirestore();
   const { toast } = useToast();
-
-  const userProfileRef = useMemoFirebase(() => {
-    if (!user || !firestore) return null;
-    return doc(firestore, `users/${user.uid}`);
-  }, [user, firestore]);
-  
-  const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
-
+  const { credits, resetTime, isLoading: isQuotaLoading, consumeCredits } = useDailyQuota();
 
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
@@ -63,18 +53,16 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   };
 
   const handleProcessImage = async () => {
-    if (!originalFile || !user) return;
-    const currentCredits = userProfile?.credits ?? 0;
+    if (!originalFile) return;
 
-    if (currentCredits < feature.creditCost) {
+    if (credits < feature.creditCost) {
         toast({
-            title: 'Insufficient Credits',
-            description: `You need ${feature.creditCost} credits to use this feature. Please upgrade your plan.`,
+            title: 'Daily Quota Exhausted',
+            description: `You don't have enough credits for this feature. Your credits will reset in ${formatDistanceToNow(resetTime!)}.`,
             variant: 'destructive',
         });
         return;
     }
-
 
     setIsLoading(true);
     setError(null);
@@ -91,11 +79,14 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     }, 200);
 
     try {
+      consumeCredits(feature.creditCost);
       const dataUri = await fileToDataUri(originalFile);
-      const result = await feature.action(dataUri, user.uid);
+      const result = await feature.action(dataUri);
       setProcessedImageUrl(result.enhancedPhotoDataUri);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+      // refund credits if AI call fails
+      consumeCredits(-feature.creditCost);
     } finally {
       clearInterval(loadingInterval);
       setProgress(100);
@@ -111,17 +102,20 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     setIsLoading(false);
     setProgress(0);
   };
+  
+  const renderQuotaExhaustedAlert = () => {
+    if (isQuotaLoading || credits >= feature.creditCost) return null;
 
-  if (!user) {
     return (
-        <Alert>
-            <ShieldAlert className="h-4 w-4" />
-            <AlertTitle>Please Log In</AlertTitle>
-            <AlertDescription>
-                You need to be logged in to use this feature. <Link href="/login" className="font-bold underline">Login now</Link>.
-            </AlertDescription>
-        </Alert>
-    )
+      <Alert variant="destructive" className="mt-4">
+        <Clock className="h-4 w-4" />
+        <AlertTitle>Daily Quota Reached</AlertTitle>
+        <AlertDescription>
+          You have used all your free credits for today. Your credits will reset in {' '}
+          {resetTime ? formatDistanceToNow(resetTime) : '24 hours'}.
+        </AlertDescription>
+      </Alert>
+    );
   }
 
   return (
@@ -177,10 +171,12 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
+              
+              {renderQuotaExhaustedAlert()}
 
               <div className="flex flex-wrap gap-2">
                 {!isLoading && !processedImageUrl && (
-                  <Button onClick={handleProcessImage} disabled={!user || (userProfile?.credits ?? 0) < feature.creditCost}>
+                  <Button onClick={handleProcessImage} disabled={isQuotaLoading || credits < feature.creditCost}>
                     Process Image ({feature.creditCost} credit)
                   </Button>
                 )}

@@ -8,7 +8,6 @@ import { Logo } from '@/components/icons';
 import { FeatureCard } from '@/components/feature-card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Wand2, Scissors, Camera, Palette, Check } from 'lucide-react';
-import { useUser } from '@/firebase';
 
 const features = [
   {
@@ -41,8 +40,8 @@ const pricingTiers = [
   {
     name: 'Free',
     price: '$0',
-    credits: '10 Credits',
-    features: ['Access to all tools', 'Standard quality', 'Email support'],
+    credits: '10 Credits/Day',
+    features: ['Access to all tools', 'Standard quality', 'Community support'],
   },
   {
     name: 'Pro',
@@ -62,7 +61,6 @@ const pricingTiers = [
 const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
 
 export default function Home() {
-    const { user, isUserLoading } = useUser();
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -72,22 +70,9 @@ export default function Home() {
             <span className="font-bold">Magicpixa</span>
           </Link>
           <div className="flex flex-1 items-center justify-end space-x-4">
-            {isUserLoading ? (
-                <div className="h-8 w-24 animate-pulse rounded-md bg-muted" />
-            ) : user ? (
-                <Button asChild>
-                    <Link href="/dashboard">Go to Dashboard</Link>
-                </Button>
-            ) : (
-                <div className="flex items-center space-x-2">
-                    <Button variant="ghost" asChild>
-                        <Link href="/login">Login</Link>
-                    </Button>
-                    <Button asChild>
-                        <Link href="/signup">Sign Up</Link>
-                    </Button>
-                </div>
-            )}
+            <Button asChild>
+                <Link href="/dashboard">Go to Dashboard</Link>
+            </Button>
           </div>
         </div>
       </header>
@@ -99,7 +84,7 @@ export default function Home() {
                 AI that brings your photos to life.
               </h1>
               <p className="max-w-[700px] text-lg text-muted-foreground">
-                Enhance, remove backgrounds, create stunning product shots, and colorize old photos with a single click. Start with 10 free credits.
+                Enhance, remove backgrounds, create stunning product shots, and colorize old photos with a single click. Get 10 free credits daily.
               </p>
               <Button asChild size="lg">
                 <Link href="/dashboard">Enhance Your First Photo</Link>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { usePathname } from 'next/navigation';
@@ -5,22 +6,12 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { features } from '@/lib/features';
 import { Button } from './ui/button';
 import { Gem } from 'lucide-react';
-import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useDailyQuota } from '@/hooks/use-daily-quota';
 import { Skeleton } from './ui/skeleton';
-import type { UserProfile } from '@/lib/types';
 
 export function DashboardHeader() {
   const pathname = usePathname();
-  const { user, isUserLoading } = useUser();
-  const firestore = useFirestore();
-
-  const userProfileRef = useMemoFirebase(() => {
-    if (!user || !firestore) return null;
-    return doc(firestore, `users/${user.uid}`);
-  }, [user, firestore]);
-  
-  const { data: userProfile, isLoading: isCreditsLoading } = useDoc<UserProfile>(userProfileRef);
+  const { credits, isLoading } = useDailyQuota();
 
   const currentFeature = features.find((f) => f.path === pathname);
   const title = currentFeature?.name || 'Dashboard';
@@ -32,15 +23,15 @@ export function DashboardHeader() {
         <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
       </div>
       <div className="flex items-center gap-4">
-        {isUserLoading || isCreditsLoading ? (
+        {isLoading ? (
           <Skeleton className="h-9 w-20" />
-        ) : user ? (
+        ) : (
           <Button variant="outline" size="sm">
             <Gem className="mr-2 size-4" />
-            <span className="font-semibold">{userProfile?.credits ?? 0}</span>
-            <span className="sr-only">credits remaining</span>
+            <span className="font-semibold">{credits}</span>
+            <span className="sr-only">daily credits remaining</span>
           </Button>
-        ) : null}
+        )}
       </div>
     </header>
   );

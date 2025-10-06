@@ -45,13 +45,5 @@ export const features: Feature[] = [
     action: colorizePhotoAction,
     showBeforeAfterSlider: true,
   },
-  {
-    name: 'My Creations',
-    description: 'View all your generated images.',
-    path: '/dashboard/creations',
-    icon: Image,
-    creditCost: 0,
-    action: async () => ({ enhancedPhotoDataUri: '' }), // No action for this view
-    showBeforeAfterSlider: false,
-  },
+  // My Creations is removed as we are not storing user data anymore
 ];
