@@ -4,18 +4,42 @@
 import { db } from './server';
 import { FieldValue } from 'firebase-admin/firestore';
 
-const INITIAL_CREDITS = 5;
+const INITIAL_CREDITS = 10;
 
-export async function initializeCredits(userId: string) {
-  const creditRef = db.collection('users').doc(userId).collection('creditBalance').doc('balance');
-  try {
-    await creditRef.set({ credits: INITIAL_CREDITS, lastUpdateTimestamp: FieldValue.serverTimestamp() });
-    console.log(`Initialized credits for user ${userId} to ${INITIAL_CREDITS}`);
-  } catch (error) {
-    console.error(`Failed to initialize credits for user ${userId}:`, error);
-    throw new Error('Could not initialize user credits.');
-  }
+type UserProfileData = {
+    email: string;
+    displayName: string;
 }
+
+export async function createUserProfileAndCredits(userId: string, profileData: UserProfileData) {
+    if (!userId) {
+        throw new Error('User ID is required.');
+    }
+    const batch = db.batch();
+
+    // 1. Create user profile document
+    const userRef = db.collection('users').doc(userId);
+    batch.set(userRef, {
+        uid: userId,
+        ...profileData
+    });
+
+    // 2. Create credit balance document
+    const creditRef = userRef.collection('creditBalance').doc('balance');
+    batch.set(creditRef, { 
+        credits: INITIAL_CREDITS, 
+        lastUpdateTimestamp: FieldValue.serverTimestamp() 
+    });
+
+    try {
+        await batch.commit();
+        console.log(`Successfully created profile and initialized credits for user ${userId}`);
+    } catch (error) {
+        console.error(`Failed to create profile and initialize credits for user ${userId}:`, error);
+        throw new Error('Could not create user profile and initialize credits.');
+    }
+}
+
 
 export async function deductCredits(userId: string, amount: number) {
     if (!userId) {
