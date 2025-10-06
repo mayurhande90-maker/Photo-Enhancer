@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -19,7 +18,6 @@ import { Logo } from '@/components/icons';
 import { useToast } from '@/hooks/use-toast';
 import { initiateEmailSignIn } from '@/firebase';
 import { useAuth } from '@/firebase/provider';
-import { onAuthStateChanged } from 'firebase/auth';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('test@example.com');
@@ -29,27 +27,33 @@ export default function LoginPage() {
   const { toast } = useToast();
   const auth = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!auth) return;
     setIsLoading(true);
-    
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (user) {
-            router.push('/dashboard');
-            unsubscribe();
-        }
-    }, (error) => {
-        toast({
-            title: 'Login Failed',
-            description: error.message,
-            variant: 'destructive',
-        });
-        setIsLoading(false);
-        unsubscribe();
-    });
-    
-    initiateEmailSignIn(auth, email, password);
+
+    try {
+      await initiateEmailSignIn(auth, email, password);
+      toast({
+        title: 'Login Successful',
+        description: "Welcome back!",
+      });
+      router.push('/dashboard');
+    } catch (error: any) {
+      let description = 'An unknown error occurred.';
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+        description = 'Invalid email or password. Please try again.';
+      } else {
+        description = error.message;
+      }
+      toast({
+        title: 'Login Failed',
+        description,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
