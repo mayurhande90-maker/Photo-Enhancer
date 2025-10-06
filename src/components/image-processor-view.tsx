@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { BeforeAfterSlider } from './before-after-slider';
 import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, ShieldAlert, Clock } from 'lucide-react';
+import { Terminal, Clock } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useDailyQuota } from '@/hooks/use-daily-quota';
@@ -118,6 +118,48 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     );
   }
 
+  const renderResultView = () => {
+    if (!processedImageUrl || !originalDataUri) return null;
+
+    if (feature.showBeforeAfterSlider) {
+      return (
+        <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
+          <BeforeAfterSlider
+            before={originalDataUri}
+            after={processedImageUrl}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col items-center gap-2">
+          <h3 className="text-lg font-semibold">Original Image</h3>
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
+            <Image
+              src={originalDataUri}
+              alt="Original upload"
+              fill
+              className="object-contain"
+            />
+          </div>
+        </div>
+        <div className="flex flex-col items-center gap-2">
+          <h3 className="text-lg font-semibold">Magic Image</h3>
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
+            <Image
+              src={processedImageUrl}
+              alt="Processed result"
+              fill
+              className="object-contain"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <Alert>
@@ -133,30 +175,19 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
           {originalDataUri && (
             <div className="space-y-4">
-              <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
-                {processedImageUrl ? (
-                    feature.showBeforeAfterSlider ? (
-                    <BeforeAfterSlider
-                      before={originalDataUri}
-                      after={processedImageUrl}
-                    />
-                  ) : (
-                    <Image
-                      src={processedImageUrl}
-                      alt="Processed result"
-                      fill
-                      className="object-contain"
-                    />
-                  )
-                ) : (
+              
+              {!processedImageUrl && (
+                <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
                   <Image
                     src={originalDataUri}
                     alt="Original upload"
                     fill
                     className="object-contain"
                   />
-                )}
-              </div>
+                </div>
+              )}
+              
+              {renderResultView()}
 
               {isLoading && (
                 <div className="space-y-2">
@@ -184,7 +215,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
                 {processedImageUrl && (
                     <Button asChild>
                         <a href={processedImageUrl} download={`magicpixa-${feature.name.toLowerCase().replace(' ','-')}.png`}>
-                            Download
+                            Download Magic Image
                         </a>
                     </Button>
                 )}
