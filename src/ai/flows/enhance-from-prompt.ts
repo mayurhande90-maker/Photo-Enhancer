@@ -50,7 +50,7 @@ const enhanceFromPromptFlow = ai.defineFlow(
     const {media} = await ai.generate({
       prompt: [
         {media: {url: input.photoDataUri}},
-        {text: `enhance this photo according to the following instructions: ${input.enhancementPrompt}`},
+        {text: `Enhance this photo according to the following instructions: ${input.enhancementPrompt}. Finally, add a small, discreet watermark in a bottom corner that says 'Made by Magicpixa'.`},
       ],
       model: 'googleai/gemini-2.5-flash-image-preview',
       config: {
