@@ -203,7 +203,7 @@ export default function Home() {
                   <Button className="w-full mt-auto">
                     {tier.cta}
                   </Button>
-                   {tier.smallText && <p className="text-center text-sm text-muted-foreground mt-2">{tier.smallText}</p>}
+                   {tier.smallText && <p className="text-center text-xs text-muted-foreground mt-2">{tier.smallText}</p>}
                 </div>
               </Card>
             ))}
