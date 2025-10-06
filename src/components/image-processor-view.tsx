@@ -133,26 +133,26 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="flex flex-col items-center gap-2">
-          <h3 className="text-lg font-semibold">Original Image</h3>
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
-            <Image
-              src={originalDataUri}
-              alt="Original upload"
-              fill
-              className="object-contain"
-            />
+        <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
+          <Image
+            src={originalDataUri}
+            alt="Original upload"
+            fill
+            className="object-contain"
+          />
+          <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white">
+            Original Image
           </div>
         </div>
-        <div className="flex flex-col items-center gap-2">
-          <h3 className="text-lg font-semibold">Magic Image</h3>
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
-            <Image
-              src={processedImageUrl}
-              alt="Processed result"
-              fill
-              className="object-contain"
-            />
+        <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
+          <Image
+            src={processedImageUrl}
+            alt="Processed result"
+            fill
+            className="object-contain"
+          />
+          <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white">
+            Magic Image
           </div>
         </div>
       </div>
