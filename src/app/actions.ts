@@ -21,7 +21,7 @@ export async function enhancePhotoAction(photoDataUri: string) {
 
 export async function removeBackgroundAction(photoDataUri: string) {
   const prompt =
-    'Detect the main subject in this image and remove the background completely, making it transparent. The output should be a high-resolution transparent PNG with clean, sharp, and precise edges around the subject. The AI should carefully analyze the subject and background to ensure no artifacts are left behind.';
+    'Thoroughly and precisely analyze the image to identify the main subject. Generate a new image of the exact same subject but with the background completely removed and made transparent. The output MUST be a high-resolution transparent PNG with clean, sharp, and meticulously precise edges around the subject. Ensure every part of the background is removed, leaving no artifacts or remnants.';
   const result = await enhanceFromPrompt({ photoDataUri, enhancementPrompt: prompt });
   return result;
 }
