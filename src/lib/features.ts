@@ -32,7 +32,7 @@ export const features: Feature[] = [
     description: 'Create e-commerce ready product shots.',
     path: '/dashboard/studio',
     icon: Camera,
-    creditCost: 3,
+    creditCost: 1,
     action: studioEnhanceAction,
     showBeforeAfterSlider: false,
   },
