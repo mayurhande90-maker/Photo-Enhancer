@@ -2,12 +2,6 @@
 'use server';
 
 import { enhanceFromPrompt } from '@/ai/flows/enhance-from-prompt';
-import {
-  enhancePhotoAction as enhancePhoto,
-  removeBackgroundAction as removeBackground,
-  studioEnhanceAction as studioEnhance,
-  colorizePhotoAction as colorizePhoto,
-} from '@/lib/features';
 
 async function processImageWithAI(
   photoDataUri: string,
@@ -27,7 +21,7 @@ export async function enhancePhotoAction(photoDataUri: string) {
 
 export async function removeBackgroundAction(photoDataUri: string) {
   const prompt =
-    'Detect the main subject in this image and remove the background completely. The output should be a transparent PNG with clean, sharp edges around the subject.';
+    'Detect the main subject in this image and remove the background completely, making it transparent. The output should be a high-resolution transparent PNG with clean, sharp, and precise edges around the subject. The AI should carefully analyze the subject and background to ensure no artifacts are left behind.';
   const result = await enhanceFromPrompt({ photoDataUri, enhancementPrompt: prompt });
   return result;
 }
