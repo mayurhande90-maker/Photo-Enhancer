@@ -9,6 +9,13 @@ import { FeatureCard } from '@/components/feature-card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Wand2, Scissors, Camera, Palette, Check, Star } from 'lucide-react';
 import { BeforeAfterSlider } from '@/components/before-after-slider';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 
 const features = [
   {
@@ -86,8 +93,28 @@ const testimonials = [
     },
 ]
 
-const heroImageBefore = PlaceHolderImages.find((img) => img.id === 'feature-colorize');
-const heroImageAfter = PlaceHolderImages.find((img) => img.id === 'processed-image');
+const heroSlides = [
+  {
+    title: 'Photo Enhancement',
+    before: PlaceHolderImages.find((img) => img.id === 'feature-enhance-before'),
+    after: PlaceHolderImages.find((img) => img.id === 'feature-enhance-after'),
+  },
+  {
+    title: 'Background Removal',
+    before: PlaceHolderImages.find((img) => img.id === 'feature-background-before'),
+    after: PlaceHolderImages.find((img) => img.id === 'feature-background-after'),
+  },
+  {
+    title: 'Photo Studio',
+    before: PlaceHolderImages.find((img) => img.id === 'feature-studio-before'),
+    after: PlaceHolderImages.find((img) => img.id === 'feature-studio-after'),
+  },
+  {
+    title: 'Photo Colorize',
+    before: PlaceHolderImages.find((img) => img.id === 'feature-colorize-before'),
+    after: PlaceHolderImages.find((img) => img.id === 'feature-colorize-after'),
+  },
+];
 
 
 export default function Home() {
@@ -120,13 +147,30 @@ export default function Home() {
                 <Link href="/dashboard">Enhance Your First Photo</Link>
               </Button>
             </div>
-            <div className="relative h-[400px] w-full overflow-hidden rounded-lg shadow-2xl">
-              {heroImageBefore && heroImageAfter && (
-                <BeforeAfterSlider
-                  before={heroImageBefore.imageUrl}
-                  after={heroImageAfter.imageUrl}
-                />
-              )}
+            <div className="relative w-full">
+               <Carousel className="w-full" opts={{ loop: true }} plugins={[]}>
+                  <CarouselContent>
+                    {heroSlides.map((slide, index) => (
+                      <CarouselItem key={index}>
+                        <div className="relative h-[400px] w-full overflow-hidden rounded-lg shadow-2xl">
+                          <Card className='h-full'>
+                            {slide.before && slide.after && (
+                              <BeforeAfterSlider
+                                before={slide.before.imageUrl}
+                                after={slide.after.imageUrl}
+                              />
+                            )}
+                             <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-3 py-1.5 text-sm font-semibold text-white">
+                                {slide.title}
+                            </div>
+                          </Card>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-4" />
+                  <CarouselNext className="right-4" />
+                </Carousel>
             </div>
           </div>
         </section>
