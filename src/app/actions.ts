@@ -1,4 +1,3 @@
-
 // @/app/actions.ts
 'use server';
 
@@ -15,7 +14,7 @@ async function processImageWithAI(
 ): Promise<{ enhancedPhotoDataUri: string }> {
   await deductCredits(userId, creditCost);
   const result = await enhanceFromPrompt({ photoDataUri, enhancementPrompt });
-  await saveGeneratedImage(userId, dataUri, result.enhancedPhotoDataUri, featureName);
+  await saveGeneratedImage(userId, photoDataUri, result.enhancedPhotoDataUri, featureName);
   return result;
 }
 

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { usePathname } from 'next/navigation';
@@ -9,18 +8,19 @@ import { Gem } from 'lucide-react';
 import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Skeleton } from './ui/skeleton';
+import type { UserProfile } from '@/lib/types';
 
 export function DashboardHeader() {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
 
-  const userCreditsRef = useMemoFirebase(() => {
+  const userProfileRef = useMemoFirebase(() => {
     if (!user || !firestore) return null;
-    return doc(firestore, `users/${user.uid}/creditBalance/balance`);
+    return doc(firestore, `users/${user.uid}`);
   }, [user, firestore]);
   
-  const { data: creditsDoc, isLoading: isCreditsLoading } = useDoc<{ credits: number }>(userCreditsRef);
+  const { data: userProfile, isLoading: isCreditsLoading } = useDoc<UserProfile>(userProfileRef);
 
   const currentFeature = features.find((f) => f.path === pathname);
   const title = currentFeature?.name || 'Dashboard';
@@ -37,7 +37,7 @@ export function DashboardHeader() {
         ) : user ? (
           <Button variant="outline" size="sm">
             <Gem className="mr-2 size-4" />
-            <span className="font-semibold">{creditsDoc?.credits ?? 0}</span>
+            <span className="font-semibold">{userProfile?.credits ?? 0}</span>
             <span className="sr-only">credits remaining</span>
           </Button>
         ) : null}

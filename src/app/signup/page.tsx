@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -19,7 +18,7 @@ import { Logo } from '@/components/icons';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/firebase/provider';
 import { initiateEmailSignUp, createUserProfileAndCredits } from '@/firebase';
-import { UserCredential } from 'firebase/auth';
+import { UserCredential, updateProfile } from 'firebase/auth';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -41,7 +40,10 @@ export default function SignupPage() {
       const user = userCredential.user;
 
       if (user) {
-        // 2. Call the server action to create profile and credits
+        // 2. Update the user's profile with display name
+        await updateProfile(user, { displayName });
+
+        // 3. Call the server action to create profile document and credits in Firestore
         await createUserProfileAndCredits(user.uid, {
           email: user.email!,
           displayName: displayName || user.email!,
@@ -54,9 +56,16 @@ export default function SignupPage() {
         router.push('/dashboard');
       }
     } catch (error: any) {
+      let description = 'An unknown error occurred.';
+      if (error.code === 'auth/email-already-in-use') {
+        description = 'This email is already in use. Please log in instead.';
+      } else if (error.message) {
+        description = error.message;
+      }
+      
       toast({
         title: 'Sign Up Failed',
-        description: error.message || 'An unknown error occurred.',
+        description,
         variant: 'destructive',
       });
     } finally {

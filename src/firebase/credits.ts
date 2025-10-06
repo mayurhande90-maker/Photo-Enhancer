@@ -1,4 +1,3 @@
-
 'use server';
 
 import { db } from './server';
@@ -15,24 +14,17 @@ export async function createUserProfileAndCredits(userId: string, profileData: U
     if (!userId) {
         throw new Error('User ID is required.');
     }
-    const batch = db.batch();
-
-    // 1. Create user profile document
     const userRef = db.collection('users').doc(userId);
-    batch.set(userRef, {
-        uid: userId,
-        ...profileData
-    });
-
-    // 2. Create credit balance document
-    const creditRef = userRef.collection('creditBalance').doc('balance');
-    batch.set(creditRef, { 
-        credits: INITIAL_CREDITS, 
-        lastUpdateTimestamp: FieldValue.serverTimestamp() 
-    });
 
     try {
-        await batch.commit();
+        await userRef.set({
+            uid: userId,
+            email: profileData.email,
+            displayName: profileData.displayName,
+            credits: INITIAL_CREDITS,
+            planName: 'Guest',
+            creationTimestamp: FieldValue.serverTimestamp(),
+        });
         console.log(`Successfully created profile and initialized credits for user ${userId}`);
     } catch (error) {
         console.error(`Failed to create profile and initialize credits for user ${userId}:`, error);
@@ -46,24 +38,24 @@ export async function deductCredits(userId: string, amount: number) {
         throw new Error('User ID is required to deduct credits.');
     }
 
-    const creditRef = db.collection('users').doc(userId).collection('creditBalance').doc('balance');
+    const userRef = db.collection('users').doc(userId);
 
     try {
         await db.runTransaction(async (transaction) => {
-            const creditDoc = await transaction.get(creditRef);
-            if (!creditDoc.exists) {
-                throw new Error('Credit balance document does not exist.');
+            const userDoc = await transaction.get(userRef);
+            if (!userDoc.exists) {
+                throw new Error('User profile does not exist.');
             }
 
-            const currentCredits = creditDoc.data()?.credits ?? 0;
+            const currentCredits = userDoc.data()?.credits ?? 0;
             if (currentCredits < amount) {
                 throw new Error('Insufficient credits.');
             }
 
             const newBalance = currentCredits - amount;
-            transaction.update(creditRef, { 
+            transaction.update(userRef, { 
                 credits: newBalance,
-                lastUpdateTimestamp: FieldValue.serverTimestamp()
+                lastCreditUpdate: FieldValue.serverTimestamp()
             });
         });
         console.log(`Successfully deducted ${amount} credits for user ${userId}.`);

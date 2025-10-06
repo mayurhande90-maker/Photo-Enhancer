@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -16,6 +15,7 @@ import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { doc } from 'firebase/firestore';
 import Link from 'next/link';
+import type { UserProfile } from '@/lib/types';
 
 interface ImageProcessorViewProps {
   featureName: Feature['name'];
@@ -36,12 +36,12 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   const firestore = useFirestore();
   const { toast } = useToast();
 
-  const userCreditsRef = useMemoFirebase(() => {
+  const userProfileRef = useMemoFirebase(() => {
     if (!user || !firestore) return null;
-    return doc(firestore, `users/${user.uid}/creditBalance/balance`);
+    return doc(firestore, `users/${user.uid}`);
   }, [user, firestore]);
   
-  const { data: creditsDoc } = useDoc<{ credits: number }>(userCreditsRef);
+  const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
 
 
   const [originalFile, setOriginalFile] = useState<File | null>(null);
@@ -64,7 +64,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
   const handleProcessImage = async () => {
     if (!originalFile || !user) return;
-    const currentCredits = creditsDoc?.credits ?? 0;
+    const currentCredits = userProfile?.credits ?? 0;
 
     if (currentCredits < feature.creditCost) {
         toast({
@@ -180,7 +180,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
               <div className="flex flex-wrap gap-2">
                 {!isLoading && !processedImageUrl && (
-                  <Button onClick={handleProcessImage} disabled={!user || (creditsDoc?.credits ?? 0) < feature.creditCost}>
+                  <Button onClick={handleProcessImage} disabled={!user || (userProfile?.credits ?? 0) < feature.creditCost}>
                     Process Image ({feature.creditCost} credit)
                   </Button>
                 )}

@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -22,6 +21,7 @@ import { LogOut, User as UserIcon } from 'lucide-react';
 import { useUser, useAuth, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { Skeleton } from './ui/skeleton';
 import { doc } from 'firebase/firestore';
+import type { UserProfile } from '@/lib/types';
 
 
 export function DashboardSidebar() {
@@ -42,15 +42,9 @@ export function DashboardSidebar() {
     if (!user || !firestore) return null;
     return doc(firestore, `users/${user.uid}`);
   }, [user, firestore]);
-  const { data: userProfile, isLoading: isProfileLoading } = useDoc<{ displayName: string; photoURL: string; }>(userProfileRef);
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userProfileRef);
 
-  const userCreditsRef = useMemoFirebase(() => {
-    if (!user || !firestore) return null;
-    return doc(firestore, `users/${user.uid}/creditBalance/balance`);
-  }, [user, firestore]);
-  const { data: creditsDoc, isLoading: isCreditsLoading } = useDoc<{ credits: number }>(userCreditsRef);
-
-  const isLoading = isUserLoading || isProfileLoading || isCreditsLoading;
+  const isLoading = isUserLoading || isProfileLoading;
 
   return (
     <Sidebar>
@@ -94,11 +88,11 @@ export function DashboardSidebar() {
               <div className="flex flex-col gap-2 text-sm p-2">
                 <div className="flex justify-between">
                     <span>Credits:</span>
-                    <span className="font-semibold">{creditsDoc?.credits ?? 0}</span>
+                    <span className="font-semibold">{userProfile?.credits ?? 0}</span>
                 </div>
                 <div className="flex justify-between">
                     <span>Plan:</span>
-                    <span className="font-semibold">Guest</span>
+                    <span className="font-semibold">{userProfile?.planName ?? 'Guest'}</span>
                 </div>
               </div>
               <Button size="sm" className="mt-2 w-full bg-accent text-accent-foreground hover:bg-accent/90">Upgrade</Button>
@@ -114,14 +108,14 @@ export function DashboardSidebar() {
             <Skeleton className="size-8 rounded-full" />
             <Skeleton className="h-5 w-20" />
           </div>
-        ) : user && userProfile ? (
+        ) : user ? (
           <div className="flex w-full items-center justify-between rounded-md p-2">
             <div className="flex items-center gap-2">
               <Avatar className="size-8">
-                {userProfile.photoURL && <AvatarImage src={userProfile.photoURL} />}
-                <AvatarFallback>{userProfile.displayName?.charAt(0) ?? <UserIcon />}</AvatarFallback>
+                {user.photoURL && <AvatarImage src={user.photoURL} />}
+                <AvatarFallback>{user.displayName?.charAt(0) ?? <UserIcon />}</AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium">{userProfile.displayName || 'User'}</span>
+              <span className="text-sm font-medium">{user.displayName || 'User'}</span>
             </div>
             <Button variant="ghost" size="icon" className="size-8" onClick={handleLogout}>
               <LogOut className="size-4" />

@@ -1,4 +1,3 @@
-
 import type { LucideIcon } from 'lucide-react';
 import type { User } from 'firebase/auth';
 
@@ -12,8 +11,13 @@ export type Feature = {
   showBeforeAfterSlider: boolean;
 };
 
-export type UserProfile = User & {
+export type UserProfile = {
+    uid: string;
+    email: string;
+    displayName: string;
+    photoURL?: string;
     credits: number;
+    planName: string;
 }
 
 export type GeneratedImage = {
