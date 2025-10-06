@@ -3,29 +3,29 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-const QUOTA_KEY = 'dailyQuota';
-const DAILY_LIMIT = 10;
-const TWENTY_FOUR_HOURS_IN_MS = 24 * 60 * 60 * 1000;
+const QUOTA_KEY = 'monthlyQuota';
+const MONTHLY_LIMIT = 10;
+const THIRTY_DAYS_IN_MS = 30 * 24 * 60 * 60 * 1000;
 
-interface DailyQuota {
+interface MonthlyQuota {
   credits: number;
   resetTimestamp: number;
 }
 
-export function useDailyQuota() {
-  const [credits, setCredits] = useState(DAILY_LIMIT);
+export function useMonthlyQuota() {
+  const [credits, setCredits] = useState(MONTHLY_LIMIT);
   const [resetTime, setResetTime] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const getLocalStorageQuota = useCallback((): DailyQuota | null => {
+  const getLocalStorageQuota = useCallback((): MonthlyQuota | null => {
     if (typeof window === 'undefined') {
         return null;
     }
     const storedQuota = localStorage.getItem(QUOTA_KEY);
-    return storedQuota ? (JSON.parse(storedQuota) as DailyQuota) : null;
+    return storedQuota ? (JSON.parse(storedQuota) as MonthlyQuota) : null;
   }, []);
 
-  const setLocalStorageQuota = useCallback((quota: DailyQuota) => {
+  const setLocalStorageQuota = useCallback((quota: MonthlyQuota) => {
     if (typeof window === 'undefined') return;
     localStorage.setItem(QUOTA_KEY, JSON.stringify(quota));
   }, []);
@@ -35,13 +35,13 @@ export function useDailyQuota() {
     const now = Date.now();
 
     if (quota && now < quota.resetTimestamp) {
-      // User is within their 24-hour window
+      // User is within their 30-day window
       setCredits(quota.credits);
       setResetTime(new Date(quota.resetTimestamp));
     } else {
       // Quota has expired or doesn't exist, so reset it
-      const newResetTimestamp = now + TWENTY_FOUR_HOURS_IN_MS;
-      const newQuota = { credits: DAILY_LIMIT, resetTimestamp: newResetTimestamp };
+      const newResetTimestamp = now + THIRTY_DAYS_IN_MS;
+      const newQuota = { credits: MONTHLY_LIMIT, resetTimestamp: newResetTimestamp };
       setLocalStorageQuota(newQuota);
       setCredits(newQuota.credits);
       setResetTime(new Date(newQuota.resetTimestamp));
@@ -53,7 +53,6 @@ export function useDailyQuota() {
     const quota = getLocalStorageQuota();
     if (!quota) return; // Should not happen if useEffect ran
 
-    // This ensures we only deduct credits, preventing the previous bug.
     const amountToDeduct = Math.abs(amount);
     const newCredits = Math.max(0, credits - amountToDeduct);
     

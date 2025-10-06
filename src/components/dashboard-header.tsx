@@ -6,12 +6,12 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { features } from '@/lib/features';
 import { Button } from './ui/button';
 import { Gem } from 'lucide-react';
-import { useDailyQuota } from '@/hooks/use-daily-quota';
+import { useMonthlyQuota } from '@/hooks/use-monthly-quota';
 import { Skeleton } from './ui/skeleton';
 
 export function DashboardHeader() {
   const pathname = usePathname();
-  const { credits, isLoading } = useDailyQuota();
+  const { credits, isLoading } = useMonthlyQuota();
 
   const currentFeature = features.find((f) => f.path === pathname);
   const title = currentFeature?.name || 'Dashboard';
@@ -29,7 +29,7 @@ export function DashboardHeader() {
           <Button variant="outline" size="sm">
             <Gem className="mr-2 size-4" />
             <span className="font-semibold">{credits}</span>
-            <span className="sr-only">daily credits remaining</span>
+            <span className="sr-only">monthly credits remaining</span>
           </Button>
         )}
       </div>

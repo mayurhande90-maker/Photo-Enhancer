@@ -49,7 +49,6 @@ const pricingTiers = [
     ],
     cta: 'Start Free',
     popular: false,
-    smallText: '',
   },
   {
     name: 'Premium',
@@ -63,7 +62,6 @@ const pricingTiers = [
     ],
     cta: 'Upgrade Now',
     popular: true,
-    smallText: 'Less than ₹5 per enhanced photo!',
   },
 ];
 
@@ -116,7 +114,7 @@ export default function Home() {
                 AI that brings your photos to life.
               </h1>
               <p className="max-w-[700px] text-lg text-muted-foreground">
-                Enhance, remove backgrounds, create stunning product shots, and colorize old photos with a single click. Get 10 free credits daily.
+                Enhance, remove backgrounds, create stunning product shots, and colorize old photos with a single click. Get 10 free credits monthly.
               </p>
               <Button asChild size="lg">
                 <Link href="/dashboard">Enhance Your First Photo</Link>
@@ -181,28 +179,30 @@ export default function Home() {
           <div className="mt-12 grid gap-8 md:grid-cols-2 max-w-2xl mx-auto">
             {pricingTiers.map((tier) => (
               <Card key={tier.name} className={`flex flex-col bg-card ${tier.popular ? 'border-primary shadow-lg' : ''}`}>
-                <CardHeader>
-                  <CardTitle className="flex justify-between items-baseline">
-                    {tier.name}
-                    {tier.popular && <span className="text-sm font-medium text-primary">Most Popular</span>}
-                  </CardTitle>
-                  <CardDescription>
-                    <span className="text-3xl font-bold text-foreground">{tier.price}</span>
-                    <span className="text-muted-foreground">{tier.priceSuffix}</span>
-                  </CardDescription>
-                </CardHeader>
-                <div className="flex flex-col flex-1 p-6 pt-0">
-                  <ul className="space-y-3 mb-6">
-                    {tier.features.map((feature) => (
-                      <li key={feature} className="flex items-center">
-                        <Check className="mr-2 h-4 w-4 text-primary" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button className="w-full mt-auto">
-                    {tier.cta}
-                  </Button>
+                <div className="flex flex-col flex-1">
+                  <CardHeader>
+                    <CardTitle className="flex justify-between items-baseline">
+                      {tier.name}
+                      {tier.popular && <span className="text-sm font-medium text-primary">Most Popular</span>}
+                    </CardTitle>
+                    <CardDescription>
+                      <span className="text-3xl font-bold text-foreground">{tier.price}</span>
+                      <span className="text-muted-foreground">{tier.priceSuffix}</span>
+                    </CardDescription>
+                  </CardHeader>
+                  <div className="flex flex-col flex-1 p-6 pt-0">
+                    <ul className="space-y-3 mb-6">
+                      {tier.features.map((feature) => (
+                        <li key={feature} className="flex items-center">
+                          <Check className="mr-2 h-4 w-4 text-primary" />
+                          <span className="text-muted-foreground">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button className="w-full mt-auto">
+                      {tier.cta}
+                    </Button>
+                  </div>
                 </div>
               </Card>
             ))}

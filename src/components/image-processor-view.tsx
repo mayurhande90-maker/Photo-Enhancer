@@ -13,7 +13,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal, Clock } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { useDailyQuota } from '@/hooks/use-daily-quota';
+import { useMonthlyQuota } from '@/hooks/use-monthly-quota';
 import { formatDistanceToNow } from 'date-fns';
 
 interface ImageProcessorViewProps {
@@ -32,7 +32,7 @@ function fileToDataUri(file: File): Promise<string> {
 export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   const feature = features.find((f) => f.name === featureName);
   const { toast } = useToast();
-  const { credits, resetTime, isLoading: isQuotaLoading, consumeCredits } = useDailyQuota();
+  const { credits, resetTime, isLoading: isQuotaLoading, consumeCredits } = useMonthlyQuota();
 
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
@@ -57,7 +57,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
     if (credits < feature.creditCost) {
         toast({
-            title: 'Daily Quota Exhausted',
+            title: 'Monthly Quota Exhausted',
             description: `You don't have enough credits for this feature. Your credits will reset in ${formatDistanceToNow(resetTime!)}.`,
             variant: 'destructive',
         });
@@ -108,10 +108,10 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     return (
       <Alert variant="destructive" className="mt-4">
         <Clock className="h-4 w-4" />
-        <AlertTitle>Daily Quota Reached</AlertTitle>
+        <AlertTitle>Monthly Quota Reached</AlertTitle>
         <AlertDescription>
-          You have used all your free credits for today. Your credits will reset in {' '}
-          {resetTime ? formatDistanceToNow(resetTime) : '24 hours'}.
+          You have used all your free credits for this month. Your credits will reset in {' '}
+          {resetTime ? formatDistanceToNow(resetTime) : 'about a month'}.
         </AlertDescription>
       </Alert>
     );
