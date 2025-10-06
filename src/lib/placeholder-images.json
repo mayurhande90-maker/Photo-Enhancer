@@ -8,87 +8,51 @@
     },
     {
       "id": "feature-enhance-before",
-      "description": "A close-up portrait of a person with dramatic lighting, showcasing enhanced details",
-      "imageUrl": "https://images.unsplash.com/photo-1544124094-8aea0374da93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHBob3RvZ3JhcGh5fGVufDB8fHx8MTc1OTcwNDUyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "portrait photography"
+      "description": "A blurry, low-resolution portrait of a woman.",
+      "imageUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&q=50&blur=10",
+      "imageHint": "blurry portrait"
     },
     {
       "id": "feature-enhance-after",
-      "description": "An abstract, colorful image representing a processed output",
-      "imageUrl": "https://images.unsplash.com/photo-1533158326339-7f3cf2404354?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMGNvbG9yZnVsfGVufDB8fHx8MTc1OTY4MjEwNnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "abstract colorful"
+      "description": "A crystal clear, high-resolution portrait of a smiling woman outdoors.",
+      "imageUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=1080&q=80",
+      "imageHint": "clear portrait"
     },
     {
       "id": "feature-background-before",
-      "description": "A stylish sneaker floating on a plain background, as if the original background was removed",
-      "imageUrl": "https://images.unsplash.com/photo-1667482464027-cdb99bd2d5ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cHJvZHVjdCUyMHBob3RvfGVufDB8fHx8MTc1OTY5MDU0M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "product photo"
+      "description": "A person standing in front of a busy city street.",
+      "imageUrl": "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=1080&q=80",
+      "imageHint": "person city"
     },
     {
       "id": "feature-background-after",
-      "description": "A stylish sneaker against a vibrant, abstract background",
-      "imageUrl": "https://images.unsplash.com/photo-1633483408137-87f2b1de542f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxhYnN0cmFjdCUyMHNuZWFrZXJ8ZW58MHx8fHwxNzU5NzU0ODAzfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "abstract sneaker"
+      "description": "A person with the background cleanly removed, on a transparent background.",
+      "imageUrl": "https://storage.googleapis.com/studio-images-prod/section_images/feature-background-after.png",
+      "imageHint": "person transparent"
     },
     {
       "id": "feature-studio-before",
-      "description": "A bottle of perfume on a reflective surface with a professional studio background",
-      "imageUrl": "https://images.unsplash.com/photo-1691096674730-2b5fb28b726f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxlY29tbWVyY2UlMjBwcm9kdWN0fGVufDB8fHx8MTc1OTY5MTY2OXww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "ecommerce product"
+      "description": "A picture of a watch taken on a wooden table.",
+      "imageUrl": "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=1080&q=80",
+      "imageHint": "watch table"
     },
     {
       "id": "feature-studio-after",
-      "description": "A bottle of perfume on a reflective surface with a professional studio background, enhanced",
-      "imageUrl": "https://images.unsplash.com/photo-1703564202740-e9805c4a14ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxlbmhhbmNlZCUyMHByb2R1Y3R8ZW58MHx8fHwxNzU5NzU0ODAzfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "enhanced product"
+      "description": "A professional product shot of a watch on a clean, studio background.",
+      "imageUrl": "https://images.unsplash.com/photo-1620625515032-6ed0c142e035?w=1080&q=80",
+      "imageHint": "watch studio"
     },
     {
       "id": "feature-colorize-before",
-      "description": "A vintage black and white photo of a smiling family, partially colorized to show the transition",
-      "imageUrl": "https://images.unsplash.com/photo-1632223082347-a2f6b07558f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx2aW50YWdlJTIwcGhvdG98ZW58MHx8fHwxNzU5NzMyMTgyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "vintage photo"
+      "description": "An old, black and white photograph of a city street.",
+      "imageUrl": "https://images.unsplash.com/photo-1518495962222-cf8d691d1533?w=1080&q=80&grayscale",
+      "imageHint": "vintage street"
     },
     {
       "id": "feature-colorize-after",
-      "description": "An abstract, colorful image representing a processed output",
-      "imageUrl": "https://images.unsplash.com/photo-1533158326339-7f3cf2404354?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMGNvbG9yZnVsfGVufDB8fHx8MTc1OTY4MjEwNnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "abstract colorful"
-    },
-    {
-      "id": "feature-enhance",
-      "description": "A close-up portrait of a person with dramatic lighting, showcasing enhanced details",
-      "imageUrl": "https://images.unsplash.com/photo-1544124094-8aea0374da93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHBob3RvZ3JhcGh5fGVufDB8fHx8MTc1OTcwNDUyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "portrait photography"
-    },
-    {
-      "id": "feature-background",
-      "description": "A stylish sneaker floating on a plain background, as if the original background was removed",
-      "imageUrl": "https://images.unsplash.com/photo-1667482464027-cdb99bd2d5ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cHJvZHVjdCUyMHBob3RvfGVufDB8fHx8MTc1OTY5MDU0M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "product photo"
-    },
-    {
-      "id": "feature-studio",
-      "description": "A bottle of perfume on a reflective surface with a professional studio background",
-      "imageUrl": "https://images.unsplash.com/photo-1691096674730-2b5fb28b726f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxlY29tbWVyY2UlMjBwcm9kdWN0fGVufDB8fHx8MTc1OTY5MTY2OXww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "ecommerce product"
-    },
-    {
-      "id": "feature-colorize",
-      "description": "A vintage black and white photo of a smiling family, partially colorized to show the transition",
-      "imageUrl": "https://images.unsplash.com/photo-1632223082347-a2f6b07558f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx2aW50YWdlJTIwcGhvdG98ZW58MHx8fHwxNzU5NzMyMTgyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "vintage photo"
-    },
-    {
-      "id": "default-image",
-      "description": "A textured placeholder image with a slight gradient",
-      "imageUrl": "https://images.unsplash.com/photo-1688927415965-f0eb108432bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwbGFjZWhvbGRlciUyMHRleHR1cmV8ZW58MHx8fHwxNzU5NzMyMTgyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "placeholder texture"
-    },
-    {
-      "id": "processed-image",
-      "description": "An abstract, colorful image representing a processed output",
-      "imageUrl": "https://images.unsplash.com/photo-1533158326339-7f3cf2404354?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMGNvbG9yZnVsfGVufDB8fHx8MTc1OTY4MjEwNnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "abstract colorful"
+      "description": "A beautifully colorized version of an old city street photograph.",
+      "imageUrl": "https://images.unsplash.com/photo-1518495962222-cf8d691d1533?w=1080&q=80",
+      "imageHint": "colorized street"
     }
   ]
 }

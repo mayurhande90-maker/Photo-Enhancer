@@ -16,24 +16,28 @@ const features = [
     title: 'Photo Enhancement',
     description: 'Fix lighting, colors, noise, and resolution automatically.',
     image: PlaceHolderImages.find((img) => img.id === 'feature-enhance-after'),
+    path: '/dashboard/enhance',
   },
   {
     icon: <Scissors className="size-8 text-primary" />,
     title: 'Background Removal',
     description: 'Instantly remove backgrounds to get clean, transparent PNGs.',
     image: PlaceHolderImages.find((img) => img.id === 'feature-background-after'),
+    path: '/dashboard/background-removal',
   },
   {
     icon: <Camera className="size-8 text-primary" />,
     title: 'Photo Studio',
     description: 'Create e-commerce ready product shots with perfect lighting.',
     image: PlaceHolderImages.find((img) => img.id === 'feature-studio-after'),
+    path: '/dashboard/studio',
   },
   {
     icon: <Palette className="size-8 text-primary" />,
     title: 'Photo Colorize',
     description: 'Bring old black and white photos to life with natural colors.',
     image: PlaceHolderImages.find((img) => img.id === 'feature-colorize-after'),
+    path: '/dashboard/colorize',
   },
 ];
 
@@ -145,7 +149,9 @@ export default function Home() {
           </div>
           <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-4">
             {features.map((feature, index) => (
-              <FeatureCard key={index} {...feature} />
+              <Link href={feature.path} key={index}>
+                <FeatureCard {...feature} />
+              </Link>
             ))}
           </div>
         </section>
