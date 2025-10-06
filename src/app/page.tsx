@@ -4,37 +4,36 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Logo } from '@/components/icons';
 import { FeatureCard } from '@/components/feature-card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Wand2, Scissors, Camera, Palette, Check, Star, PauseCircle, PlayCircle } from 'lucide-react';
-import { BeforeAfterSlider } from '@/components/before-after-slider';
+import { Wand2, Scissors, Camera, Palette, Check, Star } from 'lucide-react';
 
 const features = [
   {
     icon: <Wand2 className="size-8 text-primary" />,
     title: 'Photo Enhancement',
     description: 'Fix lighting, colors, noise, and resolution automatically.',
-    image: PlaceHolderImages.find((img) => img.id === 'feature-enhance'),
+    image: PlaceHolderImages.find((img) => img.id === 'feature-enhance-after'),
   },
   {
     icon: <Scissors className="size-8 text-primary" />,
     title: 'Background Removal',
     description: 'Instantly remove backgrounds to get clean, transparent PNGs.',
-    image: PlaceHolderImages.find((img) => img.id === 'feature-background'),
+    image: PlaceHolderImages.find((img) => img.id === 'feature-background-after'),
   },
   {
     icon: <Camera className="size-8 text-primary" />,
     title: 'Photo Studio',
     description: 'Create e-commerce ready product shots with perfect lighting.',
-    image: PlaceHolderImages.find((img) => img.id === 'feature-studio'),
+    image: PlaceHolderImages.find((img) => img.id === 'feature-studio-after'),
   },
   {
     icon: <Palette className="size-8 text-primary" />,
     title: 'Photo Colorize',
     description: 'Bring old black and white photos to life with natural colors.',
-    image: PlaceHolderImages.find((img) => img.id === 'feature-colorize'),
+    image: PlaceHolderImages.find((img) => img.id === 'feature-colorize-after'),
   },
 ];
 
@@ -87,43 +86,10 @@ const testimonials = [
     },
 ]
 
-const heroSlides = [
-  {
-    title: 'Photo Enhancement',
-    before: PlaceHolderImages.find((img) => img.id === 'feature-enhance-before'),
-    after: PlaceHolderImages.find((img) => img.id === 'feature-enhance-after'),
-  },
-  {
-    title: 'Background Removal',
-    before: PlaceHolderImages.find((img) => img.id === 'feature-background-before'),
-    after: PlaceHolderImages.find((img) => img.id === 'feature-background-after'),
-  },
-  {
-    title: 'Photo Studio',
-    before: PlaceHolderImages.find((img) => img.id === 'feature-studio-before'),
-    after: PlaceHolderImages.find((img) => img.id === 'feature-studio-after'),
-  },
-  {
-    title: 'Photo Colorize',
-    before: PlaceHolderImages.find((img) => img.id === 'feature-colorize-before'),
-    after: PlaceHolderImages.find((img) => img.id === 'feature-colorize-after'),
-  },
-];
+const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
 
 
 export default function Home() {
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  useEffect(() => {
-    if (isPaused) return;
-    const timer = setInterval(() => {
-      setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % heroSlides.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [isPaused]);
-
-  const currentSlide = heroSlides[currentSlideIndex];
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -155,33 +121,18 @@ export default function Home() {
               </Button>
             </div>
             <div className="relative w-full">
-              <div className="relative h-[400px] w-full overflow-hidden rounded-lg shadow-2xl">
-                 {currentSlide.before && currentSlide.after && (
-                   <BeforeAfterSlider
-                     key={currentSlideIndex} // Add key to force re-render
-                     before={currentSlide.before.imageUrl}
-                     after={currentSlide.after.imageUrl}
-                   />
-                 )}
-               </div>
-               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-4 py-2 flex items-center gap-4 text-white">
-                  {heroSlides.map((_, index) => (
-                    <button
-                      key={index}
-                      className={`h-2 w-2 rounded-full transition-colors ${
-                        index === currentSlideIndex ? 'bg-white' : 'bg-white/50 hover:bg-white/75'
-                      }`}
-                      onClick={() => setCurrentSlideIndex(index)}
-                      aria-label={`Go to slide ${index + 1}`}
-                    />
-                  ))}
-                  <button onClick={() => setIsPaused(!isPaused)} aria-label={isPaused ? 'Play slideshow' : 'Pause slideshow'}>
-                    {isPaused ? <PlayCircle className="h-4 w-4" /> : <PauseCircle className="h-4 w-4" />}
-                  </button>
-               </div>
-               <div className="absolute top-4 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-4 py-1.5 text-sm font-semibold text-white">
-                  {currentSlide.title}
+              {heroImage && (
+                <div className="relative h-[400px] w-full overflow-hidden rounded-lg shadow-2xl">
+                  <Image
+                    src={heroImage.imageUrl}
+                    alt={heroImage.description}
+                    fill
+                    className="object-cover"
+                    priority
+                    data-ai-hint={heroImage.imageHint}
+                  />
                 </div>
+              )}
             </div>
           </div>
         </section>
@@ -245,7 +196,7 @@ export default function Home() {
                       <span className="text-muted-foreground">{tier.priceSuffix}</span>
                     </CardDescription>
                   </CardHeader>
-                  <div className="flex flex-col flex-1 p-6 pt-0">
+                  <CardContent className="flex flex-col flex-1">
                     <ul className="space-y-3 mb-6">
                       {tier.features.map((feature) => (
                         <li key={feature} className="flex items-center">
@@ -257,7 +208,7 @@ export default function Home() {
                     <Button className="w-full mt-auto">
                       {tier.cta}
                     </Button>
-                  </div>
+                  </CardContent>
                 </div>
               </Card>
             ))}
@@ -280,4 +231,3 @@ export default function Home() {
     </div>
   );
 }
-
