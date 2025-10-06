@@ -17,7 +17,7 @@ export function useDailyQuota() {
   const [resetTime, setResetTime] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const getLocalStorageQuota = useCallback(() => {
+  const getLocalStorageQuota = useCallback((): DailyQuota | null => {
     if (typeof window === 'undefined') {
         return null;
     }
@@ -53,7 +53,10 @@ export function useDailyQuota() {
     const quota = getLocalStorageQuota();
     if (!quota) return; // Should not happen if useEffect ran
 
-    const newCredits = Math.max(0, credits - amount);
+    // This ensures we only deduct credits, preventing the previous bug.
+    const amountToDeduct = Math.abs(amount);
+    const newCredits = Math.max(0, credits - amountToDeduct);
+    
     setCredits(newCredits);
     setLocalStorageQuota({ ...quota, credits: newCredits });
 

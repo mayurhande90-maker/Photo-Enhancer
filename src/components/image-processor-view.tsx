@@ -79,14 +79,13 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     }, 200);
 
     try {
-      consumeCredits(feature.creditCost);
       const dataUri = await fileToDataUri(originalFile);
       const result = await feature.action(dataUri);
       setProcessedImageUrl(result.enhancedPhotoDataUri);
+      // Only deduct credits on success
+      consumeCredits(feature.creditCost);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
-      // refund credits if AI call fails
-      consumeCredits(-feature.creditCost);
     } finally {
       clearInterval(loadingInterval);
       setProgress(100);
