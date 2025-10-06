@@ -40,40 +40,48 @@ const features = [
 const pricingTiers = [
   {
     name: 'Free',
-    price: '$0',
-    credits: '10 Credits/Day',
-    features: ['Access to all tools', 'Standard quality', 'Community support'],
+    price: '₹0',
+    priceSuffix: '/ month',
+    features: [
+      '10 image enhancements per month',
+      'Basic AI enhancements',
+      'Watermark on images',
+    ],
+    cta: 'Start Free',
+    popular: false,
+    smallText: '',
   },
   {
-    name: 'Pro',
-    price: '$10',
-    credits: '100 Credits/month',
-    features: ['Access to all tools', 'Highest quality', 'Priority support', 'No watermarks'],
+    name: 'Premium',
+    price: '₹999',
+    priceSuffix: '/ month',
+    features: [
+      '200 image enhancements per month',
+      'Advanced AI enhancements (studio lighting, color correction, upscaling)',
+      'No watermark',
+      'Priority support',
+    ],
+    cta: 'Upgrade Now',
     popular: true,
-  },
-  {
-    name: 'Enterprise',
-    price: 'Contact Us',
-    credits: 'Unlimited Credits',
-    features: ['Volume discounts', 'Dedicated support', 'Custom integrations', 'API access'],
+    smallText: 'Less than ₹5 per enhanced photo!',
   },
 ];
 
 const testimonials = [
     {
-      name: 'Sarah L.',
+      name: 'Priya S.',
       title: 'Photographer',
       quote: "Magicpixa has been a game-changer for my workflow. The photo enhancement tool saves me hours of manual editing, and the results are consistently stunning.",
       rating: 5,
     },
     {
-      name: 'David Chen',
+      name: 'Rohan M.',
       title: 'E-commerce Store Owner',
       quote: "The background removal and photo studio features are incredible. My product shots have never looked better, and my sales have increased by 20%!",
       rating: 5,
     },
     {
-      name: 'Emily R.',
+      name: 'Ananya K.',
       title: 'Genealogy Hobbyist',
       quote: "I'm restoring my family's old photo albums, and the colorization tool is pure magic. Seeing my ancestors in color for the first time was an emotional experience.",
       rating: 5,
@@ -165,12 +173,12 @@ export default function Home() {
         </section>
         <section id="pricing" className="container py-8 md:py-12 lg:py-24 bg-slate-50/50">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
-            <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-5xl">Pricing</h2>
+            <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-5xl">Enhance Your Photos with AI — Fast, Easy, Stunning</h2>
             <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-              Choose the plan that's right for you. Get started for free.
+              Bring Your Photos to Life — Free & Premium Plans Available
             </p>
           </div>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
+          <div className="mt-12 grid gap-8 md:grid-cols-2 max-w-2xl mx-auto">
             {pricingTiers.map((tier) => (
               <Card key={tier.name} className={`flex flex-col bg-card ${tier.popular ? 'border-primary shadow-lg' : ''}`}>
                 <CardHeader>
@@ -180,9 +188,8 @@ export default function Home() {
                   </CardTitle>
                   <CardDescription>
                     <span className="text-3xl font-bold text-foreground">{tier.price}</span>
-                    {tier.name !== 'Free' && tier.price !== 'Contact Us' && <span className="text-muted-foreground">/month</span>}
+                    <span className="text-muted-foreground">{tier.priceSuffix}</span>
                   </CardDescription>
-                  <CardDescription>{tier.credits}</CardDescription>
                 </CardHeader>
                 <div className="flex flex-col flex-1 p-6 pt-0">
                   <ul className="space-y-3 mb-6">
@@ -194,12 +201,16 @@ export default function Home() {
                     ))}
                   </ul>
                   <Button className="w-full mt-auto">
-                    {tier.price === 'Contact Us' ? 'Contact Sales' : 'Get Started'}
+                    {tier.cta}
                   </Button>
+                   {tier.smallText && <p className="text-center text-sm text-muted-foreground mt-2">{tier.smallText}</p>}
                 </div>
               </Card>
             ))}
           </div>
+            <div className="text-center mt-8">
+                <p className="text-sm text-muted-foreground">Cancel anytime. Upgrade or downgrade whenever you want.</p>
+            </div>
         </section>
       </main>
       <footer className="container">
