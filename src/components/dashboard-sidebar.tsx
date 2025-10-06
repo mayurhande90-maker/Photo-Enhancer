@@ -33,7 +33,7 @@ export function DashboardSidebar() {
           <Logo className="size-7 text-primary" />
           <div className="flex flex-col">
             <span className="text-lg font-semibold tracking-tight">
-              PhotoCraft AI
+              Magicpixa
             </span>
           </div>
         </div>

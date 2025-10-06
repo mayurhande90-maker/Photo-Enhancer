@@ -175,7 +175,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
                 
                 {processedImageUrl && (
                     <Button asChild>
-                        <a href={processedImageUrl} download={`photocraft-${feature.name.toLowerCase().replace(' ','-')}.png`}>
+                        <a href={processedImageUrl} download={`magicpixa-${feature.name.toLowerCase().replace(' ','-')}.png`}>
                             Download
                         </a>
                     </Button>
@@ -192,5 +192,3 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     </div>
   );
 }
-
-    

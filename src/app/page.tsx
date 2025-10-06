@@ -67,7 +67,7 @@ export default function Home() {
         <div className="container flex h-14 items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Logo className="h-6 w-6" />
-            <span className="font-bold">PhotoCraft AI</span>
+            <span className="font-bold">Magicpixa</span>
           </Link>
           <div className="flex flex-1 items-center justify-end space-x-4">
             <Button asChild>
@@ -160,7 +160,7 @@ export default function Home() {
           <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
             <Logo className="h-6 w-6" />
             <p className="text-center text-sm leading-loose md:text-left">
-              Built by PhotoCraft AI.
+              Built by Magicpixa.
             </p>
           </div>
         </div>

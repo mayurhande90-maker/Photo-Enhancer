@@ -8,7 +8,7 @@ import { FirebaseClientProvider } from '@/firebase/client-provider';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'PhotoCraft AI',
+  title: 'Magicpixa',
   description: 'AI that brings your photos to life.',
 };
 

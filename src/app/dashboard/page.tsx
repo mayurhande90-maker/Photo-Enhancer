@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { features } from '@/lib/features';
@@ -6,7 +7,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Welcome to PhotoCraft AI</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Welcome to Magicpixa</h1>
         <p className="text-muted-foreground">
           Choose a tool below to start bringing your photos to life.
         </p>
