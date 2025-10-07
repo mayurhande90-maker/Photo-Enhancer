@@ -69,7 +69,7 @@ export function DashboardHeader() {
         <ThemeToggle />
         { user ? (
           <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
                 size="icon"
@@ -99,3 +99,5 @@ export function DashboardHeader() {
     </header>
   );
 }
+
+    

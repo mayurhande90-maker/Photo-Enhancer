@@ -69,7 +69,7 @@ export function InfoPageLayout({
                   <span className="text-muted-foreground">credits</span>
                 </div>
                 <DropdownMenu>
-                  <DropdownMenuTrigger>
+                  <DropdownMenuTrigger asChild>
                     <Button
                       variant="outline"
                       size="icon"
@@ -120,3 +120,5 @@ export function InfoPageLayout({
     </div>
   );
 }
+
+    
