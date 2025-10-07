@@ -4,6 +4,7 @@ import { getApp, getApps, initializeApp, type App } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import {credential} from 'firebase-admin';
+import Razorpay from 'razorpay';
 
 const INITIAL_CREDITS = 10;
 
@@ -95,4 +96,30 @@ export async function deductCredits(userId: string, amount: number) {
         // Re-throw the original error to be caught by the caller
         throw error;
     }
+}
+
+
+export async function createRazorpayOrder(amount: number, currency: string) {
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    throw new Error('Razorpay API keys are not configured.');
+  }
+
+  const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+
+  const options = {
+    amount: amount * 100, // Amount in the smallest currency unit (e.g., paisa for INR)
+    currency,
+    receipt: `receipt_order_${new Date().getTime()}`,
+  };
+
+  try {
+    const order = await razorpay.orders.create(options);
+    return { success: true, order };
+  } catch (error: any) {
+    console.error('Razorpay Order Creation Error:', error);
+    return { error: error.message || 'An unknown error occurred while creating the Razorpay order.' };
+  }
 }

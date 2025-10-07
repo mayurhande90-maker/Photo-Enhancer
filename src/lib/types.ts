@@ -17,7 +17,7 @@ export interface UserProfile {
   displayName: string;
   photoURL?: string;
   credits: number;
-  planName: string;
+  planName: 'Guest' | 'Pro';
 }
 
     

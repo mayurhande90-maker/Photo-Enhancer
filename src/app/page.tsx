@@ -17,6 +17,10 @@ import {
 } from "@/components/ui/carousel"
 import { BeforeAfterSlider } from '@/components/before-after-slider';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { useUser } from '@/firebase';
+import { useRouter } from 'next/navigation';
+import { createRazorpayOrder } from './auth/actions';
+import { useToast } from '@/hooks/use-toast';
 
 const features = [
   {
@@ -133,6 +137,28 @@ const testimonials = [
 ]
 
 export default function Home() {
+  const { user } = useUser();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handlePayment = async () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    const result = await createRazorpayOrder(499, 'INR');
+
+    if (result.error || !result.order) {
+      toast({
+        title: 'Payment Error',
+        description: result.error || 'Could not create a payment order.',
+        variant: 'destructive'
+      });
+      return;
+    }
+  };
+
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -301,8 +327,12 @@ export default function Home() {
                         </li>
                       ))}
                     </ul>
-                    <Button asChild className="w-full mt-auto">
-                      <Link href={tier.ctaPath}>{tier.cta}</Link>
+                    <Button 
+                      asChild={tier.name === 'Free'} 
+                      onClick={tier.name === 'Pro' ? handlePayment : undefined}
+                      className="w-full mt-auto"
+                    >
+                      {tier.name === 'Free' ? <Link href={tier.ctaPath}>{tier.cta}</Link> : tier.cta}
                     </Button>
                   </CardContent>
                 </div>
