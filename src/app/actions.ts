@@ -1,4 +1,3 @@
-// @/app/actions.ts
 'use server';
 
 import { enhanceFromPrompt } from '@/ai/flows/enhance-from-prompt';
