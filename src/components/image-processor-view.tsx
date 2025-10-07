@@ -162,9 +162,11 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   return (
     <div className="space-y-6">
       <Alert>
-        <Terminal className="h-4 w-4" />
-        <AlertTitle>How it works</AlertTitle>
-        <AlertDescription>
+        <AlertTitle className="flex items-center gap-2">
+          <Terminal className="h-4 w-4" />
+          How it works
+        </AlertTitle>
+        <AlertDescription className="pt-2 pl-7">
           {feature.description} This costs {feature.creditCost} credit(s).
         </AlertDescription>
       </Alert>
