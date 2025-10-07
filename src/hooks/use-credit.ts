@@ -1,9 +1,9 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { useUser, useFirestore, useAuth, updateDocumentNonBlocking } from '@/firebase';
-import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useUser, useFirestore, updateDocumentNonBlocking } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 const ANONYMOUS_QUOTA_KEY = 'anonymousUserQuota';
 const ANONYMOUS_LIMIT = 1;
@@ -15,11 +15,20 @@ interface AnonymousQuota {
 export function useCredit() {
   const { user, loading: isUserLoading } = useUser();
   const firestore = useFirestore();
-  const auth = useAuth();
   
-  const [credits, setCredits] = useState(0);
-  const [resetTime, setResetTime] = useState<Date | null>(null); // This is now only for display if needed
+  const [localCredits, setLocalCredits] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Determine credits from the user object if available, otherwise from local state
+  const credits = useMemo(() => {
+      if (user && typeof user.credits === 'number') {
+          return user.credits;
+      }
+      if (localCredits !== null) {
+          return localCredits;
+      }
+      return 0;
+  }, [user, localCredits]);
 
   const getAnonymousQuota = useCallback((): AnonymousQuota | null => {
     if (typeof window === 'undefined') return null;
@@ -33,30 +42,24 @@ export function useCredit() {
   }, []);
 
   useEffect(() => {
-    const manageCredits = async () => {
-      setIsLoading(true);
+    const manageCredits = () => {
+      if (isUserLoading) {
+        setIsLoading(true);
+        return;
+      }
 
-      if (isUserLoading) return; // Wait until we know if there is a user
-
-      if (user && firestore) {
-        // Logged-in user
-        const userRef = doc(firestore, 'users', user.uid);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setCredits(userData.credits ?? 0);
-        } else {
-          // This case should be handled at signup, but as a fallback:
-          setCredits(0);
-        }
+      if (user) {
+        // For logged-in users, the `useUser` hook's profile data is the source of truth.
+        // `user.credits` will be updated via the `useUser` hook's listener.
+        // We don't need to set local credits here.
       } else {
         // Anonymous user
         const storedQuota = getAnonymousQuota();
         if (storedQuota) {
-          setCredits(storedQuota.credits);
+          setLocalCredits(storedQuota.credits);
         } else {
           // First time anonymous user
-          setCredits(ANONYMOUS_LIMIT);
+          setLocalCredits(ANONYMOUS_LIMIT);
           setAnonymousQuota({ credits: ANONYMOUS_LIMIT });
         }
       }
@@ -64,27 +67,30 @@ export function useCredit() {
     };
 
     manageCredits();
-  }, [user, isUserLoading, firestore, getAnonymousQuota, setAnonymousQuota]);
+  }, [user, isUserLoading, getAnonymousQuota, setAnonymousQuota]);
   
   const consumeCredits = useCallback(async (amount: number) => {
     const amountToDeduct = Math.max(0, amount);
-    const newCreditValue = Math.max(0, credits - amountToDeduct);
     
-    setCredits(newCreditValue); // Optimistic update
-
     if (user && firestore) {
         // Logged-in user: Update Firestore
+        // The optimistic update is now handled by the `useUser` hook's real-time listener.
+        const currentCredits = user.credits ?? 0;
+        const newCreditValue = Math.max(0, currentCredits - amountToDeduct);
         const userRef = doc(firestore, 'users', user.uid);
-        // Use the non-blocking update function to get detailed errors
-        updateDocumentNonBlocking(userRef, {
-            credits: newCreditValue,
-            lastCreditUpdate: serverTimestamp()
-        });
+        updateDocumentNonBlocking(userRef, { credits: newCreditValue });
     } else {
         // Anonymous user: Update localStorage
+        const currentCredits = localCredits ?? 0;
+        const newCreditValue = Math.max(0, currentCredits - amountToDeduct);
+        setLocalCredits(newCreditValue);
         setAnonymousQuota({ credits: newCreditValue });
     }
-  }, [credits, user, firestore, setAnonymousQuota]);
+  }, [user, firestore, localCredits, setAnonymousQuota]);
 
-  return { credits, resetTime, isLoading, consumeCredits };
+  return { 
+      credits, 
+      isLoading: isUserLoading || isLoading, 
+      consumeCredits 
+  };
 }

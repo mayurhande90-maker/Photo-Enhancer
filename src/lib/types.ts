@@ -17,7 +17,8 @@ export interface UserProfile {
   displayName: string;
   photoURL?: string;
   credits: number;
-  planName: 'Guest' | 'Pro';
+  planName: 'Free' | 'Pro';
+  createdAt: any; // Firestore ServerTimestamp
 }
 
 export interface GeneratedImage {

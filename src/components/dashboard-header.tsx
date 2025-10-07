@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { features } from '@/lib/features';
 import { Button } from './ui/button';
-import { User, LogOut } from 'lucide-react';
+import { User, LogOut, CreditCard } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
 import Link from 'next/link';
@@ -13,9 +13,11 @@ import { ThemeToggle } from './theme-toggle';
 import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
+import { useCredit } from '@/hooks/use-credit';
 
 function HeaderUserSection() {
     const { user, loading: isUserLoading } = useUser();
+    const { credits, isLoading: isCreditLoading } = useCredit();
     const auth = useAuth();
     const { toast } = useToast();
     const router = useRouter();
@@ -63,6 +65,18 @@ function HeaderUserSection() {
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>{user.displayName || 'My Account'}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
+                        <DropdownMenuItem disabled>
+                            <div className="flex items-center justify-between w-full">
+                                <span className="flex items-center">
+                                    <CreditCard className="mr-2 h-4 w-4" /> Credits
+                                </span>
+                                {isCreditLoading ? (
+                                    <Skeleton className="h-4 w-6" />
+                                ) : (
+                                    <span>{credits}</span>
+                                )}
+                            </div>
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => router.push('/dashboard/creations')}>
                             My Creations
                         </DropdownMenuItem>

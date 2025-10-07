@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import type { Feature } from '@/lib/types';
 import { features } from '@/lib/features';
@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { BeforeAfterSlider } from './before-after-slider';
 import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Clock, User } from 'lucide-react';
+import { Terminal, Clock, User, Loader2 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
@@ -35,7 +35,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   const feature = features.find((f) => f.name === featureName);
   const { toast } = useToast();
   const { user, loading: isUserLoading } = useUser();
-  const { credits, resetTime, isLoading: isCreditLoading, consumeCredits } = useCredit();
+  const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
 
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
@@ -57,13 +57,11 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
   const handleProcessImage = async () => {
     if (!originalFile || !user) return;
-
-    if (credits < feature.creditCost) {
+    
+    if (!isCreditLoading && credits < feature.creditCost) {
         toast({
             title: 'Not Enough Credits',
-            description: user 
-                ? `You don't have enough credits for this. Your credits will reset in ${resetTime ? formatDistanceToNow(resetTime) : 'a month'}.`
-                : 'You have used your one free credit. Please sign up for more.',
+            description: `You don't have enough credits for this operation.`,
             variant: 'destructive',
         });
         return;
@@ -81,15 +79,21 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
             }
             return prev + 5;
         });
-    }, 200);
+    }, 500);
 
     try {
       const dataUri = await fileToDataUri(originalFile);
       const result = await feature.action(dataUri, user.uid);
       setProcessedImageUrl(result.enhancedPhotoDataUri);
-      consumeCredits(feature.creditCost);
+      await consumeCredits(feature.creditCost);
     } catch (err) {
+      console.error(err);
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+      toast({
+          title: 'Processing Error',
+          description: err instanceof Error ? err.message : 'Could not process the image.',
+          variant: 'destructive'
+      });
     } finally {
       clearInterval(loadingInterval);
       setProgress(100);
@@ -106,28 +110,36 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     setProgress(0);
   };
   
-  const renderQuotaExhaustedAlert = () => {
-    if (isUserLoading || isCreditLoading || credits >= feature.creditCost) return null;
+  const renderQuotaAlert = () => {
+    if (isUserLoading || isCreditLoading) return null;
+    
+    const noCredits = credits < feature.creditCost;
 
-    const alertTitle = user ? "Monthly Quota Reached" : "Free Credit Used";
-    const alertDescription = user ? (
-        <>
-            You have used all your free credits for this month. Your credits will reset in{' '}
-            {resetTime ? formatDistanceToNow(resetTime) : 'about a month'}.
-        </>
-    ) : (
-        <>
-            You have used your single free credit. Please <Link href="/signup" className="underline font-bold">sign up</Link> to get more credits.
-        </>
-    );
+    if (!user && noCredits) {
+      return (
+        <Alert variant="destructive" className="mt-4">
+          <User className="h-4 w-4" />
+          <AlertTitle>Sign Up for More Credits</AlertTitle>
+          <AlertDescription>
+              You've used your free credit. Please <Link href="/signup" className="underline font-bold">create an account</Link> to continue.
+          </AlertDescription>
+        </Alert>
+      )
+    }
 
-    return (
-      <Alert variant="destructive" className="mt-4">
-        <Clock className="h-4 w-4" />
-        <AlertTitle>{alertTitle}</AlertTitle>
-        <AlertDescription>{alertDescription}</AlertDescription>
-      </Alert>
-    );
+    if (user && noCredits) {
+      return (
+         <Alert variant="destructive" className="mt-4">
+          <Clock className="h-4 w-4" />
+          <AlertTitle>Not Enough Credits</AlertTitle>
+          <AlertDescription>
+              You don't have enough credits for this action. Upgrade to the Pro plan for more credits.
+          </AlertDescription>
+        </Alert>
+      )
+    }
+
+    return null;
   }
 
   const renderResultView = () => {
@@ -185,15 +197,19 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
       </Alert>
       <Card>
         <CardContent className="p-4 md:p-6">
-          {!originalFile && <FileUploader onFileSelect={handleFileSelect} />}
-
-          {originalDataUri && (
+          {!user && isUserLoading ? (
+             <div className="flex justify-center items-center h-48">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : !originalFile ? (
+            <FileUploader onFileSelect={handleFileSelect} />
+          ) : (
             <div className="space-y-4">
               
-              {!processedImageUrl && (
+              {!processedImageUrl && !isProcessing && (
                 <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
                   <Image
-                    src={originalDataUri}
+                    src={originalDataUri!}
                     alt="Original upload"
                     fill
                     className="object-contain"
@@ -204,24 +220,28 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
               {renderResultView()}
 
               {isProcessing && (
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">Processing... Please wait.</p>
-                  <Progress value={progress} className="w-full" />
+                <div className="space-y-2 text-center">
+                  <div className="flex justify-center items-center h-48">
+                    <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                  </div>
+                  <p className="text-lg text-muted-foreground">Magic in progress... Please wait.</p>
+                  <Progress value={progress} className="w-full max-w-sm mx-auto" />
                 </div>
               )}
 
-              {error && (
+              {error && !isProcessing && (
                 <Alert variant="destructive">
                   <AlertTitle>Error</AlertTitle>
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
               
-              {renderQuotaExhaustedAlert()}
+              {!isProcessing && renderQuotaAlert()}
 
               <div className="flex flex-wrap gap-2">
                 {!isProcessing && !processedImageUrl && (
-                  <Button onClick={handleProcessImage} disabled={!user || isUserLoading || isCreditLoading || credits < feature.creditCost}>
+                  <Button onClick={handleProcessImage} disabled={!user || isCreditLoading || credits < feature.creditCost}>
+                    <Loader2 className={`mr-2 h-4 w-4 animate-spin ${isProcessing ? 'inline-block' : 'hidden'}`} />
                     Process Image ({feature.creditCost} credit)
                   </Button>
                 )}
@@ -234,7 +254,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
                     </Button>
                 )}
 
-                <Button variant="outline" onClick={handleReset}>
+                <Button variant="outline" onClick={handleReset} disabled={isProcessing}>
                   Try Another Image
                 </Button>
               </div>
@@ -243,10 +263,10 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
         </CardContent>
       </Card>
       <div className="text-center text-sm text-muted-foreground">
-        {isUserLoading ? (
-            <p>Loading credit information...</p>
+        {isUserLoading || isCreditLoading ? (
+            <p>Loading user information...</p>
         ) : user ? (
-            <p>You have {credits} credits left for this month.</p>
+            <p>You have {credits} credits left.</p>
         ) : (
             <p>
                 Please{' '}

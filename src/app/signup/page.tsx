@@ -17,7 +17,7 @@ import { useAuth, useFirestore } from '@/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { AuthLayout } from '@/components/auth-layout';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 const signupSchema = z.object({
   displayName: z.string().min(2, { message: 'Full name must be at least 2 characters' }),
@@ -48,6 +48,12 @@ export default function SignupPage() {
 
     const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
         setIsLoading(true);
+        if (!auth || !firestore) {
+             toast({ title: 'Error', description: 'Database services are not available.', variant: 'destructive' });
+             setIsLoading(false);
+             return;
+        }
+
         try {
             // 1. Create user with Firebase Auth
             const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
@@ -60,8 +66,8 @@ export default function SignupPage() {
                 email: data.email,
                 displayName: data.displayName,
                 credits: INITIAL_CREDITS,
-                planName: 'Guest',
-                creationTimestamp: serverTimestamp(),
+                planName: 'Free',
+                createdAt: serverTimestamp(),
             });
 
             toast({
@@ -74,7 +80,9 @@ export default function SignupPage() {
             console.error("Signup failed:", error);
             toast({
                 title: 'Signup Failed',
-                description: error.message || 'An unknown error occurred.',
+                description: error.code === 'auth/email-already-in-use' 
+                    ? 'This email is already associated with an account.'
+                    : error.message || 'An unknown error occurred.',
                 variant: 'destructive',
             });
         } finally {
@@ -126,6 +134,7 @@ export default function SignupPage() {
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
               <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? 'Creating Account...' : 'Sign Up'}
               </Button>
               <div className="text-center text-sm text-muted-foreground">

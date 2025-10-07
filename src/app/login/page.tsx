@@ -16,7 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { AuthLayout } from '@/components/auth-layout';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
@@ -42,6 +42,11 @@ export default function LoginPage() {
 
     const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
         setIsLoading(true);
+        if (!auth) {
+            toast({ title: 'Error', description: 'Authentication service is not available.', variant: 'destructive' });
+            setIsLoading(false);
+            return;
+        }
         try {
             await signInWithEmailAndPassword(auth, data.email, data.password);
             toast({
@@ -53,7 +58,9 @@ export default function LoginPage() {
             console.error("Login failed:", error);
             toast({
                 title: 'Login Failed',
-                description: error.message || 'An unknown error occurred.',
+                description: error.code === 'auth/invalid-credential' 
+                    ? 'Invalid email or password.'
+                    : error.message || 'An unknown error occurred.',
                 variant: 'destructive',
             });
         } finally {
@@ -100,6 +107,7 @@ export default function LoginPage() {
                     </CardContent>
                     <CardFooter className="flex flex-col gap-4">
                         <Button type="submit" className="w-full" disabled={isLoading}>
+                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             {isLoading ? 'Signing In...' : 'Sign In'}
                         </Button>
                         <div className="text-center text-sm text-muted-foreground">
