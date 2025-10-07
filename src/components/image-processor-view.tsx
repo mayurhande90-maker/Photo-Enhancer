@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -162,11 +163,11 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   return (
     <div className="space-y-6">
       <Alert>
-        <AlertTitle className="flex items-center gap-2">
-          <Terminal className="h-4 w-4" />
+        <Terminal className="h-4 w-4" />
+        <AlertTitle className="pl-6">
           How it works
         </AlertTitle>
-        <AlertDescription className="pt-2 pl-7">
+        <AlertDescription className="pt-2 pl-6">
           {feature.description} This costs {feature.creditCost} credit(s).
         </AlertDescription>
       </Alert>
