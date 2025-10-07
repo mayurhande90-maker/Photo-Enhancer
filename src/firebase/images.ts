@@ -25,10 +25,12 @@ export async function saveGeneratedImageClient(
   try {
     const imagesCollection = collection(firestore, `users/${userId}/generatedImages`);
     
+    // Pass an empty string for processedImageUrl to avoid hitting Firestore's size limit.
+    // The image data URI is too large to be stored in a document field.
     await addDoc(imagesCollection, {
       userId,
       originalImageUrl,
-      processedImageUrl,
+      processedImageUrl: '', // Fix: Don't store large data URI.
       processingType,
       createdAt: serverTimestamp(),
     });

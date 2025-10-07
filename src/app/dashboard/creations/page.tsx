@@ -10,16 +10,18 @@ import { collection, orderBy, query } from 'firebase/firestore';
 import { ImageIcon, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
-import { BeforeAfterSlider } from '@/components/before-after-slider';
+import Image from 'next/image';
 
 function CreationCard({ image }: { image: GeneratedImage }) {
     return (
         <Card className="overflow-hidden group">
             <CardContent className="p-0">
                 <div className="relative aspect-[4/3] w-full">
-                    <BeforeAfterSlider
-                        before={image.originalImageUrl}
-                        after={image.processedImageUrl}
+                    <Image
+                        src={image.originalImageUrl}
+                        alt={image.processingType}
+                        fill
+                        className="object-contain"
                     />
                 </div>
                 <div className="p-4">
@@ -31,8 +33,8 @@ function CreationCard({ image }: { image: GeneratedImage }) {
             </CardContent>
             <div className="p-4 pt-0">
                  <Button asChild variant="secondary" size="sm" className="w-full">
-                    <a href={image.processedImageUrl} download={`magicpixa-${image.id}.png`}>
-                        Download
+                    <a href={image.originalImageUrl} download={`magicpixa-original-${image.id}.png`}>
+                        Download Original
                     </a>
                 </Button>
             </div>
