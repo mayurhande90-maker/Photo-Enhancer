@@ -255,7 +255,7 @@ export default function Home() {
                   <span className="text-muted-foreground">credits</span>
                 </div>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                  <DropdownMenuTrigger>
                     <Button
                       variant="outline"
                       size="icon"
