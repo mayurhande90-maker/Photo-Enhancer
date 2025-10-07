@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Logo } from '@/components/icons';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Wand2, Scissors, Camera, Palette, Star } from 'lucide-react';
+import Autoplay from "embla-carousel-autoplay"
 import {
   Carousel,
   CarouselContent,
@@ -198,7 +199,16 @@ export default function Home() {
               </div>
             </div>
             <div className="relative w-full h-[450px]">
-                <Carousel className="w-full h-full" plugins={[]} opts={{ loop: true }}>
+                <Carousel 
+                  className="w-full h-full"
+                  plugins={[
+                    Autoplay({
+                      delay: 4000,
+                      stopOnInteraction: true,
+                    }),
+                  ]}
+                  opts={{ loop: true }}
+                >
                   <CarouselContent className="h-full">
                     {features.map((feature, index) => (
                       <CarouselItem key={index} className="h-full">
@@ -371,4 +381,5 @@ export default function Home() {
       </footer>
     </div>
   );
-}
+
+    
