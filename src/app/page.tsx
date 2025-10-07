@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Logo } from '@/components/icons';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Wand2, Scissors, Camera, Palette, Star, ChevronDown } from 'lucide-react';
+import { Wand2, Scissors, Camera, Palette, Star, ChevronUp } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
@@ -19,8 +19,9 @@ import { BeforeAfterSlider } from '@/components/before-after-slider';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 const features = [
   {
@@ -142,8 +143,9 @@ export default function Home() {
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)
   const [currentFeatureName, setCurrentFeatureName] = React.useState(features[0].name);
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!api) {
       return
     }
@@ -163,6 +165,18 @@ export default function Home() {
     }
   }, [api])
 
+  useEffect(() => {
+    const checkScroll = () => {
+      if (window.scrollY > 400) {
+        setShowScrollToTop(true);
+      } else {
+        setShowScrollToTop(false);
+      }
+    };
+
+    window.addEventListener('scroll', checkScroll);
+    return () => window.removeEventListener('scroll', checkScroll);
+  }, []);
 
   const handleGoProClick = () => {
     if (user) {
@@ -175,6 +189,13 @@ export default function Home() {
       // User is not logged in, redirect to signup.
       router.push('/signup');
     }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
   };
 
   return (
@@ -238,10 +259,6 @@ export default function Home() {
                 </Badge>
             </div>
           </div>
-           <Link href="#features" className="absolute bottom-10 right-10 animate-bounce">
-              <ChevronDown className="h-8 w-8 text-muted-foreground" />
-              <span className="sr-only">Scroll down</span>
-          </Link>
         </section>
         <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
           <div className="container space-y-12 px-4 md:px-6">
@@ -387,6 +404,20 @@ export default function Home() {
             </div>
         </div>
       </footer>
+      <Button
+        onClick={scrollToTop}
+        className={cn(
+          "fixed bottom-4 right-4 rounded-full p-2 h-12 w-12 transition-opacity duration-300",
+          showScrollToTop ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+        variant="outline"
+        size="icon"
+        aria-label="Scroll to top"
+      >
+        <ChevronUp className="h-6 w-6" />
+      </Button>
     </div>
   );
 }
+
+    
