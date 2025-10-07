@@ -2,14 +2,9 @@
 'use client';
 
 import { 
-    getFirestore, 
     collection, 
     addDoc, 
     serverTimestamp,
-    query,
-    where,
-    orderBy,
-    limit
 } from 'firebase/firestore';
 import { initializeFirebase } from '.';
 
@@ -19,12 +14,12 @@ export async function saveGeneratedImage(
   originalImageUrl: string,
   processedImageUrl: string,
   processingType: string
-) {
+): Promise<void> {
   if (!userId) {
     throw new Error('User ID is required to save an image.');
   }
 
-  // We need to initialize firebase here because this is a server action
+  // We need to initialize firebase here because this can be called from a server action
   const { firestore } = initializeFirebase();
 
   try {

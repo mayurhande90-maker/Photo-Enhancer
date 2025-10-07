@@ -8,7 +8,6 @@ import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebas
 import type { GeneratedImage } from '@/lib/types';
 import { collection, orderBy, query } from 'firebase/firestore';
 import { ImageIcon, Loader2 } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { BeforeAfterSlider } from '@/components/before-after-slider';
@@ -26,7 +25,7 @@ function CreationCard({ image }: { image: GeneratedImage }) {
                 <div className="p-4">
                     <h3 className="font-semibold">{image.processingType}</h3>
                     <p className="text-sm text-muted-foreground">
-                        {formatDistanceToNow(new Date(image.createdAt.seconds * 1000), { addSuffix: true })}
+                        {image.createdAt ? formatDistanceToNow(new Date(image.createdAt.seconds * 1000), { addSuffix: true }) : 'Just now'}
                     </p>
                     <Button asChild variant="secondary" size="sm" className="mt-2 w-full">
                         <a href={image.processedImageUrl} download={`magicpixa-${image.id}.png`}>
