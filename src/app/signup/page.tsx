@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { signupAction } from '@/app/auth/actions';
+import { AuthLayout } from '@/components/auth-layout';
 
 const signupSchema = z.object({
   displayName: z.string().min(2, { message: 'Full name must be at least 2 characters' }),
@@ -51,7 +52,7 @@ export default function SignupPage() {
     };
 
     return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <AuthLayout>
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <CardTitle>Create an Account</CardTitle>
@@ -90,8 +91,6 @@ export default function SignupPage() {
             </CardFooter>
         </form>
       </Card>
-    </div>
+    </AuthLayout>
     )
 }
-
-    

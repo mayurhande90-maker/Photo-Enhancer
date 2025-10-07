@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { AuthLayout } from '@/components/auth-layout';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
@@ -55,7 +56,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <AuthLayout>
             <Card className="w-full max-w-sm">
                 <CardHeader className="text-center">
                     <CardTitle>Login to Magicpixa</CardTitle>
@@ -89,8 +90,6 @@ export default function LoginPage() {
                     </CardFooter>
                 </form>
             </Card>
-        </div>
+        </AuthLayout>
     );
 }
-
-    
