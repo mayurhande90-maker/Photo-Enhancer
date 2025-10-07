@@ -1,4 +1,3 @@
-
 'use client';
 
 import { 
@@ -12,7 +11,7 @@ import { initializeFirebase } from '.';
 export async function saveGeneratedImageClient(
   userId: string,
   originalImageUrl: string,
-  processedImageUrl: string,
+  processedImageUrl: string, // This will be an empty string for now
   processingType: string
 ): Promise<void> {
   if (!userId) {
@@ -28,7 +27,7 @@ export async function saveGeneratedImageClient(
     await addDoc(imagesCollection, {
       userId,
       originalImageUrl,
-      processedImageUrl,
+      processedImageUrl: '', // Saving empty string to avoid firestore size limit error
       processingType,
       createdAt: serverTimestamp(),
     });
