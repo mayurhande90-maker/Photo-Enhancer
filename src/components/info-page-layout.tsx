@@ -70,7 +70,11 @@ export function InfoPageLayout({
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="overflow-hidden rounded-full"
+                    >
                       <User />
                     </Button>
                   </DropdownMenuTrigger>

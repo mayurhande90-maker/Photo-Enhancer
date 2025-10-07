@@ -70,8 +70,12 @@ export function DashboardHeader() {
         { user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-                  <User />
+              <Button
+                variant="outline"
+                size="icon"
+                className="overflow-hidden rounded-full"
+              >
+                <User />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -95,5 +99,3 @@ export function DashboardHeader() {
     </header>
   );
 }
-
-    
