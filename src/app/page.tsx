@@ -219,8 +219,7 @@ export default function Home() {
             <Link href="#pricing" className="transition-colors hover:text-foreground/80 text-foreground/60">Pricing</Link>
           </nav>
           <div className="flex flex-1 items-center justify-end space-x-4">
-            <ThemeToggle />
-            <nav className="hidden items-center space-x-2 md:flex">
+            <nav className="flex items-center space-x-2">
               <Button variant="ghost" asChild>
                 <Link href="/login">Login</Link>
               </Button>
@@ -228,6 +227,7 @@ export default function Home() {
                 <Link href="/signup">Sign Up</Link>
               </Button>
             </nav>
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -277,13 +277,6 @@ export default function Home() {
                 </Badge>
             </div>
           </div>
-           <div className="absolute bottom-10 right-10 flex items-center justify-center text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2 animate-bounce">
-                    <path d="M12 5V19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M19 12L12 19L5 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                Scroll
-            </div>
         </section>
         <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
           <div className="container space-y-12 px-4 md:px-6">
