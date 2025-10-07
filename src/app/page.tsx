@@ -8,14 +8,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Logo } from '@/components/icons';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Wand2, Scissors, Camera, Palette, Star } from 'lucide-react';
-import Autoplay from "embla-carousel-autoplay"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
 import { BeforeAfterSlider } from '@/components/before-after-slider';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useUser } from '@/firebase';
@@ -144,7 +136,7 @@ export default function Home() {
       // User is logged in, redirect to the payment link.
       const proTier = pricingTiers.find(p => p.name === 'Pro');
       if (proTier) {
-        router.push(proTier.ctaPath);
+        window.location.href = proTier.ctaPath;
       }
     } else {
       // User is not logged in, redirect to signup.
@@ -152,6 +144,7 @@ export default function Home() {
     }
   };
 
+  const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -198,39 +191,17 @@ export default function Home() {
                   </p>
               </div>
             </div>
-            <div className="relative w-full h-[450px]">
-                <Carousel 
-                  className="w-full h-full"
-                  plugins={[
-                    Autoplay({
-                      delay: 4000,
-                      stopOnInteraction: true,
-                    }),
-                  ]}
-                  opts={{ loop: true }}
-                >
-                  <CarouselContent className="h-full">
-                    {features.map((feature, index) => (
-                      <CarouselItem key={index} className="h-full">
-                        <div className="p-1 h-full">
-                          <Card className="h-full overflow-hidden">
-                            <CardContent className="relative p-0 h-full">
-                              <BeforeAfterSlider
-                                before={feature.imageBefore!.imageUrl}
-                                after={feature.imageAfter!.imageUrl}
-                              />
-                               <div className="absolute bottom-4 left-4 bg-black/50 text-white px-3 py-1 rounded-md text-sm font-semibold backdrop-blur-sm">
-                                {feature.name}
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <CarouselPrevious className="left-4" />
-                  <CarouselNext className="right-4" />
-                </Carousel>
+            <div className="relative w-full h-[450px] rounded-lg overflow-hidden border shadow-lg">
+                {heroImage && (
+                  <Image
+                    src={heroImage.imageUrl}
+                    alt={heroImage.description}
+                    fill
+                    className="object-cover"
+                    priority
+                    data-ai-hint={heroImage.imageHint}
+                  />
+                )}
             </div>
           </div>
         </section>
@@ -329,12 +300,11 @@ export default function Home() {
                         </li>
                       ))}
                     </ul>
-                    <Button 
-                      asChild={tier.name !== 'Pro'} 
-                      onClick={tier.name === 'Pro' ? handleGoProClick : undefined}
+                    <Button
+                      onClick={tier.name === 'Pro' ? handleGoProClick : () => router.push(tier.ctaPath)}
                       className="w-full mt-auto"
                     >
-                      {tier.name === 'Free' ? <Link href={tier.ctaPath}>{tier.cta}</Link> : tier.cta}
+                      {tier.cta}
                     </Button>
                   </CardContent>
                 </div>
