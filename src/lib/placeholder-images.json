@@ -9,7 +9,7 @@
     {
       "id": "feature-enhance-before",
       "description": "A blurry, low-resolution portrait of a woman.",
-      "imageUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&q=50&blur=10",
+      "imageUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=1080&q=50&blur=10",
       "imageHint": "blurry portrait"
     },
     {
@@ -39,7 +39,7 @@
     {
       "id": "feature-studio-after",
       "description": "A professional product shot of a watch on a clean, studio background.",
-      "imageUrl": "https://images.unsplash.com/photo-1620625515032-6ed0c142e035?w=1080&q=80",
+      "imageUrl": "https://storage.googleapis.com/studio-images-prod/section_images/feature-studio-after.png",
       "imageHint": "watch studio"
     },
     {
