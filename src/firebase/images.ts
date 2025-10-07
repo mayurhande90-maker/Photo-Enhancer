@@ -4,22 +4,20 @@ import {
     collection, 
     addDoc, 
     serverTimestamp,
+    type Firestore,
 } from 'firebase/firestore';
-import { initializeFirebase } from '.';
 
 // This function is intended to be called from a client component.
 export async function saveGeneratedImageClient(
+  firestore: Firestore,
   userId: string,
   originalImageUrl: string,
-  processedImageUrl: string, // This will be an empty string for now
+  processedImageUrl: string,
   processingType: string
 ): Promise<void> {
   if (!userId) {
     throw new Error('User ID is required to save an image.');
   }
-
-  // We need to initialize firebase here because this is called from the client
-  const { firestore } = initializeFirebase();
 
   try {
     const imagesCollection = collection(firestore, `users/${userId}/generatedImages`);
@@ -27,7 +25,7 @@ export async function saveGeneratedImageClient(
     await addDoc(imagesCollection, {
       userId,
       originalImageUrl,
-      processedImageUrl: '', // Saving empty string to avoid firestore size limit error
+      processedImageUrl,
       processingType,
       createdAt: serverTimestamp(),
     });
@@ -36,5 +34,6 @@ export async function saveGeneratedImageClient(
     console.error(`Failed to save image for user ${userId}:`, error);
     // We don't rethrow the error to avoid blocking the user flow
     // The image generation was successful, only saving failed.
+    // This could be a Firestore size limit error, which needs a different architecture to solve (e.g., Cloud Storage).
   }
 }

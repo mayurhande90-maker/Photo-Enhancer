@@ -15,7 +15,7 @@ import { Terminal, Clock, User, Loader2 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore } from '@/firebase';
 import { saveGeneratedImageClient } from '@/firebase/images';
 
 interface ImageProcessorViewProps {
@@ -35,6 +35,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   const feature = features.find((f) => f.name === featureName);
   const { toast } = useToast();
   const { user, loading: isUserLoading } = useUser();
+  const firestore = useFirestore();
   const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
 
   const [originalFile, setOriginalFile] = useState<File | null>(null);
@@ -56,7 +57,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   };
 
   const handleProcessImage = async () => {
-    if (!originalFile || !user || !originalDataUri) return;
+    if (!originalFile || !user || !originalDataUri || !firestore) return;
     
     if (!isCreditLoading && credits < feature.creditCost) {
         toast({
@@ -92,6 +93,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
       // 3. Save the image data to Firestore on the client
       if (result.enhancedPhotoDataUri) {
         await saveGeneratedImageClient(
+            firestore,
             user.uid,
             dataUri,
             result.enhancedPhotoDataUri,

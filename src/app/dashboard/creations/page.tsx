@@ -19,12 +19,18 @@ function CreationCard({ image }: { image: GeneratedImage }) {
             <CardContent className="p-0">
                 <a href={displayUrl} target="_blank" rel="noopener noreferrer">
                     <div className="relative aspect-[4/3] w-full">
-                        <Image
-                            src={displayUrl}
-                            alt={image.processingType}
-                            fill
-                            className="object-contain"
-                        />
+                        {displayUrl ? (
+                            <Image
+                                src={displayUrl}
+                                alt={image.processingType}
+                                fill
+                                className="object-contain"
+                            />
+                        ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-muted">
+                                <ImageIcon className="h-16 w-16 text-muted-foreground" />
+                            </div>
+                        )}
                     </div>
                 </a>
                 <div className="p-4">
@@ -35,8 +41,8 @@ function CreationCard({ image }: { image: GeneratedImage }) {
                 </div>
             </CardContent>
             <div className="p-4 pt-0">
-                 <Button asChild variant="secondary" size="sm" className="w-full">
-                    <a href={image.processedImageUrl || image.originalImageUrl} download={`magicpixa-creation-${image.id}.png`}>
+                 <Button asChild variant="secondary" size="sm" className="w-full" disabled={!image.processedImageUrl}>
+                    <a href={image.processedImageUrl} download={`magicpixa-creation-${image.id}.png`}>
                         Download Image
                     </a>
                 </Button>
