@@ -368,6 +368,7 @@ export default function Home() {
                     <nav className="flex flex-col gap-1 text-sm text-muted-foreground">
                         <Link href="/terms" className="hover:text-foreground">Terms & Conditions</Link>
                         <Link href="/policy" className="hover:text-foreground">Privacy Policy</Link>
+                        <Link href="/cancellation-refunds" className="hover:text-foreground">Cancellation & Refund Policy</Link>
                     </nav>
                 </div>
             </div>
