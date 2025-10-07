@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { signupAction } from '@/app/auth/actions';
 import { AuthLayout } from '@/components/auth-layout';
+import { Eye, EyeOff } from 'lucide-react';
 
 const signupSchema = z.object({
   displayName: z.string().min(2, { message: 'Full name must be at least 2 characters' }),
@@ -26,6 +27,7 @@ export default function SignupPage() {
     const router = useRouter();
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const { register, handleSubmit, formState: { errors } } = useForm<SignupFormInputs>({
         resolver: zodResolver(signupSchema),
@@ -74,7 +76,22 @@ export default function SignupPage() {
                 </div>
                 <div className="grid gap-2">
                     <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" {...register('password')} />
+                    <div className="relative">
+                        <Input 
+                            id="password" 
+                            type={showPassword ? 'text' : 'password'} 
+                            {...register('password')} 
+                        />
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                        >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </Button>
+                    </div>
                     {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
                 </div>
             </CardContent>
