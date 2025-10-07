@@ -44,15 +44,15 @@
     },
     {
       "id": "feature-colorize-before",
-      "description": "An old, black and white photograph of a city street.",
-      "imageUrl": "https://picsum.photos/seed/bwstreet/1080/1080?grayscale",
-      "imageHint": "vintage street"
+      "description": "An old, black and white photograph of an elephant in a field.",
+      "imageUrl": "https://storage.googleapis.com/studio-images-prod/image_1719293489381.jpeg",
+      "imageHint": "vintage elephant"
     },
     {
       "id": "feature-colorize-after",
-      "description": "A beautifully colorized version of an old city street photograph.",
-      "imageUrl": "https://picsum.photos/seed/colorstreet/1080/1080",
-      "imageHint": "colorized street"
+      "description": "A beautifully colorized version of an old elephant photograph.",
+      "imageUrl": "https://storage.googleapis.com/studio-images-prod/image_1719293502396.jpeg",
+      "imageHint": "colorized elephant"
     }
   ]
 }
