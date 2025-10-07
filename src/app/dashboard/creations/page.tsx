@@ -16,10 +16,10 @@ function CreationCard({ image }: { image: GeneratedImage }) {
     return (
         <Card className="overflow-hidden group">
             <CardContent className="p-0">
-                <a href={image.originalImageUrl} target="_blank" rel="noopener noreferrer">
+                <a href={image.processedImageUrl} target="_blank" rel="noopener noreferrer">
                     <div className="relative aspect-[4/3] w-full">
                         <Image
-                            src={image.originalImageUrl}
+                            src={image.processedImageUrl}
                             alt={image.processingType}
                             fill
                             className="object-contain"
@@ -35,7 +35,7 @@ function CreationCard({ image }: { image: GeneratedImage }) {
             </CardContent>
             <div className="p-4 pt-0">
                  <Button asChild variant="secondary" size="sm" className="w-full">
-                    <a href={image.originalImageUrl} download={`magicpixa-creation-${image.id}.png`}>
+                    <a href={image.processedImageUrl} download={`magicpixa-creation-${image.id}.png`}>
                         Download Image
                     </a>
                 </Button>

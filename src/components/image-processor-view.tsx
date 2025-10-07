@@ -56,7 +56,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   };
 
   const handleProcessImage = async () => {
-    if (!originalFile || !user) return;
+    if (!originalFile || !user || !originalDataUri) return;
     
     if (!isCreditLoading && credits < feature.creditCost) {
         toast({
@@ -82,7 +82,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     }, 500);
 
     try {
-      const dataUri = await fileToDataUri(originalFile);
+      const dataUri = originalDataUri;
       // 1. Call the server action to process the image
       const result = await feature.action(dataUri, user.uid);
       
