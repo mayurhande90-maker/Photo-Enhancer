@@ -19,8 +19,6 @@ import { BeforeAfterSlider } from '@/components/before-after-slider';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { createRazorpayOrder } from './auth/actions';
-import { useToast } from '@/hooks/use-toast';
 
 const features = [
   {
@@ -104,7 +102,7 @@ const pricingTiers = [
       'Priority processing',
     ],
     cta: 'Go Pro',
-    ctaPath: '/signup', // Changed this to signup
+    ctaPath: 'https://rzp.io/rzp/r90n01c',
     popular: true,
   },
 ];
@@ -139,23 +137,17 @@ const testimonials = [
 export default function Home() {
   const { user } = useUser();
   const router = useRouter();
-  const { toast } = useToast();
 
-  const handlePayment = async () => {
-    if (!user) {
-      router.push('/signup'); // Redirect to signup if not logged in
-      return;
-    }
-
-    const result = await createRazorpayOrder(499, 'INR');
-
-    if (result.error || !result.order) {
-      toast({
-        title: 'Payment Error',
-        description: result.error || 'Could not create a payment order.',
-        variant: 'destructive'
-      });
-      return;
+  const handleGoProClick = () => {
+    if (user) {
+      // User is logged in, redirect to the payment link.
+      const proTier = pricingTiers.find(p => p.name === 'Pro');
+      if (proTier) {
+        router.push(proTier.ctaPath);
+      }
+    } else {
+      // User is not logged in, redirect to signup.
+      router.push('/signup');
     }
   };
 
@@ -329,7 +321,7 @@ export default function Home() {
                     </ul>
                     <Button 
                       asChild={tier.name !== 'Pro'} 
-                      onClick={tier.name === 'Pro' ? handlePayment : undefined}
+                      onClick={tier.name === 'Pro' ? handleGoProClick : undefined}
                       className="w-full mt-auto"
                     >
                       {tier.name === 'Free' ? <Link href={tier.ctaPath}>{tier.cta}</Link> : tier.cta}
