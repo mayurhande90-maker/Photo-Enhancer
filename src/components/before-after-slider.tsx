@@ -8,10 +8,11 @@ interface BeforeAfterSliderProps {
   before: string;
   after: string;
   className?: string;
+  initialPosition?: number;
 }
 
-export function BeforeAfterSlider({ before, after, className }: BeforeAfterSliderProps) {
-  const [sliderPosition, setSliderPosition] = useState(50);
+export function BeforeAfterSlider({ before, after, className, initialPosition = 50 }: BeforeAfterSliderProps) {
+  const [sliderPosition, setSliderPosition] = useState(initialPosition);
   const containerRef = useRef<HTMLDivElement>(null);
   const id = useId();
 

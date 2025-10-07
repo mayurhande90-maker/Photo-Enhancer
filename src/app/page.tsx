@@ -166,8 +166,13 @@ function HeaderUserSection() {
         }
     };
     
-    if (isUserLoading) {
-        return <Skeleton className="h-9 w-40" />;
+    if (isUserLoading || isCreditLoading) {
+      return (
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-9 w-20" />
+          <Skeleton className="h-9 w-9 rounded-full" />
+        </div>
+      );
     }
 
     if (user) {
@@ -175,7 +180,7 @@ function HeaderUserSection() {
             <div className="flex items-center gap-4">
                 <Button variant="ghost">
                     <Gem className="mr-2 h-4 w-4" />
-                    {isCreditLoading ? '...' : credits}
+                    {credits}
                 </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -294,7 +299,7 @@ export default function Home() {
             <Link href="#pricing" className="transition-colors hover:text-foreground/80 text-foreground/60">Pricing</Link>
           </nav>
           <div className="flex flex-1 items-center justify-end space-x-4">
-             <HeaderUserSection />
+            <HeaderUserSection />
             <ThemeToggle />
           </div>
         </div>
@@ -329,6 +334,7 @@ export default function Home() {
                                 <BeforeAfterSlider
                                     before={feature.imageBefore.imageUrl}
                                     after={feature.imageAfter.imageUrl}
+                                    initialPosition={80}
                                 />
                             </CarouselItem>
                         ))}
