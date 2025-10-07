@@ -13,13 +13,14 @@ import { formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
 
 function CreationCard({ image }: { image: GeneratedImage }) {
+    const displayUrl = image.processedImageUrl || image.originalImageUrl;
     return (
         <Card className="overflow-hidden group">
             <CardContent className="p-0">
-                <a href={image.processedImageUrl} target="_blank" rel="noopener noreferrer">
+                <a href={displayUrl} target="_blank" rel="noopener noreferrer">
                     <div className="relative aspect-[4/3] w-full">
                         <Image
-                            src={image.processedImageUrl}
+                            src={displayUrl}
                             alt={image.processingType}
                             fill
                             className="object-contain"
@@ -35,7 +36,7 @@ function CreationCard({ image }: { image: GeneratedImage }) {
             </CardContent>
             <div className="p-4 pt-0">
                  <Button asChild variant="secondary" size="sm" className="w-full">
-                    <a href={image.processedImageUrl} download={`magicpixa-creation-${image.id}.png`}>
+                    <a href={image.processedImageUrl || image.originalImageUrl} download={`magicpixa-creation-${image.id}.png`}>
                         Download Image
                     </a>
                 </Button>
