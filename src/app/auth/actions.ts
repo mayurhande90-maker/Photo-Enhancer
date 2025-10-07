@@ -1,3 +1,4 @@
+
 'use server';
 
 import { getApp, getApps, initializeApp, type App } from 'firebase-admin/app';
@@ -101,7 +102,7 @@ export async function deductCredits(userId: string, amount: number) {
 
 export async function createRazorpayOrder(amount: number, currency: string) {
   if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-    throw new Error('Razorpay API keys are not configured.');
+    return { error: 'Razorpay API keys are not configured.' };
   }
 
   const razorpay = new Razorpay({
