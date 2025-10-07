@@ -104,7 +104,7 @@ const pricingTiers = [
       'Priority processing',
     ],
     cta: 'Go Pro',
-    ctaPath: '/signup',
+    ctaPath: '/signup', // Changed this to signup
     popular: true,
   },
 ];
@@ -143,7 +143,7 @@ export default function Home() {
 
   const handlePayment = async () => {
     if (!user) {
-      router.push('/login');
+      router.push('/signup'); // Redirect to signup if not logged in
       return;
     }
 
@@ -328,7 +328,7 @@ export default function Home() {
                       ))}
                     </ul>
                     <Button 
-                      asChild={tier.name === 'Free'} 
+                      asChild={tier.name !== 'Pro'} 
                       onClick={tier.name === 'Pro' ? handlePayment : undefined}
                       className="w-full mt-auto"
                     >
