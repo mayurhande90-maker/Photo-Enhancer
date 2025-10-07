@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useUser, useFirestore, useAuth } from '@/firebase';
+import { useUser, useFirestore, useAuth, updateDocumentNonBlocking } from '@/firebase';
 import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 
 const ANONYMOUS_QUOTA_KEY = 'anonymousUserQuota';
@@ -75,15 +75,11 @@ export function useCredit() {
     if (user && firestore) {
         // Logged-in user: Update Firestore
         const userRef = doc(firestore, 'users', user.uid);
-        try {
-            await updateDoc(userRef, {
-                credits: newCreditValue,
-                lastCreditUpdate: serverTimestamp()
-            });
-        } catch (error) {
-            console.error("Failed to update credits in Firestore:", error);
-            setCredits(credits); // Revert optimistic update on failure
-        }
+        // Use the non-blocking update function to get detailed errors
+        updateDocumentNonBlocking(userRef, {
+            credits: newCreditValue,
+            lastCreditUpdate: serverTimestamp()
+        });
     } else {
         // Anonymous user: Update localStorage
         setAnonymousQuota({ credits: newCreditValue });
@@ -92,5 +88,3 @@ export function useCredit() {
 
   return { credits, resetTime, isLoading, consumeCredits };
 }
-
-    
