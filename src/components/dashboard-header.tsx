@@ -5,8 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { features } from '@/lib/features';
 import { Button } from './ui/button';
-import { Gem, User, LogOut } from 'lucide-react';
-import { useCredit } from '@/hooks/use-credit';
+import { User, LogOut } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
 import Link from 'next/link';
@@ -20,7 +19,6 @@ function HeaderUserSection() {
     const auth = useAuth();
     const { toast } = useToast();
     const router = useRouter();
-    const { credits, isLoading: isCreditLoading } = useCredit();
 
     const handleLogout = async () => {
         try {
@@ -40,7 +38,7 @@ function HeaderUserSection() {
         }
     };
     
-    if (isUserLoading || isCreditLoading) {
+    if (isUserLoading) {
         return (
           <div className="flex items-center gap-4">
             <Skeleton className="h-9 w-28" />
@@ -52,10 +50,6 @@ function HeaderUserSection() {
     if (user) {
         return (
             <div className="flex items-center gap-4">
-                <Button variant="outline">
-                    <Gem className="mr-2 h-4 w-4" />
-                    {credits} Credits
-                </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                          <Button
@@ -114,5 +108,3 @@ export function DashboardHeader() {
     </header>
   );
 }
-
-    

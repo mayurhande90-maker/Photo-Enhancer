@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Gem, User, LogOut } from 'lucide-react';
-import { useCredit } from '@/hooks/use-credit';
+import { User, LogOut } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
 import { useUser, useAuth } from '@/firebase';
@@ -19,7 +18,6 @@ function HeaderUserSection() {
     const auth = useAuth();
     const { toast } = useToast();
     const router = useRouter();
-    const { credits, isLoading: isCreditLoading } = useCredit();
 
     const handleLogout = async () => {
         try {
@@ -39,7 +37,7 @@ function HeaderUserSection() {
         }
     };
     
-    if (isUserLoading || isCreditLoading) {
+    if (isUserLoading) {
       return (
         <div className="flex items-center gap-4">
           <Skeleton className="h-9 w-20" />
@@ -51,10 +49,6 @@ function HeaderUserSection() {
     if (user) {
         return (
             <div className="flex items-center gap-4">
-                <Button variant="outline">
-                    <Gem className="mr-2 h-4 w-4" />
-                    {credits}
-                </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                          <Button
@@ -132,5 +126,3 @@ export function InfoPageLayout({
     </div>
   );
 }
-
-    

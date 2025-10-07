@@ -7,8 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Logo } from '@/components/icons';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Wand2, Scissors, Camera, Palette, Star, ChevronUp, Gem, User, LogOut } from 'lucide-react';
-import { BeforeAfterSlider } from '@/components/before-after-slider';
+import { Wand2, Scissors, Camera, Palette, Star, ChevronUp, User, LogOut } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useUser, useAuth } from '@/firebase';
 import { useRouter } from 'next/navigation';
@@ -16,7 +15,6 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { useCredit } from '@/hooks/use-credit';
 import { Skeleton } from '@/components/ui/skeleton';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
@@ -109,7 +107,6 @@ function HeaderUserSection() {
     const auth = useAuth();
     const { toast } = useToast();
     const router = useRouter();
-    const { credits, isLoading: isCreditLoading } = useCredit();
 
     const handleLogout = async () => {
         try {
@@ -129,11 +126,10 @@ function HeaderUserSection() {
         }
     };
     
-    if (isUserLoading || isCreditLoading) {
+    if (isUserLoading) {
       return (
         <div className="flex items-center gap-4">
-          <Skeleton className="h-9 w-20" />
-          <Skeleton className="h-9 w-9 rounded-full" />
+          <Skeleton className="h-9 w-24" />
         </div>
       );
     }
@@ -141,10 +137,6 @@ function HeaderUserSection() {
     if (user) {
         return (
             <div className="flex items-center gap-4">
-                <Button variant="ghost">
-                    <Gem className="mr-2 h-4 w-4" />
-                    {credits}
-                </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button
