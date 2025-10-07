@@ -12,6 +12,8 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
   type CarouselApi,
 } from '@/components/ui/carousel';
 import { BeforeAfterSlider } from '@/components/before-after-slider';
@@ -327,6 +329,7 @@ export default function Home() {
                 <Carousel 
                     setApi={setApi}
                     className="w-full h-full"
+                    opts={{ loop: true }}
                 >
                     <CarouselContent>
                         {features.map((feature, index) => (
@@ -339,6 +342,8 @@ export default function Home() {
                             </CarouselItem>
                         ))}
                     </CarouselContent>
+                    <CarouselPrevious className="left-4" />
+                    <CarouselNext className="right-4" />
                 </Carousel>
                  <Badge variant="secondary" className="absolute top-4 left-4 text-lg transition-all duration-300 ease-in-out">
                     {currentFeatureName}
@@ -505,5 +510,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
