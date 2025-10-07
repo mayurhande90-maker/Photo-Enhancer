@@ -44,15 +44,15 @@
     },
     {
       "id": "feature-colorize-before",
-      "description": "An old, black and white photograph of an elephant in a field.",
-      "imageUrl": "https://storage.googleapis.com/studio-images-prod/image_1719293489381.jpeg",
-      "imageHint": "vintage elephant"
+      "description": "An old, black and white photograph of a woman smiling.",
+      "imageUrl": "https://images.unsplash.com/photo-1542328522-835332c9e27d?w=1080&q=80&fit=max&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHwib2xkJTIwYmxhY2slMjBhbmQlMjB3aGl0ZSUyMHBob3RvJTIwb2YlMjB3b21hbnxlbnwwfHx8fDE3MjE4MTk0NDh8MA&ixlib=rb-4.1.0&fm=jpg&cs=tinysrgb&grayscale=true",
+      "imageHint": "vintage woman"
     },
     {
       "id": "feature-colorize-after",
-      "description": "A beautifully colorized version of an old elephant photograph.",
-      "imageUrl": "https://storage.googleapis.com/studio-images-prod/image_1719293502396.jpeg",
-      "imageHint": "colorized elephant"
+      "description": "A beautifully colorized version of an old photograph of a woman smiling.",
+      "imageUrl": "https://images.unsplash.com/photo-1542328522-835332c9e27d?w=1080&q=80&fit=max&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHwib2xkJTIwYmxhY2slMjBhbmQlMjB3aGl0ZSUyMHBob3RvJTIwb2YlMjB3b21hbnxlbnwwfHx8fDE3MjE4MTk0NDh8MA&ixlib=rb-4.1.0&fm=jpg&cs=tinysrgb",
+      "imageHint": "colorized woman"
     }
   ]
 }

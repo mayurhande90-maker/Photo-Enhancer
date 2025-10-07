@@ -8,14 +8,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Logo } from '@/components/icons';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Wand2, Scissors, Camera, Palette, Star, ChevronUp, Gem, User, LogOut } from 'lucide-react';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi,
-} from '@/components/ui/carousel';
 import { BeforeAfterSlider } from '@/components/before-after-slider';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useUser, useAuth } from '@/firebase';
@@ -182,14 +174,14 @@ function HeaderUserSection() {
     }
 
     return (
-        <nav className="flex items-center space-x-2">
+        <div className="flex items-center gap-4">
             <Button variant="ghost" asChild>
                 <Link href="/login">Login</Link>
             </Button>
             <Button asChild>
                 <Link href="/signup">Sign Up</Link>
             </Button>
-        </nav>
+        </div>
     );
 }
 
