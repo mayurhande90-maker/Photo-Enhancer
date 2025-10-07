@@ -3,25 +3,25 @@
     {
       "id": "hero-image",
       "description": "Abstract technological background with flowing lines and glowing nodes",
-      "imageUrl": "https://images.unsplash.com/photo-1562575214-da9fcf59b907?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhYnN0cmFjdCUyMHRlY2hub2xvZ3l8ZW58MHx8fHwxNzU5NjU0MDY5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1644088379091-d574269d422f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMHRlY2hub2xvZ3l8ZW58MHx8fHwxNzU5NzUxMjY3fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "abstract technology"
     },
     {
       "id": "feature-enhance-before",
       "description": "A blurry, low-resolution portrait of a woman.",
-      "imageUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=1080&q=50&blur=10",
+      "imageUrl": "https://picsum.photos/seed/blurry/1080/1080?blur=5",
       "imageHint": "blurry portrait"
     },
     {
       "id": "feature-enhance-after",
       "description": "A crystal clear, high-resolution portrait of a smiling woman outdoors.",
-      "imageUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=1080&q=80",
+      "imageUrl": "https://picsum.photos/seed/clear/1080/1080",
       "imageHint": "clear portrait"
     },
     {
       "id": "feature-background-before",
       "description": "A person standing in front of a busy city street.",
-      "imageUrl": "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=1080&q=80",
+      "imageUrl": "https://picsum.photos/seed/personcity/1080/1080",
       "imageHint": "person city"
     },
     {
@@ -33,7 +33,7 @@
     {
       "id": "feature-studio-before",
       "description": "A picture of a watch taken on a wooden table.",
-      "imageUrl": "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=1080&q=80",
+      "imageUrl": "https://picsum.photos/seed/watchtable/1080/1080",
       "imageHint": "watch table"
     },
     {
@@ -45,13 +45,13 @@
     {
       "id": "feature-colorize-before",
       "description": "An old, black and white photograph of a city street.",
-      "imageUrl": "https://images.unsplash.com/photo-1518495962222-cf8d691d1533?w=1080&q=80&grayscale",
+      "imageUrl": "https://picsum.photos/seed/bwstreet/1080/1080?grayscale",
       "imageHint": "vintage street"
     },
     {
       "id": "feature-colorize-after",
       "description": "A beautifully colorized version of an old city street photograph.",
-      "imageUrl": "https://images.unsplash.com/photo-1518495962222-cf8d691d1533?w=1080&q=80",
+      "imageUrl": "https://picsum.photos/seed/colorstreet/1080/1080",
       "imageHint": "colorized street"
     }
   ]
