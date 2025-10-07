@@ -10,6 +10,7 @@ import { useMonthlyQuota } from '@/hooks/use-monthly-quota';
 import { Skeleton } from './ui/skeleton';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
 import Link from 'next/link';
+import { ThemeToggle } from './theme-toggle';
 
 export function DashboardHeader() {
   const pathname = usePathname();
@@ -34,6 +35,7 @@ export function DashboardHeader() {
             <span className="sr-only">monthly credits remaining</span>
           </div>
         )}
+        <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" className="overflow-hidden rounded-full">

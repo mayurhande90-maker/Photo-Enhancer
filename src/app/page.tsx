@@ -15,6 +15,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { BeforeAfterSlider } from '@/components/before-after-slider';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const features = [
   {
@@ -145,8 +146,8 @@ export default function Home() {
             <Link href="#pricing" className="text-muted-foreground transition-colors hover:text-foreground">Pricing</Link>
             <Link href="#testimonials" className="text-muted-foreground transition-colors hover:text-foreground">Reviews</Link>
           </nav>
-          <div className="flex flex-1 items-center justify-end space-x-4">
-            <nav className="hidden items-center space-x-4 md:flex">
+          <div className="flex flex-1 items-center justify-end space-x-2">
+            <nav className="hidden items-center space-x-2 md:flex">
               <Link href="/login">
                 <Button variant="ghost">Login</Button>
               </Link>
@@ -154,6 +155,7 @@ export default function Home() {
                 <Button>Sign Up</Button>
               </Link>
             </nav>
+            <ThemeToggle />
           </div>
         </div>
       </header>
