@@ -14,9 +14,9 @@ import { BeforeAfterSlider } from '@/components/before-after-slider';
 
 function CreationCard({ image }: { image: GeneratedImage }) {
     return (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden group">
             <CardContent className="p-0">
-                <div className="relative aspect-[16/10] w-full">
+                <div className="relative aspect-[4/3] w-full">
                     <BeforeAfterSlider
                         before={image.originalImageUrl}
                         after={image.processedImageUrl}
@@ -27,13 +27,15 @@ function CreationCard({ image }: { image: GeneratedImage }) {
                     <p className="text-sm text-muted-foreground">
                         {image.createdAt ? formatDistanceToNow(new Date(image.createdAt.seconds * 1000), { addSuffix: true }) : 'Just now'}
                     </p>
-                    <Button asChild variant="secondary" size="sm" className="mt-2 w-full">
-                        <a href={image.processedImageUrl} download={`magicpixa-${image.id}.png`}>
-                            Download
-                        </a>
-                    </Button>
                 </div>
             </CardContent>
+            <div className="p-4 pt-0">
+                 <Button asChild variant="secondary" size="sm" className="w-full">
+                    <a href={image.processedImageUrl} download={`magicpixa-${image.id}.png`}>
+                        Download
+                    </a>
+                </Button>
+            </div>
         </Card>
     )
 }
@@ -106,7 +108,7 @@ export default function CreationsPage() {
                     A gallery of your magical transformations.
                 </p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {images.map((image) => (
                     <CreationCard key={image.id} image={image} />
                 ))}
