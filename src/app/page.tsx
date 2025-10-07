@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Logo } from '@/components/icons';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Wand2, Scissors, Camera, Palette, Check, Star } from 'lucide-react';
+import { Wand2, Scissors, Camera, Palette, Star } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
@@ -353,3 +353,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
