@@ -191,7 +191,6 @@ export default function Home() {
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   
   const colorizeFeature = {
-    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-colorize-before')!,
     imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-colorize-after')!,
   }
 
@@ -269,13 +268,15 @@ export default function Home() {
               </div>
             </div>
             <div className="relative w-full h-[450px] rounded-lg overflow-hidden border shadow-lg group">
-                <BeforeAfterSlider
-                    before={colorizeFeature.imageBefore.imageUrl}
-                    after={colorizeFeature.imageAfter.imageUrl}
-                    initialPosition={80}
+                <Image
+                    src={colorizeFeature.imageAfter.imageUrl}
+                    alt={colorizeFeature.imageAfter.description}
+                    fill
+                    className="object-cover"
+                    priority
                 />
                  <Badge variant="secondary" className="absolute top-4 left-4 text-lg transition-all duration-300 ease-in-out">
-                    Photo Colorization
+                    AI Magic at Work
                 </Badge>
             </div>
           </div>
