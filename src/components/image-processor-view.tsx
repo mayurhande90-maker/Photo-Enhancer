@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import type { Feature } from '@/lib/types';
 import { features } from '@/lib/features';
 import { FileUploader } from '@/components/file-uploader';
