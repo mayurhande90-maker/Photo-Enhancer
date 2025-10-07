@@ -7,39 +7,48 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Logo } from '@/components/icons';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Wand2, Scissors, Camera, Palette, Star } from 'lucide-react';
+import { Wand2, Scissors, Camera, Palette, Star, ChevronDown } from 'lucide-react';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from '@/components/ui/carousel';
+import Autoplay from "embla-carousel-autoplay"
 import { BeforeAfterSlider } from '@/components/before-after-slider';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
 
 const features = [
   {
     name: 'Photo Enhancement',
     description: 'Fix lighting, colors, noise, and resolution automatically.',
-    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-enhance-before'),
-    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-enhance-after'),
+    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-enhance-before')!,
+    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-enhance-after')!,
     path: '/dashboard/enhance',
   },
   {
     name: 'Background Removal',
     description: 'Instantly remove backgrounds to get clean, transparent PNGs.',
-    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-background-before'),
-    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-background-after'),
+    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-background-before')!,
+    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-background-after')!,
     path: '/dashboard/background-removal',
   },
   {
     name: 'Photo Studio',
     description: 'Create e-commerce ready product shots with perfect lighting.',
-    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-studio-before'),
-    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-studio-after'),
+    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-studio-before')!,
+    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-studio-after')!,
     path: '/dashboard/studio',
   },
   {
     name: 'Photo Colorize',
     description: 'Bring old black and white photos to life with natural colors.',
-    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-colorize-before'),
-    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-colorize-after'),
+    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-colorize-before')!,
+    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-colorize-after')!,
     path: '/dashboard/colorize',
   },
 ];
@@ -130,6 +139,30 @@ const testimonials = [
 export default function Home() {
   const { user } = useUser();
   const router = useRouter();
+  const [api, setApi] = React.useState<CarouselApi>()
+  const [current, setCurrent] = React.useState(0)
+  const [currentFeatureName, setCurrentFeatureName] = React.useState(features[0].name);
+
+  React.useEffect(() => {
+    if (!api) {
+      return
+    }
+ 
+    setCurrent(api.selectedScrollSnap())
+    setCurrentFeatureName(features[api.selectedScrollSnap()].name);
+ 
+    const handleSelect = () => {
+        setCurrent(api.selectedScrollSnap());
+        setCurrentFeatureName(features[api.selectedScrollSnap()].name);
+    }
+
+    api.on("select", handleSelect)
+ 
+    return () => {
+      api.off("select", handleSelect)
+    }
+  }, [api])
+
 
   const handleGoProClick = () => {
     if (user) {
@@ -144,66 +177,71 @@ export default function Home() {
     }
   };
 
-  const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
-
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
+    <div className="flex min-h-dvh flex-col bg-background text-foreground">
+        <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(#29abe255_1px,transparent_1px)] [background-size:32px_32px]"></div>
+
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Logo className="h-6 w-6" />
             <span className="font-bold">Magicpixa</span>
           </Link>
-          <nav className="hidden flex-1 items-center gap-6 text-sm md:flex">
-            <Link href="#features" className="text-muted-foreground transition-colors hover:text-foreground">Features</Link>
-            <Link href="#pricing" className="text-muted-foreground transition-colors hover:text-foreground">Pricing</Link>
-            <Link href="#testimonials" className="text-muted-foreground transition-colors hover:text-foreground">Reviews</Link>
-          </nav>
           <div className="flex flex-1 items-center justify-end space-x-2">
-            <nav className="hidden items-center space-x-2 md:flex">
-              <Link href="/login">
-                <Button variant="ghost">Login</Button>
-              </Link>
-              <Link href="/signup">
-                <Button>Sign Up</Button>
-              </Link>
-            </nav>
             <ThemeToggle />
           </div>
         </div>
       </header>
       <main className="flex-1">
-        <section className="container grid items-center gap-6 pb-8 pt-10 md:py-20">
+        <section className="container grid min-h-[calc(100dvh-3.5rem)] items-center gap-6 pb-8 pt-10 md:py-20">
           <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-2">
             <div className="flex flex-col items-start gap-4">
               <h1 className="text-4xl font-extrabold leading-tight tracking-tighter md:text-5xl lg:text-6xl">
-                Turn Any Photo Into Pure Magic.
+                Transform Any Photo Into Pure Magic ✨
               </h1>
               <p className="max-w-[700px] text-lg text-muted-foreground">
-                Remove backgrounds, enhance lighting, colorize memories, or make studio-ready product shots — all with one click.
+                 Enhance, stylize, remove backgrounds, and colorize — all powered by AI.
               </p>
-              <div className="flex flex-col items-start gap-4">
+              <div className="flex flex-wrap items-start gap-4">
                   <Button asChild size="lg">
-                    <Link href="/dashboard/enhance">Create Magic →</Link>
+                    <Link href="/dashboard">Create Magic</Link>
                   </Button>
-                  <p className="text-sm text-muted-foreground">
-                    Try for free. No sign-up needed for your first image.
-                  </p>
+                  <Button asChild size="lg" variant="outline">
+                    <Link href="#features">Explore Features</Link>
+                  </Button>
               </div>
             </div>
-            <div className="relative w-full h-[450px] rounded-lg overflow-hidden border shadow-lg">
-                {heroImage && (
-                  <Image
-                    src={heroImage.imageUrl}
-                    alt={heroImage.description}
-                    fill
-                    className="object-cover"
-                    priority
-                    data-ai-hint={heroImage.imageHint}
-                  />
-                )}
+            <div className="relative w-full h-[450px] rounded-lg overflow-hidden border shadow-lg group">
+                <Carousel 
+                    setApi={setApi}
+                    className="w-full h-full"
+                    plugins={[
+                      Autoplay({
+                        delay: 4000,
+                        stopOnInteraction: true,
+                      }),
+                    ]}
+                >
+                    <CarouselContent>
+                        {features.map((feature, index) => (
+                            <CarouselItem key={index}>
+                                <BeforeAfterSlider
+                                    before={feature.imageBefore.imageUrl}
+                                    after={feature.imageAfter.imageUrl}
+                                />
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                </Carousel>
+                 <Badge variant="secondary" className="absolute top-4 left-4 text-lg transition-all duration-300 ease-in-out">
+                    {currentFeatureName}
+                </Badge>
             </div>
           </div>
+           <Link href="#features" className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+              <ChevronDown className="h-8 w-8 text-muted-foreground" />
+              <span className="sr-only">Scroll down</span>
+          </Link>
         </section>
         <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
           <div className="container space-y-12 px-4 md:px-6">
@@ -224,8 +262,8 @@ export default function Home() {
                       <CardTitle>{feature.title}</CardTitle>
                       <CardDescription>{feature.description}</CardDescription>
                     </CardHeader>
-                    <CardContent className="flex-1">
-                        <Button variant="link" className="p-0 mt-auto">
+                    <CardContent className="flex-1 flex flex-col justify-end">
+                        <Button variant="link" className="p-0 mt-auto justify-start">
                             {feature.title === 'Background Vanisher' && 'Erase & Shine'}
                             {feature.title === 'Photo Enhancement' && 'Enhance Now'}
                             {feature.title === 'AI Photo Studio' && 'Launch Studio'}
@@ -339,7 +377,6 @@ export default function Home() {
                     <h4 className="font-semibold mb-2">Legal</h4>
                     <nav className="flex flex-col gap-1 text-sm text-muted-foreground">
                         <Link href="/terms" className="hover:text-foreground">Terms & Conditions</Link>
-
                         <Link href="/policy" className="hover:text-foreground">Privacy Policy</Link>
                         <Link href="/cancellation-refunds" className="hover:text-foreground">Cancellation & Refund Policy</Link>
                     </nav>
@@ -352,3 +389,4 @@ export default function Home() {
       </footer>
     </div>
   );
+}
