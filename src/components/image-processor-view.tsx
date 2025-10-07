@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -58,7 +57,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     if (credits < feature.creditCost) {
         toast({
             title: 'Monthly Quota Exhausted',
-            description: `You don't have enough credits for this feature. Your credits will reset in ${formatDistanceToNow(resetTime!)}.`,
+            description: `You don't have enough credits for this feature. Your credits will reset in ${resetTime ? formatDistanceToNow(resetTime) : 'a month'}.`,
             variant: 'destructive',
         });
         return;
@@ -140,7 +139,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
             fill
             className="object-contain"
           />
-          <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white">
+          <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
             Original Image
           </div>
         </div>
@@ -151,7 +150,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
             fill
             className="object-contain"
           />
-          <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white">
+           <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
             Magic Image
           </div>
         </div>
@@ -213,7 +212,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
                 
                 {processedImageUrl && (
                     <Button asChild>
-                        <a href={processedImageUrl} download={`magicpixa-${feature.name.toLowerCase().replace(' ','-')}.png`}>
+                        <a href={processedImageUrl} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
                             Download Magic Image
                         </a>
                     </Button>
@@ -227,6 +226,9 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
           )}
         </CardContent>
       </Card>
+      <div className="text-center text-sm text-muted-foreground">
+        You have {credits} free image credits left. <Link href="/signup" className="underline">Sign up</Link> to unlock more.
+      </div>
     </div>
   );
 }
