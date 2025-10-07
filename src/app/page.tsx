@@ -143,10 +143,7 @@ const testimonials = [
 ]
 
 export default function Home() {
-  const { user, loading: isUserLoading } = useUser();
-  const auth = useAuth();
-  const { toast } = useToast();
-  const { credits, isLoading: isCreditLoading } = useCredit();
+  const { user } = useUser();
   const router = useRouter();
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)
@@ -206,25 +203,6 @@ export default function Home() {
     });
   };
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      toast({
-        title: 'Logged Out',
-        description: 'You have been successfully logged out.',
-      });
-      router.push('/');
-    } catch (error) {
-      toast({
-        title: 'Logout Failed',
-        description: 'There was an error logging you out.',
-        variant: 'destructive'
-      })
-    }
-  }
-
-  const isLoading = isUserLoading || isCreditLoading;
-
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground">
         <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(#29abe255_1px,transparent_1px)] [background-size:32px_32px]"></div>
@@ -242,51 +220,14 @@ export default function Home() {
           </nav>
           <div className="flex flex-1 items-center justify-end space-x-4">
             <ThemeToggle />
-            {isLoading ? (
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-8 w-24" />
-                <Skeleton className="h-8 w-8 rounded-full" />
-              </div>
-            ) : user ? (
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 rounded-lg border bg-card px-3 py-1.5 text-sm">
-                  <Gem className="mr-1 size-4 text-primary" />
-                  <span className="font-semibold">{credits}</span>
-                  <span className="text-muted-foreground">credits</span>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="overflow-hidden rounded-full"
-                    >
-                      <User />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>{user.displayName || 'My Account'}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild><Link href="/dashboard">Dashboard</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link href="/dashboard/creations">Creations</Link></DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout} className='cursor-pointer'>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Logout</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            ) : (
-              <nav className="hidden items-center space-x-2 md:flex">
-                <Button variant="ghost" asChild>
-                  <Link href="/login">Login</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/signup">Sign Up</Link>
-                </Button>
-              </nav>
-            )}
+            <nav className="hidden items-center space-x-2 md:flex">
+              <Button variant="ghost" asChild>
+                <Link href="/login">Login</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/signup">Sign Up</Link>
+              </Button>
+            </nav>
           </div>
         </div>
       </header>
