@@ -206,10 +206,10 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
           ) : (
             <div className="space-y-4">
               
-              {!processedImageUrl && !isProcessing && (
+              {!processedImageUrl && !isProcessing && originalDataUri && (
                 <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
                   <Image
-                    src={originalDataUri!}
+                    src={originalDataUri}
                     alt="Original upload"
                     fill
                     className="object-contain"
