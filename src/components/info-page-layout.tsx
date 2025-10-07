@@ -39,8 +39,13 @@ function HeaderUserSection() {
         }
     };
     
-    if (isUserLoading) {
-        return <Skeleton className="h-9 w-24" />;
+    if (isUserLoading || isCreditLoading) {
+      return (
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-9 w-20" />
+          <Skeleton className="h-9 w-9 rounded-full" />
+        </div>
+      );
     }
 
     if (user) {
@@ -48,7 +53,7 @@ function HeaderUserSection() {
             <div className="flex items-center gap-4">
                 <Button variant="outline">
                     <Gem className="mr-2 h-4 w-4" />
-                    {isCreditLoading ? '...' : credits}
+                    {credits}
                 </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
