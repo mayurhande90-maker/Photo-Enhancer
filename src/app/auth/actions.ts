@@ -1,18 +1,31 @@
 'use server';
 
-import { getApp, getApps, initializeApp } from 'firebase-admin/app';
+import { getApp, getApps, initializeApp, type App } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import {credential} from 'firebase-admin';
 
 const INITIAL_CREDITS = 10;
 
 // Initialize Firebase Admin SDK if not already initialized
-function initializeAdminApp() {
+function initializeAdminApp(): App {
     if (getApps().length === 0) {
+      if (process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
+        return initializeApp({
+            credential: credential.cert({
+                projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+                clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+                privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY.replace(/\\n/g, '\n'),
+            }),
+        });
+      } else {
+        // For local development without service account, or in environments where it's auto-discovered
         return initializeApp();
+      }
     }
     return getApp();
 }
+
 
 export async function signupAction(credentials: {email: string, password: string, displayName: string}) {
   const { email, password, displayName } = credentials;
