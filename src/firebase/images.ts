@@ -1,9 +1,19 @@
 
-'use server';
+'use client';
 
-import { db } from './server';
-import { FieldValue } from 'firebase-admin/firestore';
+import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    serverTimestamp,
+    query,
+    where,
+    orderBy,
+    limit
+} from 'firebase/firestore';
+import { initializeFirebase } from '.';
 
+// Note: This function is intended to be called from a server action.
 export async function saveGeneratedImage(
   userId: string,
   originalImageUrl: string,
@@ -14,20 +24,23 @@ export async function saveGeneratedImage(
     throw new Error('User ID is required to save an image.');
   }
 
-  const imageRef = db.collection('users').doc(userId).collection('generatedImages').doc();
+  // We need to initialize firebase here because this is a server action
+  const { firestore } = initializeFirebase();
 
   try {
-    await imageRef.set({
-      id: imageRef.id,
-      userId: userId,
+    const imagesCollection = collection(firestore, `users/${userId}/generatedImages`);
+    
+    await addDoc(imagesCollection, {
+      userId,
       originalImageUrl,
       processedImageUrl,
       processingType,
-      generationTimestamp: FieldValue.serverTimestamp(),
+      createdAt: serverTimestamp(),
     });
-    console.log(`Image ${imageRef.id} saved for user ${userId}`);
+
   } catch (error) {
     console.error(`Failed to save image for user ${userId}:`, error);
-    throw new Error('Could not save generated image.');
+    // We don't rethrow the error to avoid blocking the user flow
+    // The image generation was successful, only saving failed.
   }
 }

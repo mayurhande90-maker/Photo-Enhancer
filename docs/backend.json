@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "UserProfile": {
@@ -24,9 +25,9 @@
         "originalImageUrl": { "type": "string", "description": "URL of the original uploaded image." },
         "processedImageUrl": { "type": "string", "description": "URL of the processed image." },
         "processingType": { "type": "string", "description": "Type of processing applied (e.g., 'Enhancement')." },
-        "generationTimestamp": { "type": "string", "description": "Timestamp of when the image was generated.", "format": "date-time" }
+        "createdAt": { "type": "string", "description": "Timestamp of when the image was generated.", "format": "date-time" }
       },
-      "required": ["id", "userId", "processedImageUrl", "processingType", "generationTimestamp"]
+      "required": ["id", "userId", "processedImageUrl", "processingType", "createdAt"]
     }
   },
   "auth": {

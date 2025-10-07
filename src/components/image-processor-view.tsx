@@ -56,7 +56,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   };
 
   const handleProcessImage = async () => {
-    if (!originalFile) return;
+    if (!originalFile || !user) return;
 
     if (credits < feature.creditCost) {
         toast({
@@ -85,7 +85,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
     try {
       const dataUri = await fileToDataUri(originalFile);
-      const result = await feature.action(dataUri);
+      const result = await feature.action(dataUri, user.uid);
       setProcessedImageUrl(result.enhancedPhotoDataUri);
       consumeCredits(feature.creditCost);
     } catch (err) {
@@ -221,7 +221,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
               <div className="flex flex-wrap gap-2">
                 {!isProcessing && !processedImageUrl && (
-                  <Button onClick={handleProcessImage} disabled={isUserLoading || isCreditLoading || credits < feature.creditCost}>
+                  <Button onClick={handleProcessImage} disabled={!user || isUserLoading || isCreditLoading || credits < feature.creditCost}>
                     Process Image ({feature.creditCost} credit)
                   </Button>
                 )}
@@ -249,16 +249,14 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
             <p>You have {credits} credits left for this month.</p>
         ) : (
             <p>
-                You have {credits} free image credit left.{' '}
-                <Link href="/signup" className="underline">
-                    Sign up
+                Please{' '}
+                <Link href="/login" className="underline">
+                    sign in
                 </Link>{' '}
-                to get 10 more.
+                to start creating images.
             </p>
         )}
       </div>
     </div>
   );
 }
-
-    
