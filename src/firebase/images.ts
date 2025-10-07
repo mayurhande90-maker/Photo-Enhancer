@@ -8,8 +8,8 @@ import {
 } from 'firebase/firestore';
 import { initializeFirebase } from '.';
 
-// Note: This function is intended to be called from a server action.
-export async function saveGeneratedImage(
+// This function is intended to be called from a client component.
+export async function saveGeneratedImageClient(
   userId: string,
   originalImageUrl: string,
   processedImageUrl: string,
@@ -19,7 +19,7 @@ export async function saveGeneratedImage(
     throw new Error('User ID is required to save an image.');
   }
 
-  // We need to initialize firebase here because this can be called from a server action
+  // We need to initialize firebase here because this is called from the client
   const { firestore } = initializeFirebase();
 
   try {

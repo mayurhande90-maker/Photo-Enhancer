@@ -15,8 +15,8 @@ import { Terminal, Clock, User, Loader2 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
-import { formatDistanceToNow } from 'date-fns';
 import { useUser } from '@/firebase';
+import { saveGeneratedImageClient } from '@/firebase/images';
 
 interface ImageProcessorViewProps {
   featureName: Feature['name'];
@@ -83,9 +83,25 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
     try {
       const dataUri = await fileToDataUri(originalFile);
+      // 1. Call the server action to process the image
       const result = await feature.action(dataUri, user.uid);
+      
+      // 2. Set the result for display
       setProcessedImageUrl(result.enhancedPhotoDataUri);
+
+      // 3. Save the image data to Firestore on the client
+      if (result.enhancedPhotoDataUri) {
+        await saveGeneratedImageClient(
+            user.uid,
+            dataUri,
+            result.enhancedPhotoDataUri,
+            feature.name
+        );
+      }
+      
+      // 4. Consume credits
       await consumeCredits(feature.creditCost);
+
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
