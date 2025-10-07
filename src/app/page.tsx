@@ -14,7 +14,6 @@ import {
   CarouselItem,
   type CarouselApi,
 } from '@/components/ui/carousel';
-import Autoplay from "embla-carousel-autoplay"
 import { BeforeAfterSlider } from '@/components/before-after-slider';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useUser, useAuth } from '@/firebase';
@@ -168,20 +167,19 @@ function HeaderUserSection() {
     };
     
     if (isUserLoading) {
-        return <Skeleton className="h-9 w-24" />;
+        return <Skeleton className="h-9 w-40" />;
     }
 
     if (user) {
         return (
             <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                    <Gem className="h-4 w-4" />
-                    <span className="font-semibold">{isCreditLoading ? '...' : credits}</span>
-                    <span className="text-muted-foreground hidden sm:inline">credits</span>
-                </div>
+                <Button variant="ghost">
+                    <Gem className="mr-2 h-4 w-4" />
+                    {isCreditLoading ? '...' : credits}
+                </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                         <Button
+                        <Button
                             variant="outline"
                             size="icon"
                             className="overflow-hidden rounded-full"
@@ -324,12 +322,6 @@ export default function Home() {
                 <Carousel 
                     setApi={setApi}
                     className="w-full h-full"
-                    plugins={[
-                      Autoplay({
-                        delay: 4000,
-                        stopOnInteraction: true,
-                      }),
-                    ]}
                 >
                     <CarouselContent>
                         {features.map((feature, index) => (
