@@ -15,9 +15,84 @@ import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 
+function HeaderUserSection() {
+    const { user, loading: isUserLoading } = useUser();
+    const auth = useAuth();
+    const { toast } = useToast();
+    const router = useRouter();
+    const { credits, isLoading: isCreditLoading } = useCredit();
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            toast({
+                title: 'Logged Out',
+                description: "You have been successfully logged out.",
+            });
+            router.push('/');
+        } catch (error) {
+            console.error('Logout failed:', error);
+            toast({
+                title: 'Logout Failed',
+                description: 'An unexpected error occurred during logout.',
+                variant: 'destructive',
+            });
+        }
+    };
+    
+    if (isUserLoading) {
+        return <Skeleton className="h-9 w-24" />;
+    }
+
+    if (user) {
+        return (
+            <div className="flex items-center gap-4">
+                <Button variant="outline">
+                    <Gem className="mr-2 h-4 w-4" />
+                    {isCreditLoading ? '...' : credits} Credits
+                </Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                         <Button
+                            variant="outline"
+                            size="icon"
+                            className="overflow-hidden rounded-full"
+                        >
+                            <User />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>{user.displayName || 'My Account'}</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => router.push('/dashboard/creations')}>
+                            My Creations
+                        </DropdownMenuItem>
+                        <DropdownMenuItem disabled>My Profile</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleLogout}>
+                            <LogOut className="mr-2 h-4 w-4" />
+                            <span>Logout</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        );
+    }
+
+    return (
+        <nav className="flex items-center space-x-2">
+            <Button variant="ghost" asChild>
+                <Link href="/login">Login</Link>
+            </Button>
+            <Button asChild>
+                <Link href="/signup">Sign Up</Link>
+            </Button>
+        </nav>
+    );
+}
+
 export function DashboardHeader() {
   const pathname = usePathname();
-  const router = useRouter();
 
   const currentFeature = features.find((f) => f.path === pathname);
   const title = currentFeature?.name || 'Dashboard';
@@ -29,15 +104,10 @@ export function DashboardHeader() {
       
       <div className="flex items-center gap-4 ml-auto">
         <ThemeToggle />
-        <nav className="flex items-center space-x-2">
-            <Button variant="ghost" asChild>
-                <Link href="/login">Login</Link>
-            </Button>
-            <Button asChild>
-                <Link href="/signup">Sign Up</Link>
-            </Button>
-        </nav>
+        <HeaderUserSection />
       </div>
     </header>
   );
 }
+
+    

@@ -5,6 +5,90 @@ import Link from 'next/link';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { Gem, User, LogOut } from 'lucide-react';
+import { useCredit } from '@/hooks/use-credit';
+import { Skeleton } from './ui/skeleton';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
+import { useUser, useAuth } from '@/firebase';
+import { signOut } from 'firebase/auth';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+
+function HeaderUserSection() {
+    const { user, loading: isUserLoading } = useUser();
+    const auth = useAuth();
+    const { toast } = useToast();
+    const router = useRouter();
+    const { credits, isLoading: isCreditLoading } = useCredit();
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            toast({
+                title: 'Logged Out',
+                description: "You have been successfully logged out.",
+            });
+            router.push('/');
+        } catch (error) {
+            console.error('Logout failed:', error);
+            toast({
+                title: 'Logout Failed',
+                description: 'An unexpected error occurred during logout.',
+                variant: 'destructive',
+            });
+        }
+    };
+    
+    if (isUserLoading) {
+        return <Skeleton className="h-9 w-24" />;
+    }
+
+    if (user) {
+        return (
+            <div className="flex items-center gap-4">
+                <Button variant="outline">
+                    <Gem className="mr-2 h-4 w-4" />
+                    {isCreditLoading ? '...' : credits}
+                </Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                         <Button
+                            variant="outline"
+                            size="icon"
+                            className="overflow-hidden rounded-full"
+                        >
+                            <User />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>{user.displayName || 'My Account'}</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => router.push('/dashboard/creations')}>
+                            My Creations
+                        </DropdownMenuItem>
+                        <DropdownMenuItem disabled>My Profile</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleLogout}>
+                            <LogOut className="mr-2 h-4 w-4" />
+                            <span>Logout</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        );
+    }
+
+    return (
+        <nav className="hidden items-center space-x-2 md:flex">
+            <Button variant="ghost" asChild>
+                <Link href="/login">Login</Link>
+            </Button>
+            <Button asChild>
+                <Link href="/signup">Sign Up</Link>
+            </Button>
+        </nav>
+    );
+}
 
 export function InfoPageLayout({
   children,
@@ -23,14 +107,7 @@ export function InfoPageLayout({
           </Link>
           <div className="flex flex-1 items-center justify-end space-x-4">
             <ThemeToggle />
-            <nav className="hidden items-center space-x-2 md:flex">
-              <Button variant="ghost" asChild>
-                <Link href="/login">Login</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/signup">Sign Up</Link>
-              </Button>
-            </nav>
+            <HeaderUserSection />
           </div>
         </div>
       </header>
@@ -50,3 +127,5 @@ export function InfoPageLayout({
     </div>
   );
 }
+
+    
