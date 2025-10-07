@@ -238,7 +238,7 @@ export default function Home() {
                 </Badge>
             </div>
           </div>
-           <Link href="#features" className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+           <Link href="#features" className="absolute bottom-10 right-10 animate-bounce">
               <ChevronDown className="h-8 w-8 text-muted-foreground" />
               <span className="sr-only">Scroll down</span>
           </Link>
