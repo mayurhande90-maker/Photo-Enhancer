@@ -29,37 +29,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 
-const features = [
-  {
-    name: 'Photo Enhancement',
-    description: 'Fix lighting, colors, noise, and resolution automatically.',
-    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-enhance-before')!,
-    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-enhance-after')!,
-    path: '/dashboard/enhance',
-  },
-  {
-    name: 'Background Removal',
-    description: 'Instantly remove backgrounds to get clean, transparent PNGs.',
-    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-background-before')!,
-    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-background-after')!,
-    path: '/dashboard/background-removal',
-  },
-  {
-    name: 'Photo Studio',
-    description: 'Create e-commerce ready product shots with perfect lighting.',
-    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-studio-before')!,
-    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-studio-after')!,
-    path: '/dashboard/studio',
-  },
-  {
-    name: 'Photo Colorize',
-    description: 'Bring old black and white photos to life with natural colors.',
-    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-colorize-before')!,
-    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-colorize-after')!,
-    path: '/dashboard/colorize',
-  },
-];
-
 const featureCards = [
     {
       icon: <Wand2 className="size-8 text-primary" />,
@@ -227,30 +196,12 @@ function HeaderUserSection() {
 export default function Home() {
   const { user } = useUser();
   const router = useRouter();
-  const [api, setApi] = React.useState<CarouselApi>()
-  const [current, setCurrent] = React.useState(0)
-  const [currentFeatureName, setCurrentFeatureName] = React.useState(features[0].name);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
-
-  useEffect(() => {
-    if (!api) {
-      return
-    }
- 
-    setCurrent(api.selectedScrollSnap())
-    setCurrentFeatureName(features[api.selectedScrollSnap()].name);
- 
-    const handleSelect = () => {
-        setCurrent(api.selectedScrollSnap());
-        setCurrentFeatureName(features[api.selectedScrollSnap()].name);
-    }
-
-    api.on("select", handleSelect)
- 
-    return () => {
-      api.off("select", handleSelect)
-    }
-  }, [api])
+  
+  const colorizeFeature = {
+    imageBefore: PlaceHolderImages.find((img) => img.id === 'feature-colorize-before')!,
+    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-colorize-after')!,
+  }
 
   useEffect(() => {
     const checkScroll = () => {
@@ -326,27 +277,13 @@ export default function Home() {
               </div>
             </div>
             <div className="relative w-full h-[450px] rounded-lg overflow-hidden border shadow-lg group">
-                <Carousel 
-                    setApi={setApi}
-                    className="w-full h-full"
-                    opts={{ loop: true }}
-                >
-                    <CarouselContent>
-                        {features.map((feature, index) => (
-                            <CarouselItem key={index}>
-                                <BeforeAfterSlider
-                                    before={feature.imageBefore.imageUrl}
-                                    after={feature.imageAfter.imageUrl}
-                                    initialPosition={80}
-                                />
-                            </CarouselItem>
-                        ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="left-4" />
-                    <CarouselNext className="right-4" />
-                </Carousel>
+                <BeforeAfterSlider
+                    before={colorizeFeature.imageBefore.imageUrl}
+                    after={colorizeFeature.imageAfter.imageUrl}
+                    initialPosition={80}
+                />
                  <Badge variant="secondary" className="absolute top-4 left-4 text-lg transition-all duration-300 ease-in-out">
-                    {currentFeatureName}
+                    Photo Colorization
                 </Badge>
             </div>
           </div>
@@ -510,5 +447,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
