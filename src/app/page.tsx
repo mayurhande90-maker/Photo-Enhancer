@@ -215,8 +215,8 @@ export default function Home() {
             </div>
             <div className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-2 md:gap-12 lg:max-w-5xl lg:grid-cols-4">
               {featureCards.map((feature) => (
-                <Link href={feature.path} key={feature.title}>
-                  <Card className="h-full transform-gpu transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20">
+                <Link href={feature.path} key={feature.title} className="h-full">
+                  <Card className="h-full flex flex-col transform-gpu transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20">
                     <CardHeader>
                       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                         {feature.icon}
@@ -224,8 +224,8 @@ export default function Home() {
                       <CardTitle>{feature.title}</CardTitle>
                       <CardDescription>{feature.description}</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <Button variant="link" className="p-0">
+                    <CardContent className="flex-1">
+                        <Button variant="link" className="p-0 mt-auto">
                             {feature.title === 'Background Vanisher' && 'Erase & Shine'}
                             {feature.title === 'Photo Enhancement' && 'Enhance Now'}
                             {feature.title === 'AI Photo Studio' && 'Launch Studio'}
@@ -339,6 +339,7 @@ export default function Home() {
                     <h4 className="font-semibold mb-2">Legal</h4>
                     <nav className="flex flex-col gap-1 text-sm text-muted-foreground">
                         <Link href="/terms" className="hover:text-foreground">Terms & Conditions</Link>
+
                         <Link href="/policy" className="hover:text-foreground">Privacy Policy</Link>
                         <Link href="/cancellation-refunds" className="hover:text-foreground">Cancellation & Refund Policy</Link>
                     </nav>
@@ -351,5 +352,3 @@ export default function Home() {
       </footer>
     </div>
   );
-
-    
