@@ -1,17 +1,21 @@
 
 'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { signupAction } from '@/app/auth/actions';
+import { useAuth, useFirestore } from '@/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { AuthLayout } from '@/components/auth-layout';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -23,8 +27,12 @@ const signupSchema = z.object({
 
 type SignupFormInputs = z.infer<typeof signupSchema>;
 
+const INITIAL_CREDITS = 10;
+
 export default function SignupPage() {
     const router = useRouter();
+    const auth = useAuth();
+    const firestore = useFirestore();
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -40,20 +48,36 @@ export default function SignupPage() {
 
     const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
         setIsLoading(true);
-        const result = await signupAction(data);
-        
-        if (result.success) {
+        try {
+            // 1. Create user with Firebase Auth
+            const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+            const user = userCredential.user;
+
+            // 2. Create user profile in Firestore
+            const userRef = doc(firestore, 'users', user.uid);
+            await setDoc(userRef, {
+                uid: user.uid,
+                email: data.email,
+                displayName: data.displayName,
+                credits: INITIAL_CREDITS,
+                planName: 'Guest',
+                creationTimestamp: serverTimestamp(),
+            });
+
             toast({
                 title: 'Account Created!',
                 description: "Welcome to Magicpixa! Please login to continue.",
             });
             router.push('/login');
-        } else {
+
+        } catch (error: any) {
+            console.error("Signup failed:", error);
             toast({
                 title: 'Signup Failed',
-                description: result.error || 'An unknown error occurred.',
+                description: error.message || 'An unknown error occurred.',
                 variant: 'destructive',
             });
+        } finally {
             setIsLoading(false);
         }
     };
