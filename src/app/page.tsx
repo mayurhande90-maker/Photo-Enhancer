@@ -87,7 +87,7 @@ const pricingTiers = [
       'Standard processing speed',
     ],
     cta: 'Start for Free',
-    ctaPath: '/dashboard',
+    ctaPath: '/signup',
     popular: false,
   },
   {
@@ -100,7 +100,7 @@ const pricingTiers = [
       'Priority processing',
     ],
     cta: 'Go Pro',
-    ctaPath: '/dashboard', // Should lead to a checkout page in a real app
+    ctaPath: '/signup',
     popular: true,
   },
 ];
@@ -175,7 +175,7 @@ export default function Home() {
                     <Link href="/dashboard/enhance">Create Magic →</Link>
                   </Button>
                   <p className="text-sm text-muted-foreground">
-                    Get 10 free image credits. No sign-up needed.
+                    Try for free. No sign-up needed for your first image.
                   </p>
               </div>
             </div>

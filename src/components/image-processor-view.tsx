@@ -11,11 +11,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { BeforeAfterSlider } from './before-after-slider';
 import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Clock } from 'lucide-react';
+import { Terminal, Clock, User } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { useMonthlyQuota } from '@/hooks/use-monthly-quota';
+import { useCredit } from '@/hooks/use-credit';
 import { formatDistanceToNow } from 'date-fns';
+import { useUser } from '@/firebase';
 
 interface ImageProcessorViewProps {
   featureName: Feature['name'];
@@ -33,12 +34,13 @@ function fileToDataUri(file: File): Promise<string> {
 export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   const feature = features.find((f) => f.name === featureName);
   const { toast } = useToast();
-  const { credits, resetTime, isLoading: isQuotaLoading, consumeCredits } = useMonthlyQuota();
+  const { user, loading: isUserLoading } = useUser();
+  const { credits, resetTime, isLoading: isCreditLoading, consumeCredits } = useCredit();
 
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
   const [processedImageUrl, setProcessedImageUrl] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
 
@@ -58,14 +60,16 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
     if (credits < feature.creditCost) {
         toast({
-            title: 'Monthly Quota Exhausted',
-            description: `You don't have enough credits for this feature. Your credits will reset in ${resetTime ? formatDistanceToNow(resetTime) : 'a month'}.`,
+            title: 'Not Enough Credits',
+            description: user 
+                ? `You don't have enough credits for this. Your credits will reset in ${resetTime ? formatDistanceToNow(resetTime) : 'a month'}.`
+                : 'You have used your one free credit. Please sign up for more.',
             variant: 'destructive',
         });
         return;
     }
 
-    setIsLoading(true);
+    setIsProcessing(true);
     setError(null);
     setProgress(0);
 
@@ -83,14 +87,13 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
       const dataUri = await fileToDataUri(originalFile);
       const result = await feature.action(dataUri);
       setProcessedImageUrl(result.enhancedPhotoDataUri);
-      // Only deduct credits on success
       consumeCredits(feature.creditCost);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
     } finally {
       clearInterval(loadingInterval);
       setProgress(100);
-      setIsLoading(false);
+      setIsProcessing(false);
     }
   };
 
@@ -99,21 +102,30 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     setOriginalDataUri(null);
     setProcessedImageUrl(null);
     setError(null);
-    setIsLoading(false);
+    setIsProcessing(false);
     setProgress(0);
   };
   
   const renderQuotaExhaustedAlert = () => {
-    if (isQuotaLoading || credits >= feature.creditCost) return null;
+    if (isUserLoading || isCreditLoading || credits >= feature.creditCost) return null;
+
+    const alertTitle = user ? "Monthly Quota Reached" : "Free Credit Used";
+    const alertDescription = user ? (
+        <>
+            You have used all your free credits for this month. Your credits will reset in{' '}
+            {resetTime ? formatDistanceToNow(resetTime) : 'about a month'}.
+        </>
+    ) : (
+        <>
+            You have used your single free credit. Please <Link href="/signup" className="underline font-bold">sign up</Link> to get more credits.
+        </>
+    );
 
     return (
       <Alert variant="destructive" className="mt-4">
         <Clock className="h-4 w-4" />
-        <AlertTitle>Monthly Quota Reached</AlertTitle>
-        <AlertDescription>
-          You have used all your free credits for this month. Your credits will reset in {' '}
-          {resetTime ? formatDistanceToNow(resetTime) : 'about a month'}.
-        </AlertDescription>
+        <AlertTitle>{alertTitle}</AlertTitle>
+        <AlertDescription>{alertDescription}</AlertDescription>
       </Alert>
     );
   }
@@ -191,7 +203,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
               
               {renderResultView()}
 
-              {isLoading && (
+              {isProcessing && (
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">Processing... Please wait.</p>
                   <Progress value={progress} className="w-full" />
@@ -208,8 +220,8 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
               {renderQuotaExhaustedAlert()}
 
               <div className="flex flex-wrap gap-2">
-                {!isLoading && !processedImageUrl && (
-                  <Button onClick={handleProcessImage} disabled={isQuotaLoading || credits < feature.creditCost}>
+                {!isProcessing && !processedImageUrl && (
+                  <Button onClick={handleProcessImage} disabled={isUserLoading || isCreditLoading || credits < feature.creditCost}>
                     Process Image ({feature.creditCost} credit)
                   </Button>
                 )}
@@ -231,8 +243,22 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
         </CardContent>
       </Card>
       <div className="text-center text-sm text-muted-foreground">
-        You have {credits} free image credits left. <Link href="/signup" className="underline">Sign up</Link> to unlock more.
+        {isUserLoading ? (
+            <p>Loading credit information...</p>
+        ) : user ? (
+            <p>You have {credits} credits left for this month.</p>
+        ) : (
+            <p>
+                You have {credits} free image credit left.{' '}
+                <Link href="/signup" className="underline">
+                    Sign up
+                </Link>{' '}
+                to get 10 more.
+            </p>
+        )}
       </div>
     </div>
   );
 }
+
+    

@@ -11,4 +11,13 @@ export type Feature = {
   showBeforeAfterSlider: boolean;
 };
 
-// User-related types are no longer needed
+export interface UserProfile {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+  credits: number;
+  planName: string;
+}
+
+    
