@@ -366,10 +366,10 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
             </div>
         ) : (
              <div className="mt-8 flex justify-center">
-                <Card className="rounded-3xl w-full max-w-sm">
+                <Card className="rounded-3xl w-full max-w-md">
                   <CardContent className="p-6 space-y-4">
                       <h2 className="text-xl font-semibold text-center">Actions</h2>
-                        <div className="flex flex-col gap-3">
+                        <div className="flex flex-row justify-center gap-3">
                            <Button size="lg" asChild className="rounded-2xl h-12">
                                 <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
                                     <Download className="mr-2 h-5 w-5"/>
