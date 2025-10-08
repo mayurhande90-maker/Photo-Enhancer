@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
 import { useUser, useFirestore, useStorage } from '@/firebase';
 import { saveGeneratedImageClient } from '@/firebase/images';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ImageProcessorViewProps {
   featureName: Feature['name'];
