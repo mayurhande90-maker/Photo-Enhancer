@@ -8,7 +8,7 @@ import {
 import type { Feature } from '@/lib/types';
 import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star } from 'lucide-react';
 
-const placeholderAction = async () => ({ enhancedPhotoDataUri: '', creditCost: 0 });
+const placeholderAction = async () => ({ enhancedPhotoDataUri: '', creditCost: 1 });
 
 export const featureCategories = {
   IMAGE_STUDIO: 'Image Studio',
