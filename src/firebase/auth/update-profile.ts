@@ -1,4 +1,3 @@
-
 'use client';
 
 import { getAuth, updateProfile, type User } from "firebase/auth";
@@ -30,16 +29,16 @@ export async function updateUserProfile(
   const firestoreUpdates: { [key: string]: any } = {};
   const authUpdates: { displayName?: string; photoURL?: string } = {};
 
-  // 1. Handle text field updates
+  // Handle text field updates
   if (updates.displayName && updates.displayName !== user.displayName) {
     firestoreUpdates.displayName = updates.displayName;
     authUpdates.displayName = updates.displayName;
   }
-  if (updates.bio) firestoreUpdates.bio = updates.bio;
-  if (updates.profession) firestoreUpdates.profession = updates.profession;
+  // Only add bio and profession if they are explicitly provided in the updates
+  if (updates.bio !== undefined) firestoreUpdates.bio = updates.bio;
+  if (updates.profession !== undefined) firestoreUpdates.profession = updates.profession;
 
-
-  // 2. Handle profile picture upload from blob
+  // Handle profile picture upload from blob
   if (updates.photoBlob) {
     try {
       const compressedFile = await imageCompression(updates.photoBlob as File, {
@@ -62,7 +61,7 @@ export async function updateUserProfile(
     }
   }
 
-  // 3. Perform the updates if there are any changes
+  // Perform the updates if there are any changes
   try {
     const promises = [];
 
@@ -77,12 +76,8 @@ export async function updateUserProfile(
        promises.push(updateProfile(currentUser, authUpdates));
     }
     
-    // Wait for all updates to complete
     if (promises.length > 0) {
         await Promise.all(promises);
-    } else {
-        // No changes were made
-        return;
     }
 
   } catch (error) {

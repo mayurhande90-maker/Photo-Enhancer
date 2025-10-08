@@ -1,7 +1,6 @@
-
 'use client'
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -38,12 +37,18 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
   const storage = useStorage();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(user?.photoURL || null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   
   const [cropImage, setCropImage] = useState<string | null>(null);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
   const cropperRef = useRef<HTMLImageElement>(null);
   const [croppedBlob, setCroppedBlob] = useState<Blob | null>(null);
+
+  useEffect(() => {
+    if (user?.photoURL) {
+      setPhotoPreview(user.photoURL);
+    }
+  }, [user]);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -60,7 +65,7 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
     setIsSaving(true);
     try {
       await updateUserProfile(firestore, storage, user, {
-        displayName: data.displayName,
+        displayName: data.displayName || user.displayName || '',
         bio: data.bio,
         profession: data.profession,
         photoBlob: croppedBlob || undefined,
@@ -76,6 +81,7 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
       });
     } finally {
       setIsSaving(false);
+      setCroppedBlob(null);
     }
   };
 
