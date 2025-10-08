@@ -16,7 +16,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
 import { useUser, useFirestore } from '@/firebase';
-import { saveGeneratedImageClient } from '@/firebase/images';
+import { saveAIOutput } from '@/firebase/creations';
 import { Skeleton } from '@/components/ui/skeleton';
 import { analyzeImageAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
@@ -139,12 +139,10 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
       if (result.enhancedPhotoDataUri) {
          setProcessedImageUrl(result.enhancedPhotoDataUri);
          try {
-            await saveGeneratedImageClient(
-                firestore,
-                user.uid,
-                originalDataUri,
+            await saveAIOutput(
+                feature.name,
                 result.enhancedPhotoDataUri,
-                feature.name
+                'image/jpeg'
             );
              toast({
                 title: '✅ Image saved to "My Creations"!',
