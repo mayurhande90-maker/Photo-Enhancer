@@ -74,42 +74,42 @@ const testimonials = [
       city: 'Pune',
       quote: "Best AI app for creators! The background removal is flawless and saved me hours.",
       rating: 5,
-      avatar: 'https://i.pravatar.cc/150?img=60'
+      avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704d'
     },
     {
       name: 'Ritika Menon',
       city: 'Mumbai',
       quote: "My brand posters look like they were designed by a professional agency. Truly magical!",
       rating: 5,
-      avatar: 'https://i.pravatar.cc/150?img=33'
+      avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704e'
     },
     {
       name: 'Karan Patel',
       city: 'Ahmedabad',
       quote: "So easy and addictive. I've enhanced my entire family photo collection.",
       rating: 4,
-      avatar: 'https://i.pravatar.cc/150?img=14'
+      avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704f'
     },
     {
       name: 'Sneha Desai',
       city: 'Nashik',
       quote: "Turned my grainy, old black-and-white photo into a vibrant memory. I was speechless.",
       rating: 5,
-      avatar: 'https://i.pravatar.cc/150?img=32'
+      avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704a'
     },
     {
       name: 'Aditya Khanna',
       city: 'Delhi',
       quote: "The YouTube thumbnail creator is a game-changer. My click-through rate has visibly improved.",
       rating: 4,
-      avatar: 'https://i.pravatar.cc/150?img=68'
+      avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704b'
     },
     {
       name: 'Priya Singh',
       city: 'Bangalore',
       quote: "As a student, the notes generator is my secret weapon for exam prep. Highly recommended!",
       rating: 5,
-      avatar: 'https://i.pravatar.cc/150?img=49'
+      avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704c'
     }
 ]
 
@@ -155,6 +155,7 @@ function HeaderUserSection() {
     }
 
     if (user) {
+        const photoSrc = user.photoURL || (user.uid ? `https://i.pravatar.cc/150?u=${user.uid}` : '');
         return (
             <div className="flex items-center gap-2">
                  <Button asChild className="hidden sm:flex">
@@ -167,7 +168,7 @@ function HeaderUserSection() {
                             size="icon"
                             className="overflow-hidden rounded-full"
                         >
-                            <Image src={user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`} width={36} height={36} alt="User avatar" />
+                            {photoSrc ? <Image src={photoSrc} width={36} height={36} alt="User avatar" /> : <User className="h-5 w-5"/>}
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">

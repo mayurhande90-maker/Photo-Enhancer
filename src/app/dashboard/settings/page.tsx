@@ -13,6 +13,12 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export default function SettingsPage() {
   const { user, loading } = useUser();
 
+  const handleUpdateProfile = () => {
+    // Redirect to profile page for editing
+    window.location.href = '/dashboard/profile';
+  };
+
+
   if (loading) {
     return (
        <div className="space-y-6">
@@ -50,18 +56,18 @@ export default function SettingsPage() {
       <Card className="rounded-2xl">
         <CardHeader>
           <CardTitle>Profile</CardTitle>
-          <CardDescription>This is how others will see you on the site.</CardDescription>
+          <CardDescription>This is how others will see you on the site. Click below to edit.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="displayName">Display Name</Label>
-            <Input id="displayName" defaultValue={user.displayName || ''} />
+            <Input id="displayName" value={user.displayName || ''} readOnly />
           </div>
            <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" defaultValue={user.email || ''} disabled />
+            <Input id="email" type="email" value={user.email || ''} readOnly />
           </div>
-          <Button disabled>Update Profile</Button>
+          <Button onClick={handleUpdateProfile}>Edit Profile</Button>
         </CardContent>
       </Card>
 

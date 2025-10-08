@@ -20,7 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Award, Briefcase, Image as ImageIcon, MapPin, Loader2, Edit, Camera } from "lucide-react";
+import { Award, Briefcase, Image as ImageIcon, MapPin, Loader2, Edit, Camera, User } from "lucide-react";
 import Link from "next/link";
 import Image from 'next/image';
 
@@ -90,7 +90,7 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
         <div className="flex flex-col items-center gap-4">
             <div className="relative">
                 <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
-                    <AvatarImage src={photoPreview || `https://i.pravatar.cc/150?u=${user?.email}`} />
+                    <AvatarImage src={photoPreview || (user?.uid ? `https://i.pravatar.cc/150?u=${user.uid}`: '')} />
                     <AvatarFallback>{user?.displayName?.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <Label htmlFor="photo-upload" className="absolute bottom-1 right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-110">
@@ -249,6 +249,7 @@ export default function ProfilePage() {
   }
   
   const appUser = user as any;
+  const photoSrc = user.photoURL || (user.uid ? `https://i.pravatar.cc/150?u=${user.uid}` : '');
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
@@ -256,7 +257,7 @@ export default function ProfilePage() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                  <div className="flex flex-col sm:flex-row items-center gap-6">
                     <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
-                        <AvatarImage src={user.photoURL || `https://i.pravatar.cc/150?u=${user.email}`} />
+                        {photoSrc ? <AvatarImage src={photoSrc} /> : <User className="h-16 w-16"/>}
                         <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div className="space-y-1 text-center sm:text-left">

@@ -49,6 +49,7 @@ function HeaderUserSection() {
     }
 
     if (user) {
+        const photoSrc = user.photoURL || (user.uid ? `https://i.pravatar.cc/150?u=${user.uid}` : '');
         return (
             <div className="flex items-center gap-4">
                  <Button asChild className="hidden sm:flex rounded-2xl">
@@ -61,7 +62,7 @@ function HeaderUserSection() {
                             size="icon"
                             className="overflow-hidden rounded-full"
                         >
-                           <Image src={user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`} width={36} height={36} alt="User avatar" />
+                           {photoSrc ? <Image src={photoSrc} width={36} height={36} alt="User avatar" /> : <User className="h-5 w-5"/>}
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -70,7 +71,7 @@ function HeaderUserSection() {
                         <DropdownMenuItem onClick={() => router.push('/dashboard/creations')}>
                             My Creations
                         </DropdownMenuItem>
-                        <DropdownMenuItem disabled>My Profile</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>My Profile</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout}>
                             <LogOut className="mr-2 h-4 w-4" />
