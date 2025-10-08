@@ -318,6 +318,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
              )}
         </section>
         
+        {/* Section C: Post-Upload, Pre-Result Feedback and Actions */}
         {!isAwaitingUpload && !isResultReady && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch mt-8">
             <div className="min-h-[200px]">
@@ -366,7 +367,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
           </div>
         )}
 
-
+        {/* Section D: Final Actions Post-Result */}
         {isResultReady && (
           <div className="mt-8 flex justify-center">
             <Card className="w-full max-w-md rounded-3xl">
@@ -401,5 +402,3 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     </div>
   );
 }
-
-    
