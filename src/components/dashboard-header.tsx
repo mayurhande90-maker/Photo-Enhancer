@@ -2,10 +2,9 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { SidebarTrigger } from '@/components/ui/sidebar';
 import { features } from '@/lib/features';
 import { Button } from './ui/button';
-import { User, LogOut, CreditCard } from 'lucide-react';
+import { User, LogOut, CreditCard, PanelLeft, Settings } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
 import Link from 'next/link';
@@ -43,7 +42,7 @@ function HeaderUserSection() {
     if (isUserLoading) {
         return (
           <div className="flex items-center gap-4">
-            <Skeleton className="h-9 w-28" />
+            <Skeleton className="h-9 w-28 rounded-full" />
             <Skeleton className="h-9 w-9 rounded-full" />
           </div>
         );
@@ -52,6 +51,15 @@ function HeaderUserSection() {
     if (user) {
         return (
             <div className="flex items-center gap-4">
+                <Button variant="outline" className="hidden sm:flex items-center gap-2 rounded-full">
+                  <CreditCard className="h-4 w-4" /> 
+                   {isCreditLoading ? (
+                        <Skeleton className="h-4 w-6" />
+                    ) : (
+                        <span>{credits}</span>
+                    )}
+                   Credits
+                </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                          <Button
@@ -62,10 +70,10 @@ function HeaderUserSection() {
                             <User />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className="w-56">
                         <DropdownMenuLabel>{user.displayName || 'My Account'}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem disabled>
+                        <DropdownMenuItem disabled className="sm:hidden">
                             <div className="flex items-center justify-between w-full">
                                 <span className="flex items-center">
                                     <CreditCard className="mr-2 h-4 w-4" /> Credits
@@ -81,6 +89,10 @@ function HeaderUserSection() {
                             My Creations
                         </DropdownMenuItem>
                         <DropdownMenuItem disabled>My Profile</DropdownMenuItem>
+                         <DropdownMenuItem disabled>
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Settings</span>
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout}>
                             <LogOut className="mr-2 h-4 w-4" />
@@ -111,11 +123,14 @@ export function DashboardHeader() {
   const title = currentFeature?.name || 'Dashboard';
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-        <SidebarTrigger className="sm:hidden" />
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-lg sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+        <Button size="icon" variant="outline" className="sm:hidden">
+            <PanelLeft className="h-5 w-5" />
+            <span className="sr-only">Toggle Menu</span>
+        </Button>
       <h1 className="text-xl font-semibold tracking-tight hidden sm:block">{title}</h1>
       
-      <div className="flex items-center gap-4 ml-auto">
+      <div className="flex items-center gap-2 md:gap-4 ml-auto">
         <ThemeToggle />
         <HeaderUserSection />
       </div>

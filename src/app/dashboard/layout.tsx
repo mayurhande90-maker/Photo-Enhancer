@@ -1,4 +1,3 @@
-import { SidebarProvider } from '@/components/ui/sidebar';
 import { DashboardSidebar } from '@/components/dashboard-sidebar';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { Suspense } from 'react';
@@ -9,10 +8,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full flex-col bg-muted/40">
+    <div className="flex min-h-screen w-full flex-col bg-muted/40 font-body">
         <DashboardSidebar />
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-64">
+        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-72">
           <Suspense>
             <DashboardHeader />
           </Suspense>
@@ -21,6 +19,5 @@ export default function DashboardLayout({
           </main>
         </div>
       </div>
-    </SidebarProvider>
   );
 }

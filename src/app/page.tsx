@@ -6,54 +6,27 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Logo } from '@/components/icons';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Wand2, Scissors, Camera, Palette, Star, ChevronUp, User, LogOut } from 'lucide-react';
+import { User, LogOut, Star, ChevronUp, Check, Settings, Moon, Sun, Monitor } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useUser, useAuth } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
-
-const featureCards = [
-    {
-      icon: <Wand2 className="size-8 text-primary" />,
-      title: 'Photo Enhancement',
-      description: 'Fix dull lighting and flat colors—make your photos pop instantly.',
-      path: '/dashboard/enhance',
-    },
-    {
-      icon: <Scissors className="size-8 text-primary" />,
-      title: 'Background Vanisher',
-      description: 'Remove distractions. Keep only what matters.',
-      path: '/dashboard/background-removal',
-    },
-    {
-      icon: <Camera className="size-8 text-primary" />,
-      title: 'AI Photo Studio',
-      description: 'Drop your raw product pic, and watch AI build a marketing-ready image.',
-      path: '/dashboard/studio',
-    },
-    {
-      icon: <Palette className="size-8 text-primary" />,
-      title: 'Retro to Real',
-      description: 'Bring old black-and-white memories to life with one tap.',
-      path: '/dashboard/colorize',
-    },
-];
+import { features } from '@/lib/features';
 
 const pricingTiers = [
   {
-    name: 'Free',
+    name: 'Free — Discover',
     price: '₹0',
     priceSuffix: '/ month',
     features: [
-      '10 image enhancements per month',
-      'Access to all features',
+      '10 credits/month',
+      'Access to basic tools',
+      'Watermark on exports',
       'Standard processing speed',
     ],
     cta: 'Start for Free',
@@ -61,45 +34,80 @@ const pricingTiers = [
     popular: false,
   },
   {
-    name: 'Pro',
-    price: '₹499',
+    name: 'Pro — Create More',
+    price: '₹299',
+    yearlyPrice: '₹2,999',
     priceSuffix: '/ month',
     features: [
-      '200 image enhancements per month',
-      'All features unlocked',
+      '100 credits/month',
+      'No watermark',
+      'Access to premium templates',
       'Priority processing',
     ],
-    cta: 'Go Pro',
-    ctaPath: 'https://rzp.io/rzp/r90n01c',
+    cta: 'Start Free Trial',
+    ctaPath: 'https://rzp.io/l/magicpixa-pro',
     popular: true,
+  },
+  {
+    name: 'Premium+ — Live Fully',
+    price: '₹499',
+    yearlyPrice: '₹4,999',
+    priceSuffix: '/ month',
+    features: [
+      'Unlimited credits',
+      'Exclusive new AI tools',
+      'Dedicated support',
+      'Highest priority queue',
+    ],
+    cta: 'Start Free Trial',
+    ctaPath: 'https://rzp.io/l/magicpixa-premium',
+    popular: false,
   },
 ];
 
 const testimonials = [
     {
-      name: 'Aarav Mehta',
-      title: 'E-commerce Seller',
-      quote: "Magicpixa made my product photos look like they were shot in a high-end studio!",
+      name: 'Aarav Sharma',
+      city: 'Pune',
+      quote: "Best AI app for creators! The background removal is flawless and saved me hours.",
       rating: 5,
+      avatar: 'https://i.pravatar.cc/150?img=1'
     },
     {
-      name: 'Priya Deshmukh',
-      title: 'Genealogy Enthusiast',
-      quote: "I revived my old family album in color. So easy, it’s addictive!",
-      rating: 4,
-    },
-    {
-      name: 'Rohan Nair',
-      title: 'Photographer',
-      quote: "Background removal is crazy fast. The ‘Enhance’ button literally saves my photos.",
+      name: 'Ritika Menon',
+      city: 'Mumbai',
+      quote: "My brand posters look like they were designed by a professional agency. Truly magical!",
       rating: 5,
+      avatar: 'https://i.pravatar.cc/150?img=5'
     },
     {
-      name: 'Sneha Patil',
-      title: 'Social Media Manager',
-      quote: "Simple, smart, and surprisingly magical. Definitely my go-to AI editor.",
+      name: 'Karan Patel',
+      city: 'Ahmedabad',
+      quote: "So easy and addictive. I've enhanced my entire family photo collection.",
       rating: 4,
+      avatar: 'https://i.pravatar.cc/150?img=7'
     },
+    {
+      name: 'Sneha Desai',
+      city: 'Nashik',
+      quote: "Turned my grainy, old black-and-white photo into a vibrant memory. I was speechless.",
+      rating: 5,
+      avatar: 'https://i.pravatar.cc/150?img=8'
+    },
+    {
+      name: 'Aditya Khanna',
+      city: 'Delhi',
+      quote: "The YouTube thumbnail creator is a game-changer. My click-through rate has visibly improved.",
+      rating: 4,
+      avatar: 'https://i.pravatar.cc/150?img=12'
+    },
+    {
+      name: 'Priya Singh',
+      city: 'Bangalore',
+      quote: "As a student, the notes generator is my secret weapon for exam prep. Highly recommended!",
+      rating: 5,
+      avatar: 'https://i.pravatar.cc/150?img=20'
+    }
 ]
 
 function HeaderUserSection() {
@@ -128,15 +136,19 @@ function HeaderUserSection() {
     
     if (isUserLoading) {
       return (
-        <div className="flex items-center gap-4">
-          <Skeleton className="h-9 w-24" />
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-9 w-24 rounded-full" />
+          <Skeleton className="h-9 w-9 rounded-full" />
         </div>
       );
     }
 
     if (user) {
         return (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+                 <Button asChild className="hidden sm:flex">
+                    <Link href="/dashboard">Go to App</Link>
+                </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button
@@ -147,13 +159,17 @@ function HeaderUserSection() {
                             <User />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className="w-56">
                         <DropdownMenuLabel>{user.displayName || 'My Account'}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.push('/dashboard/creations')}>
                             My Creations
                         </DropdownMenuItem>
                         <DropdownMenuItem disabled>My Profile</DropdownMenuItem>
+                         <DropdownMenuItem disabled>
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Settings</span>
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout}>
                             <LogOut className="mr-2 h-4 w-4" />
@@ -166,12 +182,12 @@ function HeaderUserSection() {
     }
 
     return (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
             <Button variant="ghost" asChild>
                 <Link href="/login">Login</Link>
             </Button>
             <Button asChild>
-                <Link href="/signup">Sign Up</Link>
+                <Link href="/signup">Sign Up Free</Link>
             </Button>
         </div>
     );
@@ -181,10 +197,7 @@ export default function Home() {
   const { user } = useUser();
   const router = useRouter();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
-  
-  const colorizeFeature = {
-    imageAfter: PlaceHolderImages.find((img) => img.id === 'feature-colorize-after')!,
-  }
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
   useEffect(() => {
     const checkScroll = () => {
@@ -199,15 +212,10 @@ export default function Home() {
     return () => window.removeEventListener('scroll', checkScroll);
   }, []);
 
-  const handleGoProClick = () => {
+  const handleGoProClick = (path: string) => {
     if (user) {
-      // User is logged in, redirect to the payment link.
-      const proTier = pricingTiers.find(p => p.name === 'Pro');
-      if (proTier) {
-        window.location.href = proTier.ctaPath;
-      }
+      window.location.href = path;
     } else {
-      // User is not logged in, redirect to signup.
       router.push('/signup');
     }
   };
@@ -220,192 +228,203 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background text-foreground">
-        <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(#29abe255_1px,transparent_1px)] [background-size:32px_32px]"></div>
+    <div className="flex min-h-dvh flex-col bg-background text-foreground font-body">
+      <div className="absolute inset-0 -z-10 h-full w-full bg-background dark:bg-navy bg-[radial-gradient(theme(colors.border)_1px,transparent_1px)] dark:bg-[radial-gradient(theme(colors.blue.900)_1px,transparent_1px)] [background-size:32px_32px]"></div>
 
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-16 items-center px-4 md:px-6">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Logo className="h-6 w-6" />
-            <span className="font-bold">Magicpixa</span>
+            <Logo className="h-7 w-7 bg-gradient-to-r from-brand-primary to-brand-secondary text-transparent bg-clip-text" />
+            <span className="font-bold text-lg tracking-wide">Magicpixa</span>
           </Link>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-            <Link href="/" className="transition-colors hover:text-foreground/80 text-foreground">Home</Link>
-            <Link href="#features" className="transition-colors hover:text-foreground/80 text-foreground/60">Features</Link>
-            <Link href="#pricing" className="transition-colors hover:text-foreground/80 text-foreground/60">Pricing</Link>
+            <Link href="#features" className="transition-colors hover:text-foreground/80 text-foreground/70">Features</Link>
+            <Link href="#pricing" className="transition-colors hover:text-foreground/80 text-foreground/70">Pricing</Link>
+             <Link href="#testimonials" className="transition-colors hover:text-foreground/80 text-foreground/70">Reviews</Link>
+            <Link href="/about" className="transition-colors hover:text-foreground/80 text-foreground/70">About</Link>
           </nav>
-          <div className="flex flex-1 items-center justify-end space-x-4">
+          <div className="flex flex-1 items-center justify-end space-x-2 md:space-x-4">
             <HeaderUserSection />
             <ThemeToggle />
           </div>
         </div>
       </header>
       <main className="flex-1">
-        <section className="container grid min-h-[calc(100dvh-3.5rem)] items-center gap-6 pb-8 pt-10 md:py-20">
-          <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-2">
-            <div className="flex flex-col items-start gap-4">
-              <h1 className="text-4xl font-extrabold leading-tight tracking-tighter md:text-5xl lg:text-6xl">
-                Transform Any Photo Into Pure Magic ✨
-              </h1>
-              <p className="max-w-[700px] text-lg text-muted-foreground">
-                 Enhance, stylize, remove backgrounds, and colorize — all powered by AI.
-              </p>
-              <div className="flex flex-wrap items-start gap-4">
-                  <Button asChild size="lg">
-                    <Link href="/dashboard">Create Magic</Link>
-                  </Button>
-                  <Button asChild size="lg" variant="outline">
-                    <Link href="#features">Explore Features</Link>
-                  </Button>
-              </div>
-            </div>
-            <div className="relative w-full h-[450px] rounded-lg overflow-hidden border shadow-lg group">
-                <Image
-                    src={colorizeFeature.imageAfter.imageUrl}
-                    alt={colorizeFeature.imageAfter.description}
-                    fill
-                    className="object-cover"
-                    priority
-                />
-                 <Badge variant="secondary" className="absolute top-4 left-4 text-lg transition-all duration-300 ease-in-out">
-                    AI Magic at Work
-                </Badge>
+        <section className="relative container grid min-h-[calc(90dvh-4rem)] items-center gap-6 pb-8 pt-10 md:py-20">
+          <div className="absolute inset-0 -z-10 overflow-hidden">
+             <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-brand-primary/20 rounded-full blur-3xl animate-pulse"></div>
+             <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-brand-secondary/20 rounded-full blur-3xl animate-pulse animation-delay-2000"></div>
+          </div>
+          <div className="flex flex-col items-center gap-6 text-center">
+            <h1 className="text-4xl font-extrabold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline bg-gradient-to-r from-brand-primary to-brand-secondary text-transparent bg-clip-text animate-shimmer bg-[length:200%_auto]">
+              Your Everyday AI Studio
+            </h1>
+            <p className="max-w-[700px] text-lg text-muted-foreground sm:text-xl">
+               Create. Enhance. Imagine. Transform your ideas into stunning visuals with a single click.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+                <Button asChild size="lg" className="rounded-2xl transition-transform hover:scale-105">
+                  <Link href="/dashboard">Start Creating Free</Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="rounded-2xl transition-transform hover:scale-105">
+                  <Link href="#pricing">View Plans</Link>
+                </Button>
             </div>
           </div>
         </section>
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
+
+        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-card/50">
           <div className="container space-y-12 px-4 md:px-6">
             <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
-              <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-5xl">What You Can Do with Magicpixa</h2>
+              <h2 className="font-bold text-3xl leading-[1.1] sm:text-4xl md:text-5xl font-headline">What You Can Do</h2>
               <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-                Four tools. Endless creative power.
+                Explore a universe of creative possibilities. Your next masterpiece is just a click away.
               </p>
             </div>
-            <div className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-2 md:gap-12 lg:max-w-5xl lg:grid-cols-4">
-              {featureCards.map((feature) => (
-                <Link href={feature.path} key={feature.title} className="h-full">
-                  <Card className="h-full flex flex-col transform-gpu transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20">
-                    <CardHeader>
-                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                        {feature.icon}
+            <div className="mx-auto grid items-start gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {features.slice(0,20).map((feature) => (
+                <Link href={feature.path} key={feature.name} className="h-full">
+                  <Card className="h-full flex flex-col rounded-3xl transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-lg hover:shadow-brand-accent/20 group">
+                    <CardHeader className="items-center text-center">
+                       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 text-brand-primary group-hover:from-brand-primary/30 group-hover:to-brand-secondary/30">
+                        <feature.icon className="h-8 w-8" />
                       </div>
-                      <CardTitle>{feature.title}</CardTitle>
-                      <CardDescription>{feature.description}</CardDescription>
+                      <CardTitle className="text-base font-semibold">{feature.name}</CardTitle>
+                      <CardDescription className="text-xs">{feature.description}</CardDescription>
                     </CardHeader>
-                    <CardContent className="flex-1 flex flex-col justify-end">
-                        <Button variant="link" className="p-0 mt-auto justify-start">
-                            {feature.title === 'Background Vanisher' && 'Erase & Shine'}
-                            {feature.title === 'Photo Enhancement' && 'Enhance Now'}
-                            {feature.title === 'AI Photo Studio' && 'Launch Studio'}
-                            {feature.title === 'Retro to Real' && 'Colorize It'}
-                             →
-                        </Button>
+                    <CardContent className="mt-auto flex justify-center pb-4">
+                        <Button variant="link" size="sm" className="text-brand-accent group-hover:underline">Try Now →</Button>
                     </CardContent>
                   </Card>
                 </Link>
               ))}
             </div>
-             <div className="text-center">
-                <p className="text-muted-foreground">All AI features are powered by our custom Magic Engine — built to deliver speed, detail, and zero lag.</p>
-            </div>
           </div>
         </section>
+
         <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
              <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
-                <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-5xl">Loved by Creators Everywhere</h2>
+                <h2 className="font-bold text-3xl leading-[1.1] sm:text-4xl md:text-5xl font-headline">Loved by Creators Across India 🇮🇳</h2>
                 <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-                    Real users. Real results.
+                    Real stories from creators who transformed their workflow with Magicpixa.
                 </p>
             </div>
-            <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {testimonials.map((testimonial) => (
-                  <Card key={testimonial.name} className="flex flex-col justify-between">
-                      <CardHeader>
-                          <div className="flex items-center mb-2">
-                              {[...Array(testimonial.rating)].map((_, i) => (
-                                  <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                  <Card key={testimonial.name} className="flex flex-col justify-between rounded-3xl p-6 transition-transform hover:-translate-y-1">
+                      <CardContent className="p-0">
+                          <div className="flex items-center mb-4">
+                              {[...Array(5)].map((_, i) => (
+                                  <Star key={i} className={cn("w-5 h-5", i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground/50")} />
                               ))}
                           </div>
-                          <CardDescription className="text-base text-foreground">"{testimonial.quote}"</CardDescription>
+                          <blockquote className="text-base">"{testimonial.quote}"</blockquote>
+                      </CardContent>
+                      <CardHeader className="flex-row items-center gap-4 p-0 pt-6">
+                          <Image src={testimonial.avatar} alt={testimonial.name} width={48} height={48} className="rounded-full" />
+                          <div>
+                            <p className="font-semibold">{testimonial.name}</p>
+                            <p className="text-sm text-muted-foreground">{testimonial.city}</p>
+                          </div>
                       </CardHeader>
-                      <div className="p-6 pt-0">
-                          <p className="font-semibold">{testimonial.name}</p>
-                          <p className="text-sm text-muted-foreground">{testimonial.title}</p>
-                      </div>
                   </Card>
               ))}
             </div>
           </div>
         </section>
-        <section id="pricing" className="container py-8 md:py-12 lg:py-24 bg-muted/40">
-          <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
-            <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-5xl">Choose Your Magic</h2>
-             <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-              Simple plans built for creators.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-8 md:grid-cols-2 max-w-2xl mx-auto">
-            {pricingTiers.map((tier) => (
-              <Card key={tier.name} className={`flex flex-col bg-card transform-gpu transition-all duration-300 ease-out hover:scale-105 ${tier.popular ? 'border-primary shadow-2xl shadow-primary/20' : 'hover:shadow-lg'}`}>
-                <div className="flex flex-col flex-1 p-6">
-                  <CardHeader className="p-0">
-                    <CardTitle className="flex justify-between items-baseline">
+
+        <section id="pricing" className="w-full py-12 md:py-24 lg:py-32 bg-card/50">
+          <div className="container space-y-12 px-4 md:px-6">
+            <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
+              <h2 className="font-bold text-3xl leading-[1.1] sm:text-4xl md:text-5xl font-headline">Choose Your Plan</h2>
+               <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+                Start free, upgrade anytime. Simple plans for every creator.
+              </p>
+            </div>
+             <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-3 max-w-5xl mx-auto">
+              {pricingTiers.map((tier) => (
+                <Card key={tier.name} className={cn(
+                  'flex flex-col rounded-3xl border-2 transition-all duration-300',
+                  tier.popular ? 'border-brand-accent shadow-2xl shadow-brand-accent/20 scale-105' : 'border-border'
+                )}>
+                  <CardHeader className="p-6">
+                    <CardTitle className="flex justify-between items-center font-headline">
                       {tier.name}
-                      {tier.popular && <span className="text-sm font-medium text-primary">Most Popular</span>}
+                      {tier.popular && <div className="text-xs font-medium text-brand-accent bg-brand-accent/10 px-3 py-1 rounded-full">POPULAR</div>}
                     </CardTitle>
-                    <CardDescription>
-                      <span className="text-3xl font-bold text-foreground">{tier.price}</span>
-                      <span className="text-muted-foreground">{tier.priceSuffix}</span>
+                     <CardDescription className="pt-2">
+                      <span className="text-4xl font-bold text-foreground">{billingCycle === 'monthly' ? tier.price : tier.yearlyPrice}</span>
+                      <span className="text-muted-foreground">{billingCycle === 'monthly' ? '/ month' : '/ year'}</span>
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="flex flex-col flex-1 p-0 pt-6">
-                    <ul className="space-y-3 mb-6">
+                  <CardContent className="flex flex-col flex-1 p-6 pt-0">
+                    <ul className="space-y-3 mb-8 flex-1">
                       {tier.features.map((feature) => (
-                        <li key={feature} className="flex items-center">
-                          {tier.name === 'Free' ? '✨' : '💎'}
-                          <span className="ml-2 text-muted-foreground">{feature}</span>
+                        <li key={feature} className="flex items-start">
+                          <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 shrink-0" />
+                          <span className="text-muted-foreground">{feature}</span>
                         </li>
                       ))}
                     </ul>
                     <Button
-                      onClick={tier.name === 'Pro' ? handleGoProClick : () => router.push(tier.ctaPath)}
-                      className="w-full mt-auto"
+                      onClick={() => handleGoProClick(tier.ctaPath)}
+                      className={cn(
+                        "w-full rounded-2xl text-base py-6 transition-all",
+                        tier.popular && "bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-lg hover:shadow-brand-primary/50"
+                      )}
+                      variant={tier.popular ? "default" : "outline"}
                     >
                       {tier.cta}
                     </Button>
                   </CardContent>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              ))}
+            </div>
+             <div className="text-center mt-4">
+                <p className="text-sm text-muted-foreground">Cancel anytime. No hidden fees. 7-day free trial on Pro plans.</p>
+            </div>
           </div>
-            <div className="text-center mt-8">
-                <p className="text-sm text-muted-foreground">Upgrade anytime. Cancel anytime. Magic stays forever.</p>
+        </section>
+
+        <section className="w-full py-16 md:py-24 lg:py-32">
+            <div className="container">
+                <div className="rounded-3xl bg-gradient-to-r from-brand-primary to-brand-secondary p-8 md:p-12 text-center text-primary-foreground">
+                     <h2 className="font-bold text-3xl leading-[1.1] sm:text-4xl md:text-5xl font-headline">Bring Your Imagination to Life</h2>
+                     <p className="max-w-2xl mx-auto mt-4 text-lg text-primary-foreground/80">
+                        Join 10,000+ creators enhancing their world with AI. Start your journey today.
+                    </p>
+                    <Button asChild size="lg" variant="secondary" className="mt-8 rounded-2xl text-lg px-8 py-6 transition-transform hover:scale-105">
+                        <Link href="/dashboard">Start Creating Now (Free)</Link>
+                    </Button>
+                </div>
             </div>
         </section>
+
       </main>
-      <footer className="border-t">
-        <div className="container py-12">
-            <div className="grid gap-8 md:grid-cols-3">
-                 <div>
+
+      <footer className="border-t bg-card/50">
+        <div className="container py-12 px-4 md:px-6">
+            <div className="grid gap-8 md:grid-cols-4">
+                 <div className="col-span-1 md:col-span-2">
                     <div className="flex items-center gap-2 mb-2">
-                        <Logo className="h-6 w-6" />
+                        <Logo className="h-7 w-7 bg-gradient-to-r from-brand-primary to-brand-secondary text-transparent bg-clip-text" />
                         <span className="font-bold text-lg">Magicpixa</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">Your photo’s best friend. Powered by AI.</p>
+                    <p className="text-sm text-muted-foreground max-w-xs">Your Everyday AI Studio — Create. Enhance. Imagine.</p>
                 </div>
                 <div>
-                    <h4 className="font-semibold mb-2">Quick Links</h4>
-                    <nav className="flex flex-col gap-1 text-sm text-muted-foreground">
-                        <Link href="/" className="hover:text-foreground">Home</Link>
+                    <h4 className="font-semibold mb-4">Quick Links</h4>
+                    <nav className="flex flex-col gap-2 text-sm text-muted-foreground">
                         <Link href="#features" className="hover:text-foreground">Features</Link>
                         <Link href="#pricing" className="hover:text-foreground">Pricing</Link>
                         <Link href="/about" className="hover:text-foreground">About Us</Link>
+                        <Link href="/dashboard" className="hover:text-foreground">Dashboard</Link>
                     </nav>
                 </div>
                 <div>
-                    <h4 className="font-semibold mb-2">Legal</h4>
-                    <nav className="flex flex-col gap-1 text-sm text-muted-foreground">
+                    <h4 className="font-semibold mb-4">Legal</h4>
+                    <nav className="flex flex-col gap-2 text-sm text-muted-foreground">
                         <Link href="/terms" className="hover:text-foreground">Terms & Conditions</Link>
                         <Link href="/policy" className="hover:text-foreground">Privacy Policy</Link>
                         <Link href="/cancellation-refunds" className="hover:text-foreground">Cancellation & Refund Policy</Link>
@@ -413,17 +432,18 @@ export default function Home() {
                 </div>
             </div>
             <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-                © 2025 Magicpixa. All rights reserved.
+                © {new Date().getFullYear()} Magicpixa. All Rights Reserved.
             </div>
         </div>
       </footer>
+
       <Button
         onClick={scrollToTop}
         className={cn(
-          "fixed bottom-4 right-4 rounded-full p-2 h-12 w-12 transition-opacity duration-300",
+          "fixed bottom-6 right-6 rounded-full p-2 h-12 w-12 transition-opacity duration-300 z-50",
+          "bg-gradient-to-tr from-brand-primary to-brand-secondary text-white",
           showScrollToTop ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
-        variant="outline"
         size="icon"
         aria-label="Scroll to top"
       >

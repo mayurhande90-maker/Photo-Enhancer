@@ -1,6 +1,6 @@
 import type {Config} from 'tailwindcss';
 
-export default {
+const config = {
   darkMode: ['class'],
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -10,18 +10,22 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: '2rem',
+      padding: '1rem',
       screens: {
         '2xl': '1400px',
       },
     },
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
-        code: ['monospace'],
+        body: ['var(--font-inter)', 'sans-serif'],
+        headline: ['var(--font-poppins)', 'sans-serif'],
+        code: ['var(--font-manrope)', 'monospace'],
       },
       colors: {
+        navy: '#0F172A',
+        'brand-primary': '#6C63FF',
+        'brand-secondary': '#00D4FF',
+        'brand-accent': '#818CF8',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -74,9 +78,13 @@ export default {
         },
       },
       borderRadius: {
+        '4xl': '2rem',
+        '3xl': '1.5rem',
+        '2xl': '1rem',
+        xl: 'calc(var(--radius) + 4px)',
         lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        md: 'calc(var(--radius) - 4px)',
+        sm: 'calc(var(--radius) - 8px)',
       },
       keyframes: {
         'accordion-down': {
@@ -95,12 +103,19 @@ export default {
             height: '0',
           },
         },
+        'shimmer': {
+          '0%, 100%': { 'background-position': '0% 50%' },
+          '50%': { 'background-position': '100% 50%' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'shimmer': 'shimmer 4s ease-in-out infinite',
       },
     },
   },
   plugins: [require('tailwindcss-animate')],
 } satisfies Config;
+
+export default config;
