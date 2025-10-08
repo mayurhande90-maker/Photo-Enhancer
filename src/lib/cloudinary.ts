@@ -39,9 +39,17 @@ export async function uploadToCloudinary(file: File, folder: string = "uploads")
     );
 
     if (!res.ok) {
-        const errorData = await res.json();
-        console.error("Cloudinary upload failed with response:", errorData);
-        throw new Error(`Upload failed: ${errorData.error.message}`);
+        let errorMessage = "Upload failed due to an unknown error.";
+        try {
+            const errorData = await res.json();
+            console.error("Cloudinary upload failed with response:", errorData);
+            if (errorData?.error?.message) {
+              errorMessage = `Upload failed: ${errorData.error.message}`;
+            }
+        } catch (e) {
+            console.error("Could not parse Cloudinary error response:", e);
+        }
+        throw new Error(errorMessage);
     }
     
     const data = await res.json();
@@ -50,7 +58,7 @@ export async function uploadToCloudinary(file: File, folder: string = "uploads")
 
   } catch (error) {
     console.error("Cloudinary upload error:", error);
-    showToast("⚠️ Failed to upload image");
+    showToast(`⚠️ ${error instanceof Error ? error.message : 'Failed to upload image'}`);
     throw error;
   }
 }
