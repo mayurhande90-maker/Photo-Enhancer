@@ -34,7 +34,6 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
   const { user } = useUser();
   const auth = useAuth();
   const firestore = useFirestore();
-  const storage = useStorage();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -60,14 +59,14 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
         });
         setPhotoPreview(user.photoURL || null);
     }
-  }, [user, open, form]);
+  }, [user, form]);
 
   const onSubmit = async (data: ProfileFormValues) => {
-    if (!user || !auth || !firestore || !storage) return;
+    if (!user || !auth || !firestore ) return;
 
     setIsSaving(true);
     try {
-      await updateUserProfile(auth, firestore, storage, user, {
+      await updateUserProfile(auth, firestore, user, {
         ...data,
         photoBlob: croppedBlob || undefined,
       });

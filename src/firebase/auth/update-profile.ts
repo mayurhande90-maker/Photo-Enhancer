@@ -12,10 +12,10 @@ interface ProfileUpdates {
 }
 
 export async function updateUserProfile(
-    auth: Auth,
-    firestore: Firestore,
-    user: User,
-    updates: ProfileUpdates
+  auth: Auth,
+  firestore: Firestore,
+  user: User,
+  updates: ProfileUpdates
 ): Promise<void> {
   if (!user || !auth.currentUser) {
     throw new Error("No user logged in to update profile.");
