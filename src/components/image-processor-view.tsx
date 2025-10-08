@@ -148,7 +148,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                 firestore,
                 storage,
                 user.uid,
-                dataUri,
+                dataUri, // original image
                 result.enhancedPhotoDataUri,
                 feature.name
             );
@@ -281,8 +281,8 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     );
   }
 
-  const isResultReady = !!processedImageUrl;
   const isAwaitingUpload = !originalDataUri;
+  const isResultReady = !!processedImageUrl;
 
   return (
     <div className="space-y-8 animate-fade-in-up">
@@ -308,21 +308,17 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                 <div className="flex justify-center items-center h-48">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
+             ) : isAwaitingUpload ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <FileUploader onFileSelect={handleFileSelect} />
+                  <BeforeUploadState />
+                </div>
              ) : (
-                <>
-                  {isAwaitingUpload && (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                      <FileUploader onFileSelect={handleFileSelect} />
-                      <BeforeUploadState />
-                    </div>
-                  )}
-
-                  {!isAwaitingUpload && renderResultView()}
-                </>
+                renderResultView()
              )}
         </section>
         
-        {!isResultReady && !isAwaitingUpload && (
+        {!isAwaitingUpload && !isResultReady && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch mt-8">
             <div className="min-h-[200px]">
               {isProcessing ? (
@@ -372,25 +368,38 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
 
 
         {isResultReady && (
-          <div className="flex justify-center mt-8">
-            <Card className="rounded-3xl w-full max-w-md">
-                <CardContent className="p-4">
-                  <div className="flex flex-row justify-center items-center gap-4">
-                      <Button variant="outline" className="flex-1 rounded-2xl h-12" onClick={handleReset}>
-                          <RefreshCw className="mr-2 h-5 w-5" />
-                          Generate Another
-                      </Button>
-                      <Button size="lg" asChild className="flex-1 rounded-2xl h-12">
-                        <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
-                            <Download className="mr-2 h-5 w-5"/>
-                            Download Image
-                        </a>
-                    </Button>
-                  </div>
-                </CardContent>
+          <div className="mt-8 flex justify-center">
+            <Card className="w-full max-w-md rounded-3xl">
+              <CardContent className="p-4">
+                <div className="flex flex-row items-center justify-center gap-4">
+                  <Button
+                    variant="outline"
+                    className="h-12 flex-1 rounded-2xl"
+                    onClick={handleReset}
+                  >
+                    <RefreshCw className="mr-2 h-5 w-5" />
+                    Generate Another
+                  </Button>
+                  <Button
+                    size="lg"
+                    asChild
+                    className="h-12 flex-1 rounded-2xl"
+                  >
+                    <a
+                      href={processedImageUrl!}
+                      download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}
+                    >
+                      <Download className="mr-2 h-5 w-5" />
+                      Download Image
+                    </a>
+                  </Button>
+                </div>
+              </CardContent>
             </Card>
           </div>
         )}
     </div>
   );
 }
+
+    
