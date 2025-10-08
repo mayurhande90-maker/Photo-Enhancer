@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent } from "@/components/ui/dropdown-menu";
-import { ImageIcon, Loader2, Download, Trash2, Search, Filter, Heart, Plus } from 'lucide-react';
+import { ImageIcon, Loader2, Download, Trash2, Search, Heart, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 function CreationCard({ image }: { image: GeneratedImage }) {
@@ -131,17 +131,6 @@ export default function CreationsPage() {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input placeholder="Search creations..." className="pl-9 w-full rounded-2xl" disabled />
                     </div>
-                     <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="rounded-2xl">
-                                <Filter className="mr-2 h-4 w-4" />
-                                Filter
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            {/* Add filter options here */}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
                 </div>
             </div>
             
