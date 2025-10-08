@@ -44,20 +44,25 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
   const cropperRef = useRef<HTMLImageElement>(null);
   const [croppedBlob, setCroppedBlob] = useState<Blob | null>(null);
 
-  useEffect(() => {
-    if (user?.photoURL) {
-      setPhotoPreview(user.photoURL);
-    }
-  }, [user]);
-
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      displayName: user?.displayName || "",
-      bio: (user as any)?.bio || "",
-      profession: (user as any)?.profession || "",
+      displayName: "",
+      bio: "",
+      profession: "",
     },
   });
+
+  useEffect(() => {
+    if (user) {
+        form.reset({
+            displayName: user.displayName || "",
+            bio: (user as any).bio || "",
+            profession: (user as any).profession || "",
+        });
+        setPhotoPreview(user.photoURL || null);
+    }
+  }, [user, form]);
 
   const onSubmit = async (data: ProfileFormValues) => {
     if (!user || !firestore || !storage) return;
