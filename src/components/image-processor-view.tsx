@@ -31,26 +31,12 @@ function fileToDataUri(file: File): Promise<string> {
   });
 }
 
-const BeforeUploadState = ({ onSampleSelect, featureName }: { onSampleSelect: (file: File) => void; featureName: string }) => {
-    
-    const handleSample = async () => {
-        const sampleImage = PlaceHolderImages.find(img => img.id === 'feature-enhance-after');
-        if (sampleImage) {
-            const response = await fetch(sampleImage.imageUrl);
-            const blob = await response.blob();
-            const file = new File([blob], "sample.jpg", { type: "image/jpeg" });
-            onSampleSelect(file);
-        }
-    };
-    
+const BeforeUploadState = () => {
     return (
         <div className="text-center p-8 rounded-3xl border-2 border-dashed border-border mt-6 bg-card/50">
             <Lightbulb className="mx-auto h-10 w-10 text-yellow-400 mb-4" />
             <h3 className="font-semibold text-lg text-foreground">Tip: Upload a clear, front-facing photo for best results.</h3>
             <p className="text-muted-foreground text-sm mt-1">Supported formats: JPG, PNG, WEBP (max 20MB).</p>
-            <div className="flex items-center justify-center gap-4">
-                <Button variant="outline" className="mt-4 rounded-xl" onClick={handleSample}>Try Sample Image</Button>
-            </div>
         </div>
     )
 }
@@ -345,7 +331,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                 {/* Smart Feedback Zone */}
                 {!processedImageUrl && (
                   <>
-                    {!originalFile && <BeforeUploadState onSampleSelect={handleFileSelect} featureName={feature.name}/>}
+                    {!originalFile && <BeforeUploadState />}
                     {isProcessing && <ProcessingState progress={progress} featureName={feature.name} />}
                     {originalFile && !isProcessing && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
                   </>
@@ -403,5 +389,4 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     </div>
   );
 }
-
     
