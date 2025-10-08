@@ -6,11 +6,20 @@ import {
   colorizePhotoAction,
 } from '@/app/actions';
 import type { Feature } from '@/lib/types';
-import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet } from 'lucide-react';
+import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star } from 'lucide-react';
 
 const placeholderAction = async () => ({ enhancedPhotoDataUri: '' });
 
+export const featureCategories = {
+  IMAGE_STUDIO: 'Image Studio',
+  CONTENT_BRAND: 'Content & Brand',
+  SMART_OFFICE: 'Smart Office',
+  PERSONAL_MAGIC: 'Personal Magic',
+  PREMIUM: 'Premium & Coming Soon',
+};
+
 export const features: Feature[] = [
+  // Image Studio
   {
     name: 'Photo Enhancement',
     description: 'Fix lighting & sharpen details instantly.',
@@ -19,6 +28,7 @@ export const features: Feature[] = [
     creditCost: 1,
     action: enhancePhotoAction,
     showBeforeAfterSlider: true,
+    category: featureCategories.IMAGE_STUDIO,
   },
   {
     name: 'Background Removal',
@@ -28,15 +38,17 @@ export const features: Feature[] = [
     creditCost: 1,
     action: removeBackgroundAction,
     showBeforeAfterSlider: false,
+    category: featureCategories.IMAGE_STUDIO,
   },
   {
     name: 'Photo Studio',
-    description: 'Turn raw product shots into cinematic ads.',
+    description: 'Turn product shots into cinematic ads.',
     path: '/dashboard/studio',
     icon: Camera,
     creditCost: 1,
     action: studioEnhanceAction,
     showBeforeAfterSlider: false,
+    category: featureCategories.IMAGE_STUDIO,
   },
   {
     name: 'Photo Colourize',
@@ -46,7 +58,40 @@ export const features: Feature[] = [
     creditCost: 1,
     action: colorizePhotoAction,
     showBeforeAfterSlider: true,
+    category: featureCategories.IMAGE_STUDIO,
   },
+   {
+    name: 'Picture with Celebrity',
+    description: 'Blend with famous personalities.',
+    path: '/dashboard/picture-with-celebrity',
+    icon: Users,
+    creditCost: 2,
+    action: placeholderAction,
+    showBeforeAfterSlider: false,
+    category: featureCategories.IMAGE_STUDIO,
+  },
+  {
+    name: 'Memory Scene',
+    description: 'Recreate how your childhood place looks today.',
+    path: '/dashboard/memory-scene',
+    icon: Home,
+    creditCost: 2,
+    action: placeholderAction,
+    showBeforeAfterSlider: false,
+    category: featureCategories.IMAGE_STUDIO,
+  },
+  {
+    name: 'AI Future Self',
+    description: 'See your cinematic future version.',
+    path: '/dashboard/future-self',
+    icon: User,
+    creditCost: 2,
+    action: placeholderAction,
+    showBeforeAfterSlider: false,
+    category: featureCategories.IMAGE_STUDIO,
+  },
+  
+  // Content & Brand
   {
     name: 'YouTube Thumbnail Creator',
     description: 'Catchy thumbnails in seconds.',
@@ -55,6 +100,7 @@ export const features: Feature[] = [
     creditCost: 2,
     action: placeholderAction,
     showBeforeAfterSlider: false,
+    category: featureCategories.CONTENT_BRAND,
   },
   {
     name: 'Auto Captions + Hashtags',
@@ -64,33 +110,7 @@ export const features: Feature[] = [
     creditCost: 1,
     action: placeholderAction,
     showBeforeAfterSlider: false,
-  },
-  {
-    name: 'Document Scanner + Enhancer',
-    description: 'Scan & clean docs.',
-    path: '/dashboard/doc-scanner',
-    icon: Scan,
-    creditCost: 1,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
-  },
-  {
-    name: 'PDF Tools',
-    description: 'Compress, summarize, translate, extract.',
-    path: '/dashboard/pdf-tools',
-    icon: File,
-    creditCost: 3,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
-  },
-  {
-    name: 'Notes Generator',
-    description: 'Textbook → summarized notes.',
-    path: '/dashboard/notes-generator',
-    icon: StickyNote,
-    creditCost: 1,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
+    category: featureCategories.CONTENT_BRAND,
   },
   {
     name: 'Ad Creative Generator',
@@ -100,6 +120,7 @@ export const features: Feature[] = [
     creditCost: 3,
     action: placeholderAction,
     showBeforeAfterSlider: false,
+    category: featureCategories.CONTENT_BRAND,
   },
   {
     name: 'Brand Guidelines Generator',
@@ -109,6 +130,7 @@ export const features: Feature[] = [
     creditCost: 5,
     action: placeholderAction,
     showBeforeAfterSlider: false,
+    category: featureCategories.CONTENT_BRAND,
   },
   {
     name: 'Mockup Generator',
@@ -118,24 +140,7 @@ export const features: Feature[] = [
     creditCost: 2,
     action: placeholderAction,
     showBeforeAfterSlider: false,
-  },
-  {
-    name: 'Post Scheduler',
-    description: 'Plan & auto-post content.',
-    path: '/dashboard/post-scheduler',
-    icon: Calendar,
-    creditCost: 1,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
-  },
-  {
-    name: 'AI Time Capsule',
-    description: 'Store memories for future.',
-    path: '/dashboard/time-capsule',
-    icon: Briefcase,
-    creditCost: 1,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
+    category: featureCategories.CONTENT_BRAND,
   },
   {
     name: 'Festive Post Generator',
@@ -145,8 +150,51 @@ export const features: Feature[] = [
     creditCost: 1,
     action: placeholderAction,
     showBeforeAfterSlider: false,
+    category: featureCategories.CONTENT_BRAND,
   },
   {
+    name: 'Post Scheduler',
+    description: 'Plan & auto-post content.',
+    path: '/dashboard/post-scheduler',
+    icon: Calendar,
+    creditCost: 1,
+    action: placeholderAction,
+    showBeforeAfterSlider: false,
+    category: featureCategories.CONTENT_BRAND,
+  },
+
+  // Smart Office
+  {
+    name: 'Document Scanner + Enhancer',
+    description: 'Scan & clean docs.',
+    path: '/dashboard/doc-scanner',
+    icon: Scan,
+    creditCost: 1,
+    action: placeholderAction,
+    showBeforeAfterSlider: false,
+    category: featureCategories.SMART_OFFICE,
+  },
+  {
+    name: 'PDF Tools',
+    description: 'Compress, summarize, translate, extract.',
+    path: '/dashboard/pdf-tools',
+    icon: File,
+    creditCost: 3,
+    action: placeholderAction,
+    showBeforeAfterSlider: false,
+    category: featureCategories.SMART_OFFICE,
+  },
+  {
+    name: 'Notes Generator',
+    description: 'Textbook → summarized notes.',
+    path: '/dashboard/notes-generator',
+    icon: StickyNote,
+    creditCost: 1,
+    action: placeholderAction,
+    showBeforeAfterSlider: false,
+    category: featureCategories.SMART_OFFICE,
+  },
+   {
     name: 'House Budget Simplifier',
     description: 'Auto expense visualizer.',
     path: '/dashboard/budget-simplifier',
@@ -154,24 +202,7 @@ export const features: Feature[] = [
     creditCost: 1,
     action: placeholderAction,
     showBeforeAfterSlider: false,
-  },
-  {
-    name: 'Picture with Celebrity',
-    description: 'Blend with famous personalities.',
-    path: '/dashboard/picture-with-celebrity',
-    icon: Users,
-    creditCost: 2,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
-  },
-  {
-    name: 'AI Future Self',
-    description: 'See yourself 10 years ahead.',
-    path: '/dashboard/future-self',
-    icon: User,
-    creditCost: 2,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
+    category: featureCategories.SMART_OFFICE,
   },
   {
     name: 'AI Bill Reader',
@@ -181,5 +212,53 @@ export const features: Feature[] = [
     creditCost: 1,
     action: placeholderAction,
     showBeforeAfterSlider: false,
-  }
+    category: featureCategories.SMART_OFFICE,
+  },
+
+  // Personal Magic
+  {
+    name: 'AI Time Capsule',
+    description: 'Store memories for future.',
+    path: '/dashboard/time-capsule',
+    icon: Briefcase,
+    creditCost: 1,
+    action: placeholderAction,
+    showBeforeAfterSlider: false,
+    category: featureCategories.PERSONAL_MAGIC,
+  },
+
+  // Premium & Coming Soon
+  {
+    name: 'AI Voice Studio',
+    description: 'Generate realistic voiceovers.',
+    path: '/dashboard/voice-studio',
+    icon: Bot,
+    creditCost: 5,
+    action: placeholderAction,
+    showBeforeAfterSlider: false,
+    category: featureCategories.PREMIUM,
+    isComingSoon: true,
+  },
+  {
+    name: 'AI Video Enhancer',
+    description: 'Upscale and enhance video quality.',
+    path: '/dashboard/video-enhancer',
+    icon: Video,
+    creditCost: 10,
+    action: placeholderAction,
+    showBeforeAfterSlider: false,
+    category: featureCategories.PREMIUM,
+    isComingSoon: true,
+  },
+  {
+    name: 'Advanced Ad Generator',
+    description: 'Create multi-format ad campaigns.',
+    path: '/dashboard/advanced-ads',
+    icon: Star,
+    creditCost: 10,
+    action: placeholderAction,
+    showBeforeAfterSlider: false,
+    category: featureCategories.PREMIUM,
+    isPremium: true,
+  },
 ];

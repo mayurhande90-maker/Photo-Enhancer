@@ -3,20 +3,23 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Logo } from '@/components/icons';
-import { User, LogOut, Star, ChevronUp, Check, Settings, Moon, Sun, Monitor } from 'lucide-react';
+import { User, LogOut, Star, ChevronUp, Check, Settings, Moon, Sun, Monitor, Image as ImageIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useUser, useAuth } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
-import { features } from '@/lib/features';
+import { features, featureCategories } from '@/lib/features';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Badge } from '@/components/ui/badge';
+
 
 const pricingTiers = [
   {
@@ -110,6 +113,14 @@ const testimonials = [
     }
 ]
 
+const categoryIcons = {
+  [featureCategories.IMAGE_STUDIO]: ImageIcon,
+  [featureCategories.CONTENT_BRAND]: Megaphone,
+  [featureCategories.SMART_OFFICE]: Briefcase,
+  [featureCategories.PERSONAL_MAGIC]: Sparkles,
+  [featureCategories.PREMIUM]: StarIcon,
+};
+
 function HeaderUserSection() {
     const { user, loading: isUserLoading } = useUser();
     const auth = useAuth();
@@ -156,7 +167,7 @@ function HeaderUserSection() {
                             size="icon"
                             className="overflow-hidden rounded-full"
                         >
-                            <User />
+                            <Image src={user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`} width={36} height={36} alt="User avatar" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
@@ -165,8 +176,8 @@ function HeaderUserSection() {
                         <DropdownMenuItem onClick={() => router.push('/dashboard/creations')}>
                             My Creations
                         </DropdownMenuItem>
-                        <DropdownMenuItem disabled>My Profile</DropdownMenuItem>
-                         <DropdownMenuItem disabled>
+                        <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>My Profile</DropdownMenuItem>
+                         <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>
                             <Settings className="mr-2 h-4 w-4" />
                             <span>Settings</span>
                         </DropdownMenuItem>
@@ -214,7 +225,7 @@ export default function Home() {
 
   const handleGoProClick = (path: string) => {
     if (user) {
-      window.location.href = path;
+      window.open(path, '_blank');
     } else {
       router.push('/signup');
     }
@@ -226,6 +237,14 @@ export default function Home() {
       behavior: 'smooth',
     });
   };
+
+  const categories = Object.values(featureCategories);
+  const categorizedFeatures = useMemo(() => {
+    return categories.map(category => ({
+      name: category,
+      features: features.filter(f => f.category === category)
+    }));
+  }, [categories]);
 
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground font-body">
@@ -276,29 +295,55 @@ export default function Home() {
         <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-card/50">
           <div className="container space-y-12 px-4 md:px-6">
             <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
-              <h2 className="font-bold text-3xl leading-[1.1] sm:text-4xl md:text-5xl font-headline">What You Can Do</h2>
+              <h2 className="font-bold text-3xl leading-[1.1] sm:text-4xl md:text-5xl font-headline">Discover the Magic — Organized Just for You</h2>
               <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-                Explore a universe of creative possibilities. Your next masterpiece is just a click away.
+                Explore 20+ AI tools across creativity, content, productivity, and everyday life.
               </p>
             </div>
-            <div className="mx-auto grid items-start gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {features.slice(0,20).map((feature) => (
-                <Link href={feature.path} key={feature.name} className="h-full">
-                  <Card className="h-full flex flex-col rounded-3xl transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-lg hover:shadow-brand-accent/20 group">
-                    <CardHeader className="items-center text-center">
-                       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 text-brand-primary group-hover:from-brand-primary/30 group-hover:to-brand-secondary/30">
-                        <feature.icon className="h-8 w-8" />
-                      </div>
-                      <CardTitle className="text-base font-semibold">{feature.name}</CardTitle>
-                      <CardDescription className="text-xs">{feature.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="mt-auto flex justify-center pb-4">
-                        <Button variant="link" size="sm" className="text-brand-accent group-hover:underline">Try Now →</Button>
-                    </CardContent>
-                  </Card>
-                </Link>
+            
+            <Tabs defaultValue={featureCategories.IMAGE_STUDIO} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-5 h-auto rounded-2xl p-2">
+                {categories.map(category => {
+                  const CategoryIcon = categoryIcons[category];
+                  return (
+                    <TabsTrigger key={category} value={category} className="flex gap-2 items-center rounded-xl py-2 data-[state=active]:shadow-md">
+                      <CategoryIcon className="h-4 w-4"/>
+                      {category}
+                    </TabsTrigger>
+                  )
+                })}
+              </TabsList>
+              
+              {categorizedFeatures.map(({name, features: categoryFeatures}) => (
+                <TabsContent key={name} value={name} className="mt-8">
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    {categoryFeatures.map((feature) => (
+                      <Link href={feature.isComingSoon || feature.isPremium ? '#' : feature.path} key={feature.name} className={cn("h-full", (feature.isComingSoon || feature.isPremium) && 'pointer-events-none')}>
+                        <Card className="h-full flex flex-col rounded-3xl transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-lg hover:shadow-brand-accent/20 group relative overflow-hidden">
+                           {(feature.isComingSoon || feature.isPremium) && (
+                            <Badge variant={feature.isPremium ? "default" : "secondary"} className={cn("absolute top-4 right-4 z-10", feature.isPremium && "bg-gradient-to-r from-yellow-400 to-orange-500 text-white")}>
+                              {feature.isPremium ? 'Premium' : 'Coming Soon'}
+                            </Badge>
+                          )}
+                          <CardHeader className="items-center text-center">
+                            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 text-brand-primary group-hover:from-brand-primary/30 group-hover:to-brand-secondary/30">
+                              <feature.icon className="h-8 w-8" />
+                            </div>
+                            <CardTitle className="text-base font-semibold">{feature.name}</CardTitle>
+                          </CardHeader>
+                          <CardContent className="text-center text-xs text-muted-foreground flex-1">
+                            {feature.description}
+                          </CardContent>
+                          <CardFooter className="mt-auto flex justify-center pb-4">
+                            <span className={cn("text-sm font-medium text-brand-accent group-hover:underline", (feature.isComingSoon || feature.isPremium) && 'opacity-50')}>Try Now →</span>
+                          </CardFooter>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                </TabsContent>
               ))}
-            </div>
+            </Tabs>
           </div>
         </section>
 
@@ -452,3 +497,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

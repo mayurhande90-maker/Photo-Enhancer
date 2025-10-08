@@ -9,6 +9,9 @@ export type Feature = {
   creditCost: number;
   action: (photoDataUri: string, userId: string) => Promise<{ enhancedPhotoDataUri: string }>;
   showBeforeAfterSlider: boolean;
+  category: string;
+  isPremium?: boolean;
+  isComingSoon?: boolean;
 };
 
 export interface UserProfile {
@@ -17,7 +20,7 @@ export interface UserProfile {
   displayName: string;
   photoURL?: string;
   credits: number;
-  planName: 'Free' | 'Pro';
+  planName: 'Free' | 'Pro' | 'Premium+';
   createdAt: any; // Firestore ServerTimestamp
 }
 
