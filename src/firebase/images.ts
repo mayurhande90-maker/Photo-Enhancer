@@ -30,27 +30,20 @@ export async function saveGeneratedImageClient(
     throw new Error('Processed image is not a valid data URI.');
   }
 
-  try {
-    const generatedBlob = await dataUriToBlob(processedImageDataUri);
-    const generatedFile = new File([generatedBlob], `${processingType}_${Date.now()}.jpg`, { type: 'image/jpeg' });
-    
-    // Upload the generated image to Cloudinary
-    const downloadURL = await uploadToCloudinary(generatedFile, `user_creations/${userId}/${processingType}`);
+  const generatedBlob = await dataUriToBlob(processedImageDataUri);
+  
+  // Upload the generated image to Cloudinary
+  const downloadURL = await uploadToCloudinary(generatedBlob, `user_creations/${userId}/${processingType}`);
 
-    const imagesCollection = collection(firestore, `users/${userId}/generatedImages`);
-    
-    await addDoc(imagesCollection, {
-      userId,
-      originalImageUrl: originalImageUri, 
-      processedImageUrl: downloadURL, 
-      processingType,
-      createdAt: serverTimestamp(),
-      status: "success",
-      creditsUsed: 1, 
-    });
-
-  } catch (error) {
-    console.error(`Failed to save image for user ${userId}:`, error);
-    throw new Error('Could not save your creation automatically. Please try downloading it manually.');
-  }
+  const imagesCollection = collection(firestore, `users/${userId}/generatedImages`);
+  
+  await addDoc(imagesCollection, {
+    userId,
+    originalImageUrl: originalImageUri, 
+    processedImageUrl: downloadURL, 
+    processingType,
+    createdAt: serverTimestamp(),
+    status: "success",
+    creditsUsed: 1, 
+  });
 }

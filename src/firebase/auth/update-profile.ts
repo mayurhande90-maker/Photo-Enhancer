@@ -25,13 +25,8 @@ export async function updateUserProfile(
 
   // Step 1: Handle photo upload to Cloudinary if a new blob is provided
   if (updates.photoBlob) {
-    try {
       const photoFile = new File([updates.photoBlob], `profile_${user.uid}_${Date.now()}.jpg`, { type: 'image/jpeg' });
       newPhotoURL = await uploadToCloudinary(photoFile, 'profiles');
-    } catch (error) {
-      console.error("Error uploading profile image to Cloudinary:", error);
-      throw new Error("Failed to upload new profile picture.");
-    }
   }
 
   // Step 2: Prepare updates for Auth and Firestore

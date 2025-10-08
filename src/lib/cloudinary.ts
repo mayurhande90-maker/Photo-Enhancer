@@ -21,46 +21,40 @@ function showToast(msg: string) {
     setTimeout(() => t.remove(), 2500);
 }
 
-export async function uploadToCloudinary(file: File, folder: string = "uploads"): Promise<string> {
-  if (!file) {
-    const message = "Please select a file before uploading.";
-    console.error(message);
-    showToast(`⚠️ ${message}`);
-    throw new Error(message);
-  }
+export async function uploadToCloudinary(file: File | Blob, folder: string = "uploads"): Promise<string> {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_CONFIG.uploadPreset);
+    formData.append("folder", folder);
 
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", CLOUDINARY_CONFIG.uploadPreset);
-  formData.append("folder", folder);
+    try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`, {
+            method: "POST",
+            body: formData,
+        });
 
-  try {
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`, {
-      method: "POST",
-      body: formData,
-    });
+        if (!res.ok) {
+            // Don't try to parse JSON on a failed response.
+            // The body might be empty or not valid JSON.
+            // Throw an error with the status text, which is more reliable.
+            const errorText = res.statusText || 'Upload failed due to a server error.';
+            throw new Error(errorText);
+        }
+        
+        const data = await res.json();
 
-    if (!res.ok) {
-      // Don't try to parse JSON on a failed response. The body might be empty.
-      // Throw an error with the status text, which is more reliable.
-      const errorText = res.statusText || 'Upload failed due to a server error.';
-      throw new Error(errorText);
+        if (!data.secure_url) {
+            console.error("Cloudinary response missing secure_url. Full response:", data);
+            throw new Error("Upload succeeded, but no URL was returned.");
+        }
+
+        showToast("✅ Image uploaded successfully!");
+        return data.secure_url;
+
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "An unknown error occurred.";
+        console.error(`Cloudinary upload process failed: ${message}`);
+        showToast(`⚠️ Upload failed: ${message}`);
+        throw error;
     }
-    
-    const data = await res.json();
-    
-    if (!data.secure_url) {
-        console.error("Cloudinary response missing secure_url. Full response:", data);
-        throw new Error("Upload succeeded, but no URL was returned.");
-    }
-
-    showToast("✅ Image uploaded successfully!");
-    return data.secure_url;
-
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "An unknown error occurred.";
-    console.error(`Cloudinary upload process failed: ${message}`);
-    showToast(`⚠️ Upload failed: ${message}`);
-    throw new Error(message);
-  }
 }
