@@ -39,21 +39,25 @@ export async function uploadToCloudinary(file: File, folder: string = "uploads")
     });
 
     const data = await res.json();
-    console.log("Cloudinary Response:", data);
-
-    if (!res.ok || data.error) {
-      console.error("Cloudinary upload failed:", data.error);
-      const errorMessage = data.error?.message || "Upload failed due to an unknown Cloudinary error.";
-      throw new Error(errorMessage);
+    
+    if (!res.ok) {
+        console.error("Cloudinary API returned an error. Full response:", data);
+        const errorMessage = data?.error?.message || "Upload failed due to a server error.";
+        throw new Error(errorMessage);
+    }
+    
+    if (!data.secure_url) {
+        console.error("Cloudinary response missing secure_url. Full response:", data);
+        throw new Error("Upload succeeded, but no URL was returned.");
     }
 
     showToast("✅ Image uploaded successfully!");
     return data.secure_url;
 
   } catch (error) {
-    console.error("Cloudinary upload error:", error);
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred during upload.";
-    showToast(`⚠️ Upload failed: ${errorMessage}`);
-    throw error;
+    const message = error instanceof Error ? error.message : "An unknown error occurred.";
+    console.error("Cloudinary upload process failed:", message);
+    showToast(`⚠️ Upload failed: ${message}`);
+    throw new Error(message);
   }
 }
