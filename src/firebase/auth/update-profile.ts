@@ -22,20 +22,38 @@ export async function updateUserProfile(
 
   if (!user) throw new Error("No user logged in to update profile.");
 
-  let newPhotoURL: string | undefined = undefined;
+  const authInstance = getAuth();
+  const currentUser = authInstance.currentUser;
+  if (!currentUser) throw new Error("Current user not found in auth instance.");
 
-  // 1. If a new photo file is provided, compress and upload it.
+
+  const firestoreUpdates: { [key: string]: any } = {};
+  const authUpdates: { displayName?: string; photoURL?: string } = {};
+
+  // 1. Handle text field updates
+  if (updates.displayName && updates.displayName !== user.displayName) {
+    firestoreUpdates.displayName = updates.displayName;
+    authUpdates.displayName = updates.displayName;
+  }
+  if (updates.bio) firestoreUpdates.bio = updates.bio;
+  if (updates.profession) firestoreUpdates.profession = updates.profession;
+
+
+  // 2. Handle profile picture upload
   if (updates.photoFile) {
     try {
       const compressedFile = await imageCompression(updates.photoFile, {
-        maxSizeMB: 0.2, // Compress to a smaller size for profile pictures
+        maxSizeMB: 0.2,
         maxWidthOrHeight: 400,
         useWebWorker: true,
       });
 
       const storageRef = ref(storage, `profile_images/${user.uid}/profile.jpg`);
       await uploadBytes(storageRef, compressedFile);
-      newPhotoURL = await getDownloadURL(storageRef);
+      const newPhotoURL = await getDownloadURL(storageRef);
+      
+      firestoreUpdates.photoURL = newPhotoURL;
+      authUpdates.photoURL = newPhotoURL;
 
     } catch (error) {
       console.error("Error uploading profile image:", error);
@@ -43,32 +61,29 @@ export async function updateUserProfile(
     }
   }
 
-  // 2. Prepare data for Firestore and Auth updates.
-  const firestoreUpdates: { [key: string]: any } = {};
-  if (updates.displayName) firestoreUpdates.displayName = updates.displayName;
-  if (updates.bio) firestoreUpdates.bio = updates.bio;
-  if (updates.profession) firestoreUpdates.profession = updates.profession;
-  if (newPhotoURL) firestoreUpdates.photoURL = newPhotoURL;
-
-  const authUpdates: { displayName?: string; photoURL?: string } = {};
-  if (updates.displayName) authUpdates.displayName = updates.displayName;
-  if (newPhotoURL) authUpdates.photoURL = newPhotoURL;
-
-  // 3. Perform the updates.
+  // 3. Perform the updates if there are any changes
   try {
-    // Update Firestore document
+    const promises = [];
+
+    // Update Firestore document if there are changes
     if (Object.keys(firestoreUpdates).length > 0) {
       const userDocRef = doc(firestore, "users", user.uid);
-      await updateDoc(userDocRef, firestoreUpdates);
+      promises.push(updateDoc(userDocRef, firestoreUpdates));
     }
 
-    // Update Firebase Auth profile
+    // Update Firebase Auth profile if there are changes
     if (Object.keys(authUpdates).length > 0) {
-      const authInstance = getAuth();
-      if (authInstance.currentUser) {
-         await updateProfile(authInstance.currentUser, authUpdates);
-      }
+       promises.push(updateProfile(currentUser, authUpdates));
     }
+    
+    // Wait for all updates to complete
+    if (promises.length > 0) {
+        await Promise.all(promises);
+    } else {
+        // No changes were made
+        return;
+    }
+
   } catch (error) {
     console.error("Error updating profile:", error);
     throw new Error("Could not save profile changes.");

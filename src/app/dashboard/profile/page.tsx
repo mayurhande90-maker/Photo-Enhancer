@@ -55,7 +55,12 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
 
     setIsSaving(true);
     try {
-      await updateUserProfile(firestore, storage, user, data);
+      await updateUserProfile(firestore, storage, user, {
+        displayName: data.displayName,
+        bio: data.bio,
+        profession: data.profession,
+        photoFile: data.photoFile,
+      });
       toast({ title: "✅ Profile updated successfully" });
       setOpen(false);
     } catch (error) {
