@@ -230,16 +230,12 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                     after={processedImageUrl}
                 />
             </div>
-            <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="mt-6 flex justify-center">
                 <Button size="lg" asChild className="rounded-2xl h-12">
                     <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
                         <Download className="mr-2 h-5 w-5"/>
                         Download Image
                     </a>
-                </Button>
-                <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset}>
-                    <RefreshCw className="mr-2 h-5 w-5" />
-                    Generate Another
                 </Button>
             </div>
         </div>
@@ -263,12 +259,6 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                             Original
                         </div>
                     </div>
-                     <div className="mt-4 flex justify-center">
-                        <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset}>
-                            <RefreshCw className="mr-2 h-5 w-5" />
-                            Generate Another
-                        </Button>
-                    </div>
                 </div>
                 <div>
                     <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
@@ -282,15 +272,15 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                             Generated
                         </div>
                     </div>
-                    <div className="mt-4 flex justify-center">
-                         <Button size="lg" asChild className="rounded-2xl h-12">
-                            <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
-                                <Download className="mr-2 h-5 w-5"/>
-                                Download Image
-                            </a>
-                        </Button>
-                    </div>
                 </div>
+            </div>
+            <div className="mt-6 flex justify-center">
+                 <Button size="lg" asChild className="rounded-2xl h-12">
+                    <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
+                        <Download className="mr-2 h-5 w-5"/>
+                        Download Image
+                    </a>
+                </Button>
             </div>
         </div>
     );
@@ -374,10 +364,10 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                             </Button>
                           )}
                           
-                          {originalFile && !processedImageUrl && !isProcessing &&(
+                          {(originalFile || processedImageUrl) && !isProcessing && (
                               <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset} disabled={isProcessing}>
                                 <RefreshCw className="mr-2 h-5 w-5" />
-                                Start Over
+                                Generate Another
                             </Button>
                           )}
                       </div>
