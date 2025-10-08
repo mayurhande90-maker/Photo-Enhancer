@@ -288,97 +288,81 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
         <div className="h-px w-full bg-border" />
 
         <section>
-             <h2 className="text-2xl font-semibold mb-4">Try It Yourself</h2>
-             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                <div className="lg:col-span-1">
-                  {isAwaitingUpload && <FileUploader onFileSelect={handleFileSelect} />}
-                  {!isAwaitingUpload && renderResultView()}
+            <h2 className="text-2xl font-semibold mb-4">Try It Yourself</h2>
+            
+            <div className="mb-8">
+              {isAwaitingUpload && <FileUploader onFileSelect={handleFileSelect} />}
+              {!isAwaitingUpload && renderResultView()}
+            </div>
+            
+            {isResultReady ? (
+                <div className="flex justify-center">
+                    <Card className="w-full max-w-md rounded-3xl">
+                        <CardHeader className="text-center">
+                            <CardTitle>Result Ready</CardTitle>
+                            <CardDescription>Your image has been processed. Download it or create another one.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                <Button variant="outline" className="h-12 w-full rounded-2xl" onClick={handleReset}>
+                                    <RefreshCw className="mr-2 h-5 w-5" />
+                                    Generate Another
+                                </Button>
+                                <Button size="lg" asChild className="h-12 w-full rounded-2xl">
+                                    <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
+                                        <Download className="mr-2 h-5 w-5" />
+                                        Download Image
+                                    </a>
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
-                
-                <div className="lg:col-span-1 sticky top-24">
-                  {!isResultReady ? (
-                    <div className="space-y-8">
-                       <div className="min-h-[200px]">
-                          {isAwaitingUpload && <BeforeUploadState />}
-                          {isProcessing ? (
-                            <ProcessingState progress={progress} featureName={feature.name} />
-                          ) : (
-                            !isAwaitingUpload && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />
-                          )}
-                        </div>
-                        <Card className="rounded-3xl h-full">
-                          <CardContent className="p-6 space-y-4 flex flex-col justify-between h-full">
-                              <div>
+            ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    <div className="min-h-[200px] flex flex-col justify-center">
+                        {isAwaitingUpload && <BeforeUploadState />}
+                        {isProcessing && <ProcessingState progress={progress} featureName={feature.name} />}
+                        {!isAwaitingUpload && !isProcessing && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
+                    </div>
+
+                    <Card className="rounded-3xl h-full sticky top-24">
+                        <CardContent className="p-6 space-y-4 flex flex-col justify-between h-full">
+                            <div>
                                 <h2 className="text-xl font-semibold mb-4">Actions</h2>
                                 {error && !isProcessing && (
-                                  <Alert variant="destructive" className="rounded-2xl">
-                                    <AlertTitle>Error</AlertTitle>
-                                    <AlertDescription>{error}</AlertDescription>
-                                  </Alert>
+                                    <Alert variant="destructive" className="rounded-2xl">
+                                        <AlertTitle>Error</AlertTitle>
+                                        <AlertDescription>{error}</AlertDescription>
+                                    </Alert>
                                 )}
                                 {renderQuotaAlert()}
-                              </div>
-                              <div className="flex flex-col gap-3">
-                                  <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isProcessing || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}>
-                                      <Wand2 className="mr-2 h-5 w-5" />
-                                      Generate
-                                  </Button>
-                                  <div className="text-center text-sm text-muted-foreground pt-2">
-                                      {isUserLoading || isCreditLoading ? (
-                                      <Skeleton className="h-4 w-32 mx-auto" />
-                                      ) : user ? (
-                                      <p>You have {credits} credits left.</p>
-                                      ) : (
-                                      <p>
-                                          <Link href="/login" className="underline font-semibold hover:text-primary">
-                                          Sign in
-                                          </Link>{' '}
-                                          to start creating.
-                                      </p>
-                                      )}
-                                  </div>
-                              </div>
-                          </CardContent>
-                        </Card>
-                    </div>
-                  ) : (
-                    <Card className="w-full max-w-md mx-auto rounded-3xl">
-                      <CardHeader>
-                        <CardTitle>Result</CardTitle>
-                        <CardDescription>Your image is ready. Download it or start a new creation.</CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-4">
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                          <Button
-                            variant="outline"
-                            className="h-12 w-full rounded-2xl"
-                            onClick={handleReset}
-                          >
-                            <RefreshCw className="mr-2 h-5 w-5" />
-                            Generate Another
-                          </Button>
-                          <Button
-                            size="lg"
-                            asChild
-                            className="h-12 w-full rounded-2xl"
-                          >
-                            <a
-                              href={processedImageUrl!}
-                              download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}
-                            >
-                              <Download className="mr-2 h-5 w-5" />
-                              Download Image
-                            </a>
-                          </Button>
-                        </div>
-                      </CardContent>
+                            </div>
+                            <div className="flex flex-col gap-3">
+                                <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isProcessing || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}>
+                                    <Wand2 className="mr-2 h-5 w-5" />
+                                    Generate
+                                </Button>
+                                <div className="text-center text-sm text-muted-foreground pt-2">
+                                    {isUserLoading || isCreditLoading ? (
+                                        <Skeleton className="h-4 w-32 mx-auto" />
+                                    ) : user ? (
+                                        <p>You have {credits} credits left.</p>
+                                    ) : (
+                                        <p>
+                                            <Link href="/login" className="underline font-semibold hover:text-primary">
+                                                Sign in
+                                            </Link>{' '}
+                                            to start creating.
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        </CardContent>
                     </Card>
-                  )}
                 </div>
-             </div>
+            )}
         </section>
     </div>
   );
 }
-
-    
