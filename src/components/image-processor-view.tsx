@@ -91,13 +91,13 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (originalDataUri) {
+    if (originalDataUri && !processedImageUrl) {
       setImageAnalysis("Analyzing image...");
       analyzeImageAction(originalDataUri)
         .then(result => setImageAnalysis(result.analysis))
         .catch(() => setImageAnalysis("Perfect upload! Let’s see what Magicpixa can do."));
     }
-  }, [originalDataUri]);
+  }, [originalDataUri, processedImageUrl]);
   
   if (!feature) {
     return <div>Feature not found.</div>;
@@ -152,13 +152,15 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
             result.enhancedPhotoDataUri,
             feature.name
         );
+        toast({
+            title: 'Image Generated!',
+            description: 'Your creation has been saved to your gallery.',
+        });
+      } else {
+         throw new Error('AI generation failed to return an image.');
       }
       
       await consumeCredits(feature.creditCost);
-      toast({
-          title: 'Image Generated!',
-          description: 'Your creation has been saved to your gallery.',
-      });
 
     } catch (err) {
       console.error(err);
@@ -270,6 +272,11 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     );
   }
 
+  const showUploader = !originalFile;
+  const showProcessingState = isProcessing;
+  const showResultState = !!processedImageUrl;
+  const showPreProcessingState = !!originalFile && !isProcessing && !showResultState;
+
   return (
     <div className="space-y-8 animate-fade-in-up">
         {/* Section A: Feature Overview */}
@@ -290,35 +297,51 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
         {/* Section B: Action/Upload */}
         <section>
              <h2 className="text-2xl font-semibold mb-4">Try It Yourself</h2>
-             {!user && isUserLoading ? (
+             {isUserLoading && !user ? (
                 <div className="flex justify-center items-center h-48">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
-            ) : !originalFile || !processedImageUrl ? (
+             ) : showUploader ? (
                 <FileUploader onFileSelect={handleFileSelect} />
-            ) : null}
-
-            {processedImageUrl ? (
+             ) : showResultState ? (
                 renderResultView()
-            ) : originalDataUri && originalFile ? (
+             ) : originalDataUri && (
                 <div className="relative">
                     <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
                     <Image src={originalDataUri} alt="Original upload" fill className="object-contain" />
                     </div>
                 </div>
-            ) : null}
+             )}
         </section>
         
-        {!processedImageUrl ? (
+        {showResultState ? (
+             <div className="mt-8 flex justify-center">
+                <Card className="rounded-3xl w-full max-w-md p-2">
+                  <CardContent className="p-4">
+                      <h2 className="text-xl font-semibold text-center mb-4">Actions</h2>
+                        <div className="flex flex-row justify-center gap-4">
+                            <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset} disabled={isProcessing}>
+                                <RefreshCw className="mr-2 h-5 w-5" />
+                                Generate Another
+                            </Button>
+                            <Button size="lg" asChild className="rounded-2xl h-12">
+                                <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
+                                    <Download className="mr-2 h-5 w-5"/>
+                                    Download Image
+                                </a>
+                            </Button>
+                        </div>
+                  </CardContent>
+              </Card>
+            </div>
+        ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Smart Feedback Zone */}
                 <div className="min-h-[200px]">
-                    {!originalFile && <BeforeUploadState />}
-                    {isProcessing && <ProcessingState progress={progress} featureName={feature.name} />}
-                    {originalFile && !isProcessing && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
+                    {showUploader && <BeforeUploadState />}
+                    {showProcessingState && <ProcessingState progress={progress} featureName={feature.name} />}
+                    {showPreProcessingState && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
                 </div>
 
-                {/* Actions Card */}
                 <div>
                     <Card className="rounded-3xl sticky top-24 h-full">
                     <CardContent className="p-6 space-y-4 flex flex-col justify-between h-full">
@@ -358,26 +381,6 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                     </CardContent>
                 </Card>
                 </div>
-            </div>
-        ) : (
-             <div className="mt-8 flex justify-center">
-                <Card className="rounded-3xl w-full max-w-md">
-                  <CardContent className="p-6">
-                      <h2 className="text-xl font-semibold text-center mb-4">Actions</h2>
-                        <div className="flex flex-row justify-center gap-4">
-                            <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset} disabled={isProcessing}>
-                                <RefreshCw className="mr-2 h-5 w-5" />
-                                Generate Another
-                            </Button>
-                            <Button size="lg" asChild className="rounded-2xl h-12">
-                                <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
-                                    <Download className="mr-2 h-5 w-5"/>
-                                    Download Image
-                                </a>
-                            </Button>
-                        </div>
-                  </CardContent>
-              </Card>
             </div>
         )}
     </div>

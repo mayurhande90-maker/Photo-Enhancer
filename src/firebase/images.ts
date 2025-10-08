@@ -3,7 +3,8 @@
 
 import { 
     collection, 
-    addDoc, 
+    doc,
+    setDoc, 
     serverTimestamp,
     type Firestore,
 } from 'firebase/firestore';
@@ -29,7 +30,7 @@ export async function saveGeneratedImageClient(
   if (!processedImageDataUri.startsWith('data:')) {
     console.error('Processed image is not a data URI, cannot upload to Storage.');
     // Fallback or error handling
-    return;
+    throw new Error('Processed image is not a valid data URI.');
   }
 
   try {
@@ -43,8 +44,10 @@ export async function saveGeneratedImageClient(
 
     // 3. Save the public URL (and other metadata) to Firestore
     const imagesCollection = collection(firestore, `users/${userId}/generatedImages`);
+    const newImageDocRef = doc(imagesCollection); // Create a new doc with a generated ID
     
-    const docRef = await addDoc(imagesCollection, {
+    await setDoc(newImageDocRef, {
+      id: newImageDocRef.id,
       userId,
       originalImageUrl: originalImageUri, // Save the original URI/URL for reference
       processedImageUrl: downloadURL, // Save the public Storage URL
@@ -52,12 +55,9 @@ export async function saveGeneratedImageClient(
       createdAt: serverTimestamp(),
     });
 
-    // We can use the auto-generated ID from addDoc.
-    // The "My Creations" page will receive this as part of the snapshot.
-
   } catch (error) {
     console.error(`Failed to save image for user ${userId}:`, error);
     // Optionally re-throw or handle the error in the UI
-    throw error;
+    throw new Error('Could not save image to your creations.');
   }
 }
