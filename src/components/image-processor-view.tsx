@@ -20,7 +20,7 @@ import { saveGeneratedImageClient } from '@/firebase/images';
 import { Skeleton } from '@/components/ui/skeleton';
 import { analyzeImageAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { PlaceHolderImages, PlaceHolderImageSamples } from '@/lib/placeholder-images';
 
 function fileToDataUri(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -31,7 +31,9 @@ function fileToDataUri(file: File): Promise<string> {
   });
 }
 
-const BeforeUploadState = ({ onSampleSelect }: { onSampleSelect: (file: File) => void; }) => {
+const BeforeUploadState = ({ onSampleSelect, featureName }: { onSampleSelect: (file: File) => void; featureName: string }) => {
+    const sampleImage = PlaceHolderImageSamples.find(img => img.featureName === featureName);
+    
     const handleSample = async () => {
         const sampleImage = PlaceHolderImages.find(img => img.id === 'feature-enhance-after');
         if (sampleImage) {
@@ -47,7 +49,15 @@ const BeforeUploadState = ({ onSampleSelect }: { onSampleSelect: (file: File) =>
             <Lightbulb className="mx-auto h-10 w-10 text-yellow-400 mb-4" />
             <h3 className="font-semibold text-lg text-foreground">Tip: Upload a clear, front-facing photo for best results.</h3>
             <p className="text-muted-foreground text-sm mt-1">Supported formats: JPG, PNG, WEBP (max 20MB).</p>
-             <Button variant="outline" className="mt-4 rounded-xl" onClick={handleSample}>Try Sample Image</Button>
+            <div className="flex items-center justify-center gap-4">
+                <Button variant="outline" className="mt-4 rounded-xl" onClick={handleSample}>Try Sample Image</Button>
+            </div>
+            {sampleImage && (
+                 <div className="mt-6">
+                    <p className="text-sm text-muted-foreground mb-4">Example result for {featureName}</p>
+                    <Image src={sampleImage.imageUrl} alt={sampleImage.description} width={400} height={300} className="rounded-2xl mx-auto border" />
+                 </div>
+            )}
         </div>
     )
 }
@@ -232,44 +242,65 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
   const renderResultView = () => {
     if (!processedImageUrl || !originalDataUri) return null;
 
+    const ActionButtons = () => (
+         <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" asChild className="rounded-2xl h-12">
+                <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
+                    <Download className="mr-2 h-5 w-5"/>
+                    Download Image
+                </a>
+            </Button>
+            <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset}>
+                <RefreshCw className="mr-2 h-5 w-5" />
+                Generate Another
+            </Button>
+        </div>
+    );
+
     if (feature.showBeforeAfterSlider) {
       return (
-        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-          <BeforeAfterSlider
-            before={originalDataUri}
-            after={processedImageUrl}
-          />
+        <div className="relative">
+             <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+                <BeforeAfterSlider
+                    before={originalDataUri}
+                    after={processedImageUrl}
+                />
+            </div>
+            <ActionButtons />
         </div>
       );
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-          {originalDataUri && (
-            <Image
-              src={originalDataUri}
-              alt="Original upload"
-              fill
-              className="object-contain"
-            />
-          )}
-          <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-            Original
-          </div>
+        <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+                {originalDataUri && (
+                    <Image
+                    src={originalDataUri}
+                    alt="Original upload"
+                    fill
+                    className="object-contain"
+                    />
+                )}
+                <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                    Original
+                </div>
+                </div>
+                <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+                <Image
+                    src={processedImageUrl}
+                    alt="Processed result"
+                    fill
+                    className="object-contain"
+                />
+                <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                    Generated
+                </div>
+                </div>
+            </div>
+            <ActionButtons />
         </div>
-        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-          <Image
-            src={processedImageUrl}
-            alt="Processed result"
-            fill
-            className="object-contain"
-          />
-           <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-            Generated
-          </div>
-        </div>
-      </div>
     );
   }
 
@@ -305,8 +336,14 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                     {processedImageUrl ? (
                       renderResultView()
                     ) : originalDataUri ? (
-                        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-                          <Image src={originalDataUri} alt="Original upload" fill className="object-contain" />
+                        <div className="relative">
+                            <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+                            <Image src={originalDataUri} alt="Original upload" fill className="object-contain" />
+                            </div>
+                             <Button variant="outline" className="absolute top-4 right-4 rounded-xl" onClick={handleReset}>
+                                <RefreshCw className="mr-2 h-4 w-4" />
+                                Upload Your Own Image
+                            </Button>
                         </div>
                     ) : null}
                   </>
@@ -315,7 +352,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                 {/* Smart Feedback Zone */}
                 {!processedImageUrl && (
                   <>
-                    {!originalFile && <BeforeUploadState onSampleSelect={handleFileSelect}/>}
+                    {!originalFile && <BeforeUploadState onSampleSelect={handleFileSelect} featureName={feature.name}/>}
                     {isProcessing && <ProcessingState progress={progress} featureName={feature.name} />}
                     {originalFile && !isProcessing && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
                   </>
@@ -345,19 +382,12 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                             </Button>
                           )}
                           
-                          {processedImageUrl && !isProcessing && (
-                              <Button size="lg" asChild className="rounded-2xl h-12">
-                                  <a href={processedImageUrl} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
-                                      <Download className="mr-2 h-5 w-5"/>
-                                      Download Result
-                                  </a>
-                              </Button>
+                          {originalFile && !processedImageUrl && !isProcessing &&(
+                              <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset} disabled={isProcessing}>
+                                <RefreshCw className="mr-2 h-5 w-5" />
+                                Start Over
+                            </Button>
                           )}
-
-                          <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset} disabled={isProcessing}>
-                            <RefreshCw className="mr-2 h-5 w-5" />
-                            Start Over
-                          </Button>
                       </div>
                        <div className="text-center text-sm text-muted-foreground pt-2">
                             {isUserLoading || isCreditLoading ? (

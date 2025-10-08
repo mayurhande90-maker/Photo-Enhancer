@@ -54,5 +54,61 @@
       "imageUrl": "https://images.unsplash.com/photo-1542328522-835332c9e27d?w=1080&q=80&fit=max&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHwib2xkJTIwYmxhY2slMjBhbmQlMjB3aGl0ZSUyMHBob3RvJTIwb2YlMjB3b21hbnxlbnwwfHx8fDE3MjE4MTk0NDh8MA&ixlib=rb-4.1.0&fm=jpg&cs=tinysrgb",
       "imageHint": "colorized woman"
     }
+  ],
+  "sampleImages": [
+    {
+      "featureName": "Photo Enhancement",
+      "description": "Bright, color-corrected selfie",
+      "imageUrl": "https://picsum.photos/seed/enhanced-selfie/600/400",
+      "imageHint": "enhanced selfie"
+    },
+    {
+      "featureName": "Background Removal",
+      "description": "Object with transparent background",
+      "imageUrl": "https://storage.googleapis.com/studio-images-prod/section_images/feature-background-after.png",
+      "imageHint": "transparent background"
+    },
+    {
+      "featureName": "Photo Studio",
+      "description": "Cinematic product render",
+      "imageUrl": "https://storage.googleapis.com/studio-images-prod/section_images/feature-studio-after.png",
+      "imageHint": "product render"
+    },
+    {
+      "featureName": "Photo Colourize",
+      "description": "Colorized vintage portrait",
+      "imageUrl": "https://images.unsplash.com/photo-1542328522-835332c9e27d?w=600&q=80&fit=max",
+      "imageHint": "colorized portrait"
+    },
+    {
+      "featureName": "YouTube Thumbnail Creator",
+      "description": "Bold YouTube thumbnail",
+      "imageUrl": "https://picsum.photos/seed/yt-thumbnail/600/400",
+      "imageHint": "youtube thumbnail"
+    },
+    {
+      "featureName": "Auto Captions + Hashtags",
+      "description": "Image with caption overlay",
+      "imageUrl": "https://picsum.photos/seed/caption-sample/600/400",
+      "imageHint": "image caption"
+    },
+    {
+      "featureName": "Document Scanner + Enhancer",
+      "description": "Clean scanned document",
+      "imageUrl": "https://picsum.photos/seed/scanned-doc/600/400",
+      "imageHint": "scanned document"
+    },
+    {
+      "featureName": "PDF Tools",
+      "description": "PDF icon with text snippet",
+      "imageUrl": "https://picsum.photos/seed/pdf-tools/600/400",
+      "imageHint": "pdf icon"
+    },
+    {
+      "featureName": "Default",
+      "description": "Abstract AI art",
+      "imageUrl": "https://picsum.photos/seed/ai-default/600/400",
+      "imageHint": "ai art"
+    }
   ]
 }
