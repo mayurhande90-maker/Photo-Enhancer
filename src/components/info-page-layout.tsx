@@ -13,6 +13,7 @@ import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 function HeaderUserSection() {
     const { user, loading: isUserLoading } = useUser();
@@ -49,7 +50,6 @@ function HeaderUserSection() {
     }
 
     if (user) {
-        const photoSrc = user.photoURL || (user.uid ? `https://i.pravatar.cc/150?u=${user.uid}` : '');
         return (
             <div className="flex items-center gap-4">
                  <Button asChild className="hidden sm:flex rounded-2xl">
@@ -62,7 +62,10 @@ function HeaderUserSection() {
                             size="icon"
                             className="overflow-hidden rounded-full"
                         >
-                           {photoSrc ? <Image src={photoSrc} width={36} height={36} alt="User avatar" /> : <User className="h-5 w-5"/>}
+                           <Avatar className="h-9 w-9">
+                                <AvatarImage src={user.photoURL || ''} alt={user.displayName || ''} />
+                                <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
+                            </Avatar>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
