@@ -32,7 +32,6 @@ function fileToDataUri(file: File): Promise<string> {
 }
 
 const BeforeUploadState = ({ onSampleSelect, featureName }: { onSampleSelect: (file: File) => void; featureName: string }) => {
-    const sampleImage = PlaceHolderImageSamples.find(img => img.featureName === featureName);
     
     const handleSample = async () => {
         const sampleImage = PlaceHolderImages.find(img => img.id === 'feature-enhance-after');
@@ -52,12 +51,6 @@ const BeforeUploadState = ({ onSampleSelect, featureName }: { onSampleSelect: (f
             <div className="flex items-center justify-center gap-4">
                 <Button variant="outline" className="mt-4 rounded-xl" onClick={handleSample}>Try Sample Image</Button>
             </div>
-            {sampleImage && (
-                 <div className="mt-6">
-                    <p className="text-sm text-muted-foreground mb-4">Example result for {featureName}</p>
-                    <Image src={sampleImage.imageUrl} alt={sampleImage.description} width={400} height={300} className="rounded-2xl mx-auto border" />
-                 </div>
-            )}
         </div>
     )
 }
