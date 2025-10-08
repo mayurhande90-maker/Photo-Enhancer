@@ -283,7 +283,6 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
 
   const isResultReady = !!processedImageUrl;
   const isAwaitingUpload = !originalDataUri;
-  const isUploaded = originalDataUri && !isProcessing && !isResultReady;
 
   return (
     <div className="space-y-8 animate-fade-in-up">
@@ -336,10 +335,10 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
               </Card>
             </div>
         ) : !isAwaitingUpload ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 <div className="min-h-[200px]">
                     {isProcessing && <ProcessingState progress={progress} featureName={feature.name} />}
-                    {isUploaded && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
+                    {!isProcessing && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
                 </div>
 
                 <div>
