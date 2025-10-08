@@ -24,6 +24,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 function HeaderUserSection() {
     const { user, loading: isUserLoading } = useUser();
@@ -61,7 +62,6 @@ function HeaderUserSection() {
     }
 
     if (user) {
-        const photoSrc = user.photoURL || (user.uid ? `https://i.pravatar.cc/150?u=${user.uid}` : '');
         return (
             <div className="flex items-center gap-4">
                 <Button variant="outline" className="hidden sm:flex items-center gap-2 rounded-2xl">
@@ -80,7 +80,10 @@ function HeaderUserSection() {
                             size="icon"
                             className="overflow-hidden rounded-full"
                         >
-                            {photoSrc ? <Image src={photoSrc} width={36} height={36} alt="User avatar" /> : <User className="h-5 w-5"/>}
+                            <Avatar className="h-9 w-9">
+                                <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} />
+                                <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
+                            </Avatar>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
