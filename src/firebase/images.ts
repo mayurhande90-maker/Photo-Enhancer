@@ -34,7 +34,8 @@ export async function saveGeneratedImageClient(
 
   try {
     // 1. Upload the generated image data URI to Firebase Storage
-    const storageRef = ref(storage, `users/${userId}/generatedImages/${Date.now()}.png`);
+    const imageName = `${Date.now()}.png`;
+    const storageRef = ref(storage, `users/${userId}/generatedImages/${imageName}`);
     const uploadResult = await uploadString(storageRef, processedImageDataUri, 'data_url');
     
     // 2. Get the public download URL for the uploaded image
@@ -43,13 +44,16 @@ export async function saveGeneratedImageClient(
     // 3. Save the public URL (and other metadata) to Firestore
     const imagesCollection = collection(firestore, `users/${userId}/generatedImages`);
     
-    await addDoc(imagesCollection, {
+    const docRef = await addDoc(imagesCollection, {
       userId,
       originalImageUrl: originalImageUri, // Save the original URI/URL for reference
       processedImageUrl: downloadURL, // Save the public Storage URL
       processingType,
       createdAt: serverTimestamp(),
     });
+
+    // We can use the auto-generated ID from addDoc.
+    // The "My Creations" page will receive this as part of the snapshot.
 
   } catch (error) {
     console.error(`Failed to save image for user ${userId}:`, error);
