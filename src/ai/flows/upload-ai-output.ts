@@ -90,14 +90,14 @@ export const uploadAIOutput = ai.defineFlow(
       // Save metadata in Firestore
       await db.collection('users')
         .doc(userId)
-        .collection('generatedImages') // Changed from myCreations to match existing structure
+        .collection('generatedImages') 
         .add({
           userId,
           processingType: featureName,
-          fileType,
+          fileType: fileType,
           processedImageUrl: publicUrl,
           createdAt: new Date(),
-          creditsUsed: 1, // You might want to adjust this based on the feature
+          creditsUsed: 1, 
         });
       
       return { success: true, downloadURL: publicUrl };
