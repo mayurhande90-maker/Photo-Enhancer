@@ -37,11 +37,12 @@ export async function uploadToCloudinary(file: File, folder: string = "uploads")
       method: "POST",
       body: formData,
     });
-
+    
     const data = await res.json();
     
     if (!res.ok) {
         console.error("Cloudinary API returned an error. Full response:", data);
+        // This is the key change: Safely access the message, or provide a default.
         const errorMessage = data?.error?.message || "Upload failed due to a server error.";
         throw new Error(errorMessage);
     }
