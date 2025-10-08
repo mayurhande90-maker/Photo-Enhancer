@@ -12,8 +12,7 @@
         "photoURL": { "type": "string", "description": "URL of the user's profile picture." },
         "credits": { "type": "number", "description": "Number of credits the user has." },
         "planName": { "type": "string", "description": "Name of the subscription plan." },
-        "bio": { "type": "string", "description": "A short user biography.", "maxLength": 150 },
-        "profession": { "type": "string", "description": "User's profession." }
+        "bio": { "type": "string", "description": "A short user biography.", "maxLength": 150 }
       },
       "required": ["uid", "email", "displayName", "credits"]
     },

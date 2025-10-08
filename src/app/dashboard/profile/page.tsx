@@ -20,13 +20,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Award, Briefcase, Loader2, Edit, Camera } from "lucide-react";
+import { Briefcase, Loader2, Edit, Camera } from "lucide-react";
 import Link from "next/link";
 
 const profileFormSchema = z.object({
   displayName: z.string().min(2, { message: "Name must be at least 2 characters." }).max(50, { message: "Name cannot be longer than 50 characters." }),
   bio: z.string().max(150, { message: "Bio cannot be longer than 150 characters." }).optional(),
-  profession: z.string().max(50, { message: "Profession cannot be longer than 50 characters." }).optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -49,7 +48,6 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
     defaultValues: {
       displayName: "",
       bio: "",
-      profession: "",
     },
   });
 
@@ -58,11 +56,10 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
         form.reset({
             displayName: user.displayName || "",
             bio: (user as any).bio || "",
-            profession: (user as any).profession || "",
         });
         setPhotoPreview(user.photoURL || null);
     }
-  }, [user, form]);
+  }, [user, form, open]);
 
   const onSubmit = async (data: ProfileFormValues) => {
     if (!user || !firestore || !storage) return;
@@ -70,9 +67,7 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
     setIsSaving(true);
     try {
       await updateUserProfile(firestore, storage, user, {
-        displayName: data.displayName,
-        bio: data.bio,
-        profession: data.profession,
+        ...data,
         photoBlob: croppedBlob || undefined,
       });
       toast({ title: "✅ Profile updated successfully" });
@@ -154,19 +149,6 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
                 <FormLabel>Bio</FormLabel>
                 <FormControl>
                   <Textarea placeholder="Filmmaker & Creator" className="resize-none" {...field} maxLength={150}/>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-           <FormField
-            control={form.control}
-            name="profession"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Profession</FormLabel>
-                <FormControl>
-                  <Input placeholder="Entrepreneur" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -325,17 +307,6 @@ export default function ProfilePage() {
                         </div>
                     </div>
                  )}
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {appUser.profession && (
-                        <div className="flex items-start gap-4">
-                            <Award className="h-5 w-5 text-muted-foreground mt-1" />
-                            <div>
-                                <h4 className="font-semibold">Profession</h4>
-                                <p className="text-muted-foreground">{appUser.profession}</p>
-                            </div>
-                        </div>
-                    )}
-                 </div>
             </CardContent>
         </Card>
     </div>
