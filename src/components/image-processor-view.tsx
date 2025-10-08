@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { BeforeAfterSlider } from './before-after-slider';
 import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Clock, User, Loader2, Download, RefreshCw } from 'lucide-react';
+import { Terminal, Clock, User, Loader2, Download, RefreshCw, Wand2 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
@@ -310,4 +310,3 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     </div>
   );
 }
-
