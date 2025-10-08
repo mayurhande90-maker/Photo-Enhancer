@@ -9,7 +9,6 @@ import imageCompression from "browser-image-compression";
 interface ProfileUpdates {
   displayName?: string;
   bio?: string;
-  location?: string;
   profession?: string;
   photoFile?: File;
 }
@@ -48,7 +47,6 @@ export async function updateUserProfile(
   const firestoreUpdates: { [key: string]: any } = {};
   if (updates.displayName) firestoreUpdates.displayName = updates.displayName;
   if (updates.bio) firestoreUpdates.bio = updates.bio;
-  if (updates.location) firestoreUpdates.location = updates.location;
   if (updates.profession) firestoreUpdates.profession = updates.profession;
   if (newPhotoURL) firestoreUpdates.photoURL = newPhotoURL;
 

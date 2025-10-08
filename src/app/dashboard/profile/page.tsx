@@ -27,7 +27,6 @@ import Image from 'next/image';
 const profileFormSchema = z.object({
   displayName: z.string().min(2, { message: "Name must be at least 2 characters." }).max(50, { message: "Name cannot be longer than 50 characters." }),
   bio: z.string().max(150, { message: "Bio cannot be longer than 150 characters." }).optional(),
-  location: z.string().max(50, { message: "Location cannot be longer than 50 characters." }).optional(),
   profession: z.string().max(50, { message: "Profession cannot be longer than 50 characters." }).optional(),
   photoFile: z.instanceof(File).optional(),
 });
@@ -47,7 +46,6 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
     defaultValues: {
       displayName: user?.displayName || "",
       bio: (user as any)?.bio || "",
-      location: (user as any)?.location || "",
       profession: (user as any)?.profession || "",
     },
   });
@@ -122,19 +120,6 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
               <FormLabel>Bio</FormLabel>
               <FormControl>
                 <Textarea placeholder="Filmmaker & Creator" className="resize-none" {...field} maxLength={150}/>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="location"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Location</FormLabel>
-              <FormControl>
-                <Input placeholder="Pune, India" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -230,7 +215,6 @@ export default function ProfilePage() {
                 <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-12 w-full" />
-                <Skeleton className="h-12 w-full" />
             </div>
         </Card>
       </div>
@@ -292,15 +276,6 @@ export default function ProfilePage() {
                             <div>
                                 <h4 className="font-semibold">Profession</h4>
                                 <p className="text-muted-foreground">{appUser.profession}</p>
-                            </div>
-                        </div>
-                    )}
-                    {appUser.location && (
-                        <div className="flex items-start gap-4">
-                            <MapPin className="h-5 w-5 text-muted-foreground mt-1" />
-                            <div>
-                                <h4 className="font-semibold">Location</h4>
-                                <p className="text-muted-foreground">{appUser.location}</p>
                             </div>
                         </div>
                     )}

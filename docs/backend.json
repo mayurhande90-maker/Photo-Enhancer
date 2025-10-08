@@ -13,7 +13,6 @@
         "credits": { "type": "number", "description": "Number of credits the user has." },
         "planName": { "type": "string", "description": "Name of the subscription plan." },
         "bio": { "type": "string", "description": "A short user biography.", "maxLength": 150 },
-        "location": { "type": "string", "description": "User's location." },
         "profession": { "type": "string", "description": "User's profession." }
       },
       "required": ["uid", "email", "displayName", "credits"]
