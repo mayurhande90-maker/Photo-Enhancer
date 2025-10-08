@@ -4,7 +4,8 @@ const CLOUDINARY_CONFIG = {
   uploadPreset: "magicpixa_unsigned",
 };
 
-function showToast(msg: string) {
+function showToast(msg: string, isError: boolean = false) {
+    if (typeof document === 'undefined') return;
     const t = document.createElement("div");
     t.textContent = msg;
     t.style.position = "fixed";
@@ -12,7 +13,9 @@ function showToast(msg: string) {
     t.style.right = "24px";
     t.style.padding = "12px 20px";
     t.style.borderRadius = "12px";
-    t.style.background = msg.startsWith('✅') ? "linear-gradient(90deg,#6C63FF,#00D4FF)" : "linear-gradient(90deg, #FF6B6B, #FFB8B8)";
+    t.style.background = isError 
+        ? "linear-gradient(90deg, #D32F2F, #FF5252)" 
+        : "linear-gradient(90deg,#6C63FF,#00D4FF)";
     t.style.color = "#fff";
     t.style.fontSize = "14px";
     t.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
@@ -24,6 +27,13 @@ function showToast(msg: string) {
 }
 
 export async function uploadToCloudinary(file: File | Blob, folder: string = "uploads"): Promise<string> {
+    if (!file) {
+      const errorMsg = "No file provided for upload.";
+      console.error(errorMsg);
+      showToast(`⚠️ ${errorMsg}`, true);
+      throw new Error(errorMsg);
+    }
+    
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", CLOUDINARY_CONFIG.uploadPreset);
@@ -35,21 +45,32 @@ export async function uploadToCloudinary(file: File | Blob, folder: string = "up
             body: formData,
         });
 
+        if (!res.ok) {
+            // Don't assume the body is JSON. Use status text for a reliable error message.
+            const errorText = res.statusText || `HTTP error ${res.status}`;
+            console.error(`Cloudinary upload failed: ${errorText}`);
+            throw new Error(`Upload failed: ${errorText}. Please check Cloudinary credentials.`);
+        }
+
         const data = await res.json();
+
+        if (data.error) {
+            console.error("Cloudinary returned an error:", data.error);
+            throw new Error(data.error.message || "An unknown Cloudinary error occurred.");
+        }
         
-        if (!res.ok || data.error) {
-            const errorMessage = data.error?.message || "Upload failed due to an unknown error.";
-            console.error("Cloudinary upload failed:", data.error);
-            throw new Error(errorMessage);
+        if (!data.secure_url) {
+            console.error("Cloudinary response missing 'secure_url'. Full response:", data);
+            throw new Error("Upload succeeded but no URL was returned.");
         }
 
         showToast("✅ Image uploaded successfully!");
         return data.secure_url;
 
     } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : "An unknown error occurred.";
+        const message = error instanceof Error ? error.message : "An unknown network error occurred during upload.";
         console.error(`Cloudinary upload process failed: ${message}`);
-        showToast(`⚠️ Upload failed: ${message}. Please check your Cloudinary cloud name and unsigned upload preset.`);
-        throw error;
+        showToast(`⚠️ ${message}`, true);
+        throw new Error(message);
     }
 }
