@@ -104,11 +104,10 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
   }
 
   const handleFileSelect = (file: File) => {
+    handleReset();
     setOriginalFile(file);
     fileToDataUri(file).then(setOriginalDataUri);
-    setProcessedImageUrl(null);
-    setError(null);
-    setImageAnalysis("");
+    
   };
 
   const handleProcessImage = async () => {
@@ -142,20 +141,28 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
       const result = await feature.action(dataUri, user.uid);
       
       setProcessedImageUrl(result.enhancedPhotoDataUri);
-
+      
       if (result.enhancedPhotoDataUri) {
-        await saveGeneratedImageClient(
-            firestore,
-            storage,
-            user.uid,
-            dataUri,
-            result.enhancedPhotoDataUri,
-            feature.name
-        );
-        toast({
-            title: 'Image Generated!',
-            description: 'Your creation has been saved to your gallery.',
-        });
+         try {
+            await saveGeneratedImageClient(
+                firestore,
+                storage,
+                user.uid,
+                dataUri, // original image
+                result.enhancedPhotoDataUri, // processed image
+                feature.name
+            );
+             toast({
+                title: '✅ Image saved to "My Creations"',
+             });
+        } catch (saveError: any) {
+             console.error("Failed to save image:", saveError);
+             toast({
+                title: '⚠️ Couldn’t save image automatically.',
+                description: 'You can still download it manually.',
+                variant: 'destructive',
+            });
+        }
       } else {
          throw new Error('AI generation failed to return an image.');
       }
@@ -272,7 +279,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     );
   }
 
-  const showUploader = !originalFile;
+  const showUploader = !originalFile && !processedImageUrl;
   const showProcessingState = isProcessing;
   const showResultState = !!processedImageUrl;
   const showPreProcessingState = !!originalFile && !isProcessing && !showResultState;
@@ -305,32 +312,31 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                 <FileUploader onFileSelect={handleFileSelect} />
              ) : showResultState ? (
                 renderResultView()
-             ) : originalDataUri && (
+             ) : originalDataUri ? ( // This condition handles showing the original image before processing
                 <div className="relative">
                     <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
                     <Image src={originalDataUri} alt="Original upload" fill className="object-contain" />
                     </div>
                 </div>
-             )}
+             ) : null}
         </section>
         
         {showResultState ? (
-             <div className="mt-8 flex justify-center">
-                <Card className="rounded-3xl w-full max-w-md p-2">
+            <div className="mt-8 flex justify-center">
+              <Card className="rounded-3xl w-full max-w-md">
                   <CardContent className="p-4">
-                      <h2 className="text-xl font-semibold text-center mb-4">Actions</h2>
-                        <div className="flex flex-row justify-center gap-4">
-                            <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset} disabled={isProcessing}>
-                                <RefreshCw className="mr-2 h-5 w-5" />
-                                Generate Another
-                            </Button>
-                            <Button size="lg" asChild className="rounded-2xl h-12">
-                                <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
-                                    <Download className="mr-2 h-5 w-5"/>
-                                    Download Image
-                                </a>
-                            </Button>
-                        </div>
+                      <div className="flex flex-row justify-center items-center gap-4">
+                          <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset} disabled={isProcessing}>
+                              <RefreshCw className="mr-2 h-5 w-5" />
+                              Generate Another
+                          </Button>
+                          <Button size="lg" asChild className="rounded-2xl h-12">
+                              <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
+                                  <Download className="mr-2 h-5 w-5"/>
+                                  Download Image
+                              </a>
+                          </Button>
+                      </div>
                   </CardContent>
               </Card>
             </div>
