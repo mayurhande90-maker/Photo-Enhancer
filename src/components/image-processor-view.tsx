@@ -294,25 +294,19 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                 <div className="flex justify-center items-center h-48">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
-            ) : !originalFile ? (
+            ) : !originalFile || !processedImageUrl ? (
                 <FileUploader onFileSelect={handleFileSelect} />
-            ) : (
-              <>
-                {processedImageUrl ? (
-                  renderResultView()
-                ) : originalDataUri ? (
-                    <div className="relative">
-                        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-                        <Image src={originalDataUri} alt="Original upload" fill className="object-contain" />
-                        </div>
-                         <Button variant="outline" className="absolute top-4 right-4 rounded-xl" onClick={handleReset}>
-                            <RefreshCw className="mr-2 h-4 w-4" />
-                            Upload Different Image
-                        </Button>
+            ) : null}
+
+            {processedImageUrl ? (
+                renderResultView()
+            ) : originalDataUri && originalFile ? (
+                <div className="relative">
+                    <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+                    <Image src={originalDataUri} alt="Original upload" fill className="object-contain" />
                     </div>
-                ) : null}
-              </>
-            )}
+                </div>
+            ) : null}
         </section>
         
         {!processedImageUrl ? (
@@ -368,7 +362,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
         ) : (
              <div className="mt-8 flex justify-center">
                 <Card className="rounded-3xl w-full max-w-md">
-                  <CardContent className="p-6 space-y-4">
+                  <CardContent className="p-6">
                       <h2 className="text-xl font-semibold text-center mb-4">Actions</h2>
                         <div className="flex flex-row justify-center gap-4">
                             <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset} disabled={isProcessing}>
@@ -389,6 +383,3 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     </div>
   );
 }
-    
-
-    
