@@ -279,10 +279,9 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     );
   }
 
-  const showUploader = !originalFile && !processedImageUrl;
-  const showProcessingState = isProcessing;
-  const showResultState = !!processedImageUrl;
-  const showPreProcessingState = !!originalFile && !isProcessing && !showResultState;
+  const showUploader = !originalDataUri;
+  const isResultReady = !!processedImageUrl;
+  const isIdle = !!originalDataUri && !isProcessing && !isResultReady;
 
   return (
     <div className="space-y-8 animate-fade-in-up">
@@ -310,27 +309,21 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                 </div>
              ) : showUploader ? (
                 <FileUploader onFileSelect={handleFileSelect} />
-             ) : showResultState ? (
+             ) : (
                 renderResultView()
-             ) : originalDataUri ? ( // This condition handles showing the original image before processing
-                <div className="relative">
-                    <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-                    <Image src={originalDataUri} alt="Original upload" fill className="object-contain" />
-                    </div>
-                </div>
-             ) : null}
+             )}
         </section>
         
-        {showResultState ? (
-            <div className="mt-8 flex justify-center">
+        {isResultReady ? (
+             <div className="mt-4 flex justify-center">
               <Card className="rounded-3xl w-full max-w-md">
                   <CardContent className="p-4">
                       <div className="flex flex-row justify-center items-center gap-4">
-                          <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset} disabled={isProcessing}>
-                              <RefreshCw className="mr-2 h-5 w-5" />
-                              Generate Another
-                          </Button>
-                          <Button size="lg" asChild className="rounded-2xl h-12">
+                            <Button size="lg" variant="outline" className="flex-1 rounded-2xl h-12" onClick={handleReset}>
+                                <RefreshCw className="mr-2 h-5 w-5" />
+                                Generate Another
+                            </Button>
+                            <Button size="lg" asChild className="flex-1 rounded-2xl h-12">
                               <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
                                   <Download className="mr-2 h-5 w-5"/>
                                   Download Image
@@ -344,8 +337,8 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="min-h-[200px]">
                     {showUploader && <BeforeUploadState />}
-                    {showProcessingState && <ProcessingState progress={progress} featureName={feature.name} />}
-                    {showPreProcessingState && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
+                    {isProcessing && <ProcessingState progress={progress} featureName={feature.name} />}
+                    {isIdle && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
                 </div>
 
                 <div>

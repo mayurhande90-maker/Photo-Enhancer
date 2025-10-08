@@ -4,7 +4,7 @@
 import { 
     collection, 
     doc,
-    setDoc, 
+    addDoc, 
     serverTimestamp,
     type Firestore,
 } from 'firebase/firestore';
@@ -27,8 +27,8 @@ export async function saveGeneratedImageClient(
   firestore: Firestore,
   storage: FirebaseStorage,
   userId: string,
-  originalImageUri: string, // Keep this for reference if needed, though not saved currently
-  processedImageDataUri: string, // This is expected to be a data URI from the AI
+  originalImageUri: string, // Keep this for reference if needed
+  processedImageDataUri: string,
   processingType: string
 ): Promise<void> {
   if (!userId) {
@@ -41,15 +41,14 @@ export async function saveGeneratedImageClient(
   try {
     const generatedBlob = await dataUriToBlob(processedImageDataUri);
 
-    // 1. Compress the image client-side
-    const compressedFile = await imageCompression(generatedBlob as File, {
-        maxWidthOrHeight: 1080,
+    const options = {
         maxSizeMB: 0.5,
+        maxWidthOrHeight: 1080,
         useWebWorker: true,
         fileType: 'image/jpeg',
-    });
+    };
+    const compressedFile = await imageCompression(generatedBlob as File, options);
 
-    // 2. Upload the compressed image to Firebase Storage
     const timestamp = Date.now();
     const imageName = `${timestamp}_${processingType.replace(/\s+/g, '-')}_small.jpg`;
     const storagePath = `user_creations/${userId}/${processingType}/${imageName}`;
@@ -57,27 +56,22 @@ export async function saveGeneratedImageClient(
     
     await uploadBytes(storageRef, compressedFile);
     
-    // 3. Get the public download URL for the uploaded image
     const downloadURL = await getDownloadURL(storageRef);
 
-    // 4. Save the public URL (and other metadata) to Firestore
     const imagesCollection = collection(firestore, `users/${userId}/generatedImages`);
-    const newImageDocRef = doc(imagesCollection); // Create a new doc with a generated ID
     
-    await setDoc(newImageDocRef, {
-      id: newImageDocRef.id,
+    await addDoc(imagesCollection, {
       userId,
-      originalImageUrl: originalImageUri, // Save the original URI/URL for reference
-      processedImageUrl: downloadURL, // Save the public Storage URL
+      originalImageUrl: originalImageUri, 
+      processedImageUrl: downloadURL, 
       processingType,
       createdAt: serverTimestamp(),
       status: "success",
-      creditsUsed: 1, // Assuming 1 credit, as per instructions
+      creditsUsed: 1, 
     });
 
   } catch (error) {
     console.error(`Failed to save image for user ${userId}:`, error);
-    // Re-throw a more specific error for the UI to catch
     throw new Error('Could not save your creation automatically. Please try downloading it manually.');
   }
 }
