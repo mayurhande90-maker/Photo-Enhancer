@@ -1,14 +1,21 @@
+
 'use server';
 /**
  * @fileOverview A server-side flow to handle uploading any AI-generated file to Firebase Storage.
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
+import { initializeApp, getApps, App, credential } from 'firebase-admin/app';
 import { getStorage } from 'firebase-admin/storage';
 import { getFirestore } from 'firebase-admin/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import sharp from 'sharp';
+
+// Initialize Firebase Admin SDK
+if (!getApps().length) {
+    initializeApp();
+}
 
 const db = getFirestore();
 const bucket = getStorage().bucket();
