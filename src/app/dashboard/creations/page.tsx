@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent } from "@/components/ui/dropdown-menu";
-import { ImageIcon, Loader2, Download, Trash2, Search, Heart, Plus } from 'lucide-react';
+import { ImageIcon, Loader2, Download, Trash2, Search, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 function CreationCard({ image }: { image: GeneratedImage }) {
@@ -143,15 +143,6 @@ export default function CreationsPage() {
                     ))}
                 </div>
             )}
-             <Link href="/dashboard"
-                className={cn(
-                "fixed bottom-6 right-6 rounded-full p-2 h-14 w-14 transition-opacity duration-300 z-50 flex items-center justify-center",
-                "bg-gradient-to-tr from-brand-primary to-brand-secondary text-white shadow-lg hover:scale-105",
-                )}
-                aria-label="Create New"
-            >
-                <Plus className="h-7 w-7" />
-            </Link>
         </div>
     );
 }
