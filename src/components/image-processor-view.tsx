@@ -15,8 +15,8 @@ import { Terminal, Clock, User, Loader2, Download, RefreshCw, Wand2, Lightbulb, 
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
-import { useUser, useFirestore, useStorage } from '@/firebase';
-import { saveGeneratedImageClient } from '@/firebase/images';
+import { useUser } from '@/firebase';
+import { saveAIOutput } from '@/firebase/creations';
 import { Skeleton } from '@/components/ui/skeleton';
 import { analyzeImageAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
@@ -76,8 +76,6 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
   const feature = features.find((f) => f.name === featureName);
   const { toast } = useToast();
   const { user, loading: isUserLoading } = useUser();
-  const firestore = useFirestore();
-  const storage = useStorage();
   const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
 
   const [originalFile, setOriginalFile] = useState<File | null>(null);
@@ -108,7 +106,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
   };
 
   const handleProcessImage = async () => {
-    if (!originalFile || !user || !originalDataUri || !firestore || !storage) return;
+    if (!originalFile || !user || !originalDataUri) return;
     
     if (!isCreditLoading && credits < feature.creditCost) {
         toast({
@@ -137,26 +135,20 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
       const dataUri = originalDataUri;
       const result = await feature.action(dataUri, user.uid);
       
-      setProcessedImageUrl(result.enhancedPhotoDataUri);
-      
       if (result.enhancedPhotoDataUri) {
+         setProcessedImageUrl(result.enhancedPhotoDataUri);
          try {
-            await saveGeneratedImageClient(
-                firestore,
-                storage,
-                user.uid,
-                dataUri, 
+            await saveAIOutput(
+                feature.name,
                 result.enhancedPhotoDataUri,
-                feature.name
+                'image/jpeg' // Assuming output is always jpeg for now
             );
-             toast({
-                title: '✅ Image saved to "My Creations"',
-             });
+             // Toast is now shown inside saveAIOutput
         } catch (saveError: any) {
-             console.error("Failed to save image:", saveError);
+             console.error("Failed to save image via Cloud Function:", saveError);
              toast({
                 title: '⚠️ Couldn’t save image automatically.',
-                description: 'You can still download it manually.',
+                description: 'You can still download it manually. ' + saveError.message,
                 variant: 'destructive',
             });
         }
