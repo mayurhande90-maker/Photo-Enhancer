@@ -50,3 +50,4 @@ export * from './firestore/use-doc';
 export * from './errors';
 export * from './error-emitter';
 export * from './auth/use-user';
+export * from './non-blocking-updates';
