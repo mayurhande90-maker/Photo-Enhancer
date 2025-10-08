@@ -29,23 +29,20 @@ export async function updateUserProfile(
   const firestoreUpdates: { [key: string]: any } = {};
   const authUpdates: { displayName?: string; photoURL?: string } = {};
 
-  // Handle text field updates
   if (updates.displayName && updates.displayName !== user.displayName) {
     firestoreUpdates.displayName = updates.displayName;
     authUpdates.displayName = updates.displayName;
   }
-  // Only add bio and profession if they are explicitly provided in the updates
   if (updates.bio !== undefined) firestoreUpdates.bio = updates.bio;
   if (updates.profession !== undefined) firestoreUpdates.profession = updates.profession;
 
-  // Handle profile picture upload from blob
   if (updates.photoBlob) {
     try {
-      const compressedFile = await imageCompression(updates.photoBlob as File, {
+      const imageFile = new File([updates.photoBlob], "profile.jpg", { type: 'image/jpeg' });
+      const compressedFile = await imageCompression(imageFile, {
         maxSizeMB: 0.2,
         maxWidthOrHeight: 400,
         useWebWorker: true,
-        fileType: 'image/jpeg',
       });
 
       const storageRef = ref(storage, `profile_images/${user.uid}/profile.jpg`);
@@ -61,27 +58,18 @@ export async function updateUserProfile(
     }
   }
 
-  // Perform the updates if there are any changes
-  try {
-    const promises = [];
+  const promises = [];
 
-    // Update Firestore document if there are changes
-    if (Object.keys(firestoreUpdates).length > 0) {
-      const userDocRef = doc(firestore, "users", user.uid);
-      promises.push(updateDoc(userDocRef, firestoreUpdates));
-    }
+  if (Object.keys(firestoreUpdates).length > 0) {
+    const userDocRef = doc(firestore, "users", user.uid);
+    promises.push(updateDoc(userDocRef, firestoreUpdates));
+  }
 
-    // Update Firebase Auth profile if there are changes
-    if (Object.keys(authUpdates).length > 0) {
-       promises.push(updateProfile(currentUser, authUpdates));
-    }
+  if (Object.keys(authUpdates).length > 0) {
+     promises.push(updateProfile(currentUser, authUpdates));
+  }
     
-    if (promises.length > 0) {
-        await Promise.all(promises);
-    }
-
-  } catch (error) {
-    console.error("Error updating profile:", error);
-    throw new Error("Could not save profile changes.");
+  if (promises.length > 0) {
+    await Promise.all(promises);
   }
 }

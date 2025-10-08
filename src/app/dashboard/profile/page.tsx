@@ -59,13 +59,13 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
     },
   });
 
-  const onSubmit: SubmitHandler<ProfileFormValues> = async (data) => {
+  const onSubmit = async (data: ProfileFormValues) => {
     if (!user || !firestore || !storage) return;
 
     setIsSaving(true);
     try {
       await updateUserProfile(firestore, storage, user, {
-        displayName: data.displayName || user.displayName || '',
+        displayName: data.displayName,
         bio: data.bio,
         profession: data.profession,
         photoBlob: croppedBlob || undefined,
@@ -117,7 +117,7 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
           <div className="flex flex-col items-center gap-4">
               <div className="relative">
                   <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
-                      <AvatarImage src={photoPreview || ''} />
+                      <AvatarImage src={photoPreview || user?.photoURL || ''} />
                       <AvatarFallback>{user?.displayName?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <Label htmlFor="photo-upload" className="absolute bottom-1 right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-110">
