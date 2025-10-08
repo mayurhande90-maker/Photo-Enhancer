@@ -103,12 +103,12 @@ export default function SignupPage() {
             <CardContent className="grid gap-4">
                 <div className="grid gap-2">
                     <Label htmlFor="displayName">Full Name</Label>
-                    <Input id="displayName" placeholder="Priya Deshmukh" {...register('displayName')} />
+                    <Input id="displayName" placeholder="Aarav Sharma" {...register('displayName')} />
                     {errors.displayName && <p className="text-sm text-destructive">{errors.displayName.message}</p>}
                 </div>
                 <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="priya@example.com" {...register('email')} />
+                    <Input id="email" type="email" placeholder="aarav@example.com" {...register('email')} />
                     {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
                 </div>
                 <div className="grid gap-2">

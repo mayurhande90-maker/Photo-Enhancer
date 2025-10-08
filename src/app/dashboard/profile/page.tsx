@@ -55,7 +55,7 @@ export default function ProfilePage() {
             <div className="bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 p-8">
                  <div className="flex items-center gap-6">
                     <Avatar className="h-24 w-24 border-4 border-background shadow-lg">
-                        <AvatarImage src={user.photoURL ?? `https://i.pravatar.cc/150?u=${user.uid}`} />
+                        <AvatarImage src={user.photoURL ?? `https://i.pravatar.cc/150?u=${user.email}`} />
                         <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>
