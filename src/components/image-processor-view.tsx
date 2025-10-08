@@ -221,21 +221,6 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
   const renderResultView = () => {
     if (!processedImageUrl || !originalDataUri) return null;
 
-    const ActionButtons = () => (
-         <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild className="rounded-2xl h-12">
-                <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
-                    <Download className="mr-2 h-5 w-5"/>
-                    Download Image
-                </a>
-            </Button>
-            <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset}>
-                <RefreshCw className="mr-2 h-5 w-5" />
-                Generate Another
-            </Button>
-        </div>
-    );
-
     if (feature.showBeforeAfterSlider) {
       return (
         <div className="relative">
@@ -245,7 +230,18 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                     after={processedImageUrl}
                 />
             </div>
-            <ActionButtons />
+            <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+                <Button size="lg" asChild className="rounded-2xl h-12">
+                    <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
+                        <Download className="mr-2 h-5 w-5"/>
+                        Download Image
+                    </a>
+                </Button>
+                <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset}>
+                    <RefreshCw className="mr-2 h-5 w-5" />
+                    Generate Another
+                </Button>
+            </div>
         </div>
       );
     }
@@ -253,32 +249,49 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     return (
         <div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-                {originalDataUri && (
-                    <Image
-                    src={originalDataUri}
-                    alt="Original upload"
-                    fill
-                    className="object-contain"
-                    />
-                )}
-                <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                    Original
+                <div>
+                    <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+                        {originalDataUri && (
+                            <Image
+                            src={originalDataUri}
+                            alt="Original upload"
+                            fill
+                            className="object-contain"
+                            />
+                        )}
+                        <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                            Original
+                        </div>
+                    </div>
+                     <div className="mt-4 flex justify-center">
+                        <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset}>
+                            <RefreshCw className="mr-2 h-5 w-5" />
+                            Generate Another
+                        </Button>
+                    </div>
                 </div>
-                </div>
-                <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-                <Image
-                    src={processedImageUrl}
-                    alt="Processed result"
-                    fill
-                    className="object-contain"
-                />
-                <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                    Generated
-                </div>
+                <div>
+                    <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+                        <Image
+                            src={processedImageUrl}
+                            alt="Processed result"
+                            fill
+                            className="object-contain"
+                        />
+                        <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                            Generated
+                        </div>
+                    </div>
+                    <div className="mt-4 flex justify-center">
+                         <Button size="lg" asChild className="rounded-2xl h-12">
+                            <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
+                                <Download className="mr-2 h-5 w-5"/>
+                                Download Image
+                            </a>
+                        </Button>
+                    </div>
                 </div>
             </div>
-            <ActionButtons />
         </div>
     );
   }
@@ -321,7 +334,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                             </div>
                              <Button variant="outline" className="absolute top-4 right-4 rounded-xl" onClick={handleReset}>
                                 <RefreshCw className="mr-2 h-4 w-4" />
-                                Upload Your Own Image
+                                Upload Different Image
                             </Button>
                         </div>
                     ) : null}
