@@ -1,10 +1,11 @@
 
 'use client'
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import Cropper, { ReactCropperElement } from "react-cropper";
 import { useUser, useFirestore, useStorage } from "@/firebase";
 import { updateUserProfile } from "@/firebase/auth/update-profile";
 import { useToast } from "@/hooks/use-toast";
@@ -20,15 +21,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Award, Briefcase, Image as ImageIcon, MapPin, Loader2, Edit, Camera, User } from "lucide-react";
+import { Award, Briefcase, Loader2, Edit, Camera } from "lucide-react";
 import Link from "next/link";
-import Image from 'next/image';
 
 const profileFormSchema = z.object({
   displayName: z.string().min(2, { message: "Name must be at least 2 characters." }).max(50, { message: "Name cannot be longer than 50 characters." }),
   bio: z.string().max(150, { message: "Bio cannot be longer than 150 characters." }).optional(),
   profession: z.string().max(50, { message: "Profession cannot be longer than 50 characters." }).optional(),
-  photoFile: z.instanceof(File).optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -40,6 +39,11 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(user?.photoURL || null);
+  
+  const [cropImage, setCropImage] = useState<string | null>(null);
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const cropperRef = useRef<ReactCropperElement>(null);
+  const [croppedBlob, setCroppedBlob] = useState<Blob | null>(null);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -59,7 +63,7 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
         displayName: data.displayName,
         bio: data.bio,
         profession: data.profession,
-        photoFile: data.photoFile,
+        photoBlob: croppedBlob || undefined,
       });
       toast({ title: "✅ Profile updated successfully" });
       setOpen(false);
@@ -78,80 +82,117 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      form.setValue('photoFile', file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
+        setCropImage(reader.result as string);
+        setIsCropperOpen(true);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="flex flex-col items-center gap-4">
-            <div className="relative">
-                <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
-                    <AvatarImage src={photoPreview || ''} />
-                    <AvatarFallback>{user?.displayName?.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <Label htmlFor="photo-upload" className="absolute bottom-1 right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-110">
-                    <Camera className="h-4 w-4" />
-                    <span className="sr-only">Change profile picture</span>
-                </Label>
-                <Input id="photo-upload" type="file" className="sr-only" accept="image/png, image/jpeg, image/webp" onChange={handlePhotoChange} />
-            </div>
-        </div>
+  const handleCrop = () => {
+    const cropper = cropperRef.current?.cropper;
+    if (typeof cropper !== "undefined") {
+      cropper.getCroppedCanvas().toBlob((blob) => {
+        if(blob) {
+            setCroppedBlob(blob);
+            setPhotoPreview(URL.createObjectURL(blob));
+        }
+      }, 'image/jpeg');
+    }
+    setIsCropperOpen(false);
+  }
 
-        <FormField
-          control={form.control}
-          name="displayName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Display Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Aarav Sharma" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="bio"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bio</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Filmmaker & Creator" className="resize-none" {...field} maxLength={150}/>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-         <FormField
-          control={form.control}
-          name="profession"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Profession</FormLabel>
-              <FormControl>
-                <Input placeholder="Entrepreneur" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <DialogFooter className="pt-4">
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={isSaving}>Cancel</Button>
-          <Button type="submit" disabled={isSaving} className="bg-gradient-to-r from-brand-primary to-brand-secondary text-white">
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Save Changes
-          </Button>
-        </DialogFooter>
-      </form>
-    </Form>
+  return (
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="flex flex-col items-center gap-4">
+              <div className="relative">
+                  <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
+                      <AvatarImage src={photoPreview || ''} />
+                      <AvatarFallback>{user?.displayName?.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <Label htmlFor="photo-upload" className="absolute bottom-1 right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-110">
+                      <Camera className="h-4 w-4" />
+                      <span className="sr-only">Change profile picture</span>
+                  </Label>
+                  <Input id="photo-upload" type="file" className="sr-only" accept="image/png, image/jpeg, image/webp" onChange={handlePhotoChange} />
+              </div>
+          </div>
+
+          <FormField
+            control={form.control}
+            name="displayName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Display Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Aarav Sharma" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Bio</FormLabel>
+                <FormControl>
+                  <Textarea placeholder="Filmmaker & Creator" className="resize-none" {...field} maxLength={150}/>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+           <FormField
+            control={form.control}
+            name="profession"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Profession</FormLabel>
+                <FormControl>
+                  <Input placeholder="Entrepreneur" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <DialogFooter className="pt-4">
+            <Button variant="outline" onClick={() => setOpen(false)} disabled={isSaving}>Cancel</Button>
+            <Button type="submit" disabled={isSaving} className="bg-gradient-to-r from-brand-primary to-brand-secondary text-white">
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </form>
+      </Form>
+      
+      <Dialog open={isCropperOpen} onOpenChange={setIsCropperOpen}>
+        <DialogContent>
+            <DialogHeader><DialogTitle>Crop Your Image</DialogTitle></DialogHeader>
+            {cropImage && (
+                <Cropper
+                    ref={cropperRef}
+                    src={cropImage}
+                    style={{ height: 400, width: "100%" }}
+                    aspectRatio={1}
+                    viewMode={1}
+                    guides={false}
+                    background={false}
+                    autoCropArea={0.8}
+                />
+            )}
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setIsCropperOpen(false)}>Cancel</Button>
+                <Button onClick={handleCrop}>Crop & Use</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
@@ -189,7 +230,7 @@ function EditProfileDialog() {
                     <Edit className="mr-2 h-4 w-4" /> Edit Profile
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Edit Your Profile</DialogTitle>
                 </DialogHeader>
@@ -217,7 +258,6 @@ export default function ProfilePage() {
         </Card>
         <Card className="rounded-3xl p-8">
             <div className="grid gap-6 md:grid-cols-2">
-                <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-12 w-full" />
             </div>

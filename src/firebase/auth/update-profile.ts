@@ -10,7 +10,7 @@ interface ProfileUpdates {
   displayName?: string;
   bio?: string;
   profession?: string;
-  photoFile?: File;
+  photoBlob?: Blob;
 }
 
 export async function updateUserProfile(
@@ -39,13 +39,14 @@ export async function updateUserProfile(
   if (updates.profession) firestoreUpdates.profession = updates.profession;
 
 
-  // 2. Handle profile picture upload
-  if (updates.photoFile) {
+  // 2. Handle profile picture upload from blob
+  if (updates.photoBlob) {
     try {
-      const compressedFile = await imageCompression(updates.photoFile, {
+      const compressedFile = await imageCompression(updates.photoBlob as File, {
         maxSizeMB: 0.2,
         maxWidthOrHeight: 400,
         useWebWorker: true,
+        fileType: 'image/jpeg',
       });
 
       const storageRef = ref(storage, `profile_images/${user.uid}/profile.jpg`);
