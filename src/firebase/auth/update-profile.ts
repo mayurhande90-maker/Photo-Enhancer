@@ -1,9 +1,9 @@
 'use client';
 
-import { updateProfile, type User, type Auth } from "firebase/auth";
+import type { User, Auth } from "firebase/auth";
+import { updateProfile } from "firebase/auth";
 import { doc, updateDoc, type Firestore } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL, type FirebaseStorage } from "firebase/storage";
-import imageCompression from "browser-image-compression";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 interface ProfileUpdates {
   displayName?: string;
@@ -12,35 +12,25 @@ interface ProfileUpdates {
 }
 
 export async function updateUserProfile(
-    auth: Auth, // Explicitly require auth instance
+    auth: Auth,
     firestore: Firestore,
-    storage: FirebaseStorage,
     user: User,
     updates: ProfileUpdates
 ): Promise<void> {
-  if (!user || !auth.currentUser) throw new Error("No user logged in to update profile.");
+  if (!user || !auth.currentUser) {
+    throw new Error("No user logged in to update profile.");
+  }
 
-  let newPhotoURL: string | undefined = undefined;
+  let newPhotoURL: string | undefined = user.photoURL || undefined;
 
-  // Step 1: Handle photo upload if a new blob is provided
+  // Step 1: Handle photo upload to Cloudinary if a new blob is provided
   if (updates.photoBlob) {
     try {
-      const compressedBlob = await imageCompression(updates.photoBlob as File, {
-        maxSizeMB: 0.5,
-        maxWidthOrHeight: 720,
-        useWebWorker: true,
-        fileType: 'image/jpeg',
-      });
-
-      const fileName = `profile_${Date.now()}.jpg`;
-      const storageRef = ref(storage, `profile_images/${user.uid}/${fileName}`);
-      
-      const snapshot = await uploadBytes(storageRef, compressedBlob);
-      newPhotoURL = await getDownloadURL(snapshot.ref);
-
+      const photoFile = new File([updates.photoBlob], `profile_${user.uid}_${Date.now()}.jpg`, { type: 'image/jpeg' });
+      newPhotoURL = await uploadToCloudinary(photoFile, 'profiles');
     } catch (error) {
-      console.error("Error uploading profile image:", error);
-      throw new Error("Failed to upload new profile picture. Please check storage rules and network.");
+      console.error("Error uploading profile image to Cloudinary:", error);
+      throw new Error("Failed to upload new profile picture.");
     }
   }
 
@@ -57,11 +47,12 @@ export async function updateUserProfile(
     firestoreUpdates.bio = updates.bio;
   }
 
-  if (newPhotoURL) {
+  // Only include photoURL if it has actually changed
+  if (newPhotoURL && newPhotoURL !== user.photoURL) {
     authUpdates.photoURL = newPhotoURL;
     firestoreUpdates.photoURL = newPhotoURL;
   }
-
+  
   // Step 3: Execute updates if there are any changes
   const promises = [];
 

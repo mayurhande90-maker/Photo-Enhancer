@@ -8,13 +8,7 @@ import {
     serverTimestamp,
     type Firestore,
 } from 'firebase/firestore';
-import { 
-    getDownloadURL, 
-    ref, 
-    uploadBytes,
-    type FirebaseStorage,
-} from 'firebase/storage';
-import imageCompression from 'browser-image-compression';
+import { uploadToCloudinary } from '@/lib/cloudinary';
 
 async function dataUriToBlob(dataUri: string): Promise<Blob> {
     const response = await fetch(dataUri);
@@ -25,7 +19,6 @@ async function dataUriToBlob(dataUri: string): Promise<Blob> {
 // This function is intended to be called from a client component.
 export async function saveGeneratedImageClient(
   firestore: Firestore,
-  storage: FirebaseStorage,
   userId: string,
   originalImageUri: string, // Keep this for reference if needed
   processedImageDataUri: string,
@@ -40,23 +33,10 @@ export async function saveGeneratedImageClient(
 
   try {
     const generatedBlob = await dataUriToBlob(processedImageDataUri);
-
-    const options = {
-        maxSizeMB: 0.5,
-        maxWidthOrHeight: 1080,
-        useWebWorker: true,
-        fileType: 'image/jpeg',
-    };
-    const compressedFile = await imageCompression(generatedBlob as File, options);
-
-    const timestamp = Date.now();
-    const imageName = `${timestamp}_${processingType.replace(/\s+/g, '-')}_small.jpg`;
-    const storagePath = `user_creations/${userId}/${processingType}/${imageName}`;
-    const storageRef = ref(storage, storagePath);
+    const generatedFile = new File([generatedBlob], `${processingType}_${Date.now()}.jpg`, { type: 'image/jpeg' });
     
-    await uploadBytes(storageRef, compressedFile);
-    
-    const downloadURL = await getDownloadURL(storageRef);
+    // Upload the generated image to Cloudinary
+    const downloadURL = await uploadToCloudinary(generatedFile, `user_creations/${userId}/${processingType}`);
 
     const imagesCollection = collection(firestore, `users/${userId}/generatedImages`);
     
