@@ -74,42 +74,42 @@ const testimonials = [
       city: 'Pune',
       quote: "Best AI app for creators! The background removal is flawless and saved me hours.",
       rating: 5,
-      avatar: 'https://i.pravatar.cc/150?img=1'
+      avatar: 'https://i.pravatar.cc/150?img=60'
     },
     {
       name: 'Ritika Menon',
       city: 'Mumbai',
       quote: "My brand posters look like they were designed by a professional agency. Truly magical!",
       rating: 5,
-      avatar: 'https://i.pravatar.cc/150?img=5'
+      avatar: 'https://i.pravatar.cc/150?img=33'
     },
     {
       name: 'Karan Patel',
       city: 'Ahmedabad',
       quote: "So easy and addictive. I've enhanced my entire family photo collection.",
       rating: 4,
-      avatar: 'https://i.pravatar.cc/150?img=7'
+      avatar: 'https://i.pravatar.cc/150?img=14'
     },
     {
       name: 'Sneha Desai',
       city: 'Nashik',
       quote: "Turned my grainy, old black-and-white photo into a vibrant memory. I was speechless.",
       rating: 5,
-      avatar: 'https://i.pravatar.cc/150?img=8'
+      avatar: 'https://i.pravatar.cc/150?img=32'
     },
     {
       name: 'Aditya Khanna',
       city: 'Delhi',
       quote: "The YouTube thumbnail creator is a game-changer. My click-through rate has visibly improved.",
       rating: 4,
-      avatar: 'https://i.pravatar.cc/150?img=12'
+      avatar: 'https://i.pravatar.cc/150?img=68'
     },
     {
       name: 'Priya Singh',
       city: 'Bangalore',
       quote: "As a student, the notes generator is my secret weapon for exam prep. Highly recommended!",
       rating: 5,
-      avatar: 'https://i.pravatar.cc/150?img=20'
+      avatar: 'https://i.pravatar.cc/150?img=49'
     }
 ]
 
@@ -497,5 +497,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
