@@ -323,56 +323,56 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
         </section>
         
         {!isResultReady && !isAwaitingUpload && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch mt-8">
             <div className="min-h-[200px]">
-                {isProcessing && <ProcessingState progress={progress} featureName={feature.name} />}
-                {!isProcessing && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
+              {isProcessing ? (
+                <ProcessingState progress={progress} featureName={feature.name} />
+              ) : (
+                originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />
+              )}
             </div>
+            
+            <Card className="rounded-3xl sticky top-24 h-full">
+              <CardContent className="p-6 space-y-4 flex flex-col justify-between h-full">
+                <div>
+                  <h2 className="text-xl font-semibold mb-4">Actions</h2>
+                  {error && !isProcessing && (
+                    <Alert variant="destructive" className="rounded-2xl">
+                      <AlertTitle>Error</AlertTitle>
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+                  {renderQuotaAlert()}
+                </div>
 
-            <div>
-                <Card className="rounded-3xl sticky top-24 h-full">
-                <CardContent className="p-6 space-y-4 flex flex-col justify-between h-full">
-                    <div>
-                        <h2 className="text-xl font-semibold mb-4">Actions</h2>
-                        {error && !isProcessing && (
-                            <Alert variant="destructive" className="rounded-2xl">
-                                <AlertTitle>Error</AlertTitle>
-
-                                <AlertDescription>{error}</AlertDescription>
-                            </Alert>
-                            )}
-                            
-                        {renderQuotaAlert()}
-                    </div>
-
-                    <div className="flex flex-col gap-3">
-                        <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isProcessing || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}>
-                            <Wand2 className="mr-2 h-5 w-5" />
-                            Generate
-                        </Button>
-                        <div className="text-center text-sm text-muted-foreground pt-2">
-                                {isUserLoading || isCreditLoading ? (
-                                    <Skeleton className="h-4 w-32 mx-auto" />
-                                ) : user ? (
-                                    <p>You have {credits} credits left.</p>
-                                ) : (
-                                    <p>
-                                        <Link href="/login" className="underline font-semibold hover:text-primary">
-                                            Sign in
-                                        </Link>{' '}
-                                        to start creating.
-                                    </p>
-                                )}
-                            </div>
-                    </div>
-                </CardContent>
+                <div className="flex flex-col gap-3">
+                  <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isProcessing || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}>
+                    <Wand2 className="mr-2 h-5 w-5" />
+                    Generate
+                  </Button>
+                  <div className="text-center text-sm text-muted-foreground pt-2">
+                    {isUserLoading || isCreditLoading ? (
+                      <Skeleton className="h-4 w-32 mx-auto" />
+                    ) : user ? (
+                      <p>You have {credits} credits left.</p>
+                    ) : (
+                      <p>
+                        <Link href="/login" className="underline font-semibold hover:text-primary">
+                          Sign in
+                        </Link>{' '}
+                        to start creating.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
             </Card>
-            </div>
           </div>
         )}
 
+
         {isResultReady && (
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-8">
             <Card className="rounded-3xl w-full max-w-md">
                 <CardContent className="p-4">
                   <div className="flex flex-row justify-center items-center gap-4">
@@ -394,5 +394,3 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     </div>
   );
 }
-
-    
