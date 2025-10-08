@@ -11,10 +11,14 @@ import { getStorage } from 'firebase-admin/storage';
 import { getFirestore } from 'firebase-admin/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import sharp from 'sharp';
+import { firebaseConfig } from '@/firebase/config';
 
 // Initialize Firebase Admin SDK
 if (!getApps().length) {
-    initializeApp();
+    initializeApp({
+        credential: credential.applicationDefault(),
+        storageBucket: firebaseConfig.storageBucket,
+    });
 }
 
 const db = getFirestore();
