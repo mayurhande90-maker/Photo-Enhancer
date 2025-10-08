@@ -23,42 +23,36 @@ function showToast(msg: string) {
 
 export async function uploadToCloudinary(file: File, folder: string = "uploads"): Promise<string> {
   try {
-    if (!file) throw new Error("No file selected.");
+    if (!file) {
+      console.error("No file provided to Cloudinary upload.");
+      throw new Error("Please select a file before uploading.");
+    }
 
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", CLOUDINARY_CONFIG.uploadPreset);
     formData.append("folder", folder);
 
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`, {
+      method: "POST",
+      body: formData,
+    });
 
-    if (!res.ok) {
-        let errorMessage = "Upload failed due to an unknown error.";
-        try {
-            const errorData = await res.json();
-            console.error("Cloudinary upload failed with response:", errorData);
-            if (errorData?.error?.message) {
-              errorMessage = `Upload failed: ${errorData.error.message}`;
-            }
-        } catch (e) {
-            console.error("Could not parse Cloudinary error response:", e);
-        }
-        throw new Error(errorMessage);
-    }
-    
     const data = await res.json();
+    console.log("Cloudinary Response:", data);
+
+    if (!res.ok || data.error) {
+      console.error("Cloudinary upload failed:", data.error);
+      throw new Error(data.error?.message || "Upload failed");
+    }
+
     showToast("✅ Image uploaded successfully!");
     return data.secure_url;
 
   } catch (error) {
     console.error("Cloudinary upload error:", error);
-    showToast(`⚠️ ${error instanceof Error ? error.message : 'Failed to upload image'}`);
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred during upload.";
+    showToast(`⚠️ Upload failed: ${errorMessage}`);
     throw error;
   }
 }
