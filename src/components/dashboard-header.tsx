@@ -4,7 +4,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { features } from '@/lib/features';
 import { Button } from './ui/button';
-import { User, LogOut, CreditCard, PanelLeft, Settings } from 'lucide-react';
+import { User, LogOut, CreditCard, PanelLeft, Settings, ChevronRight } from 'lucide-react';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Skeleton } from './ui/skeleton';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
@@ -15,6 +15,15 @@ import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
 import { DashboardSidebar } from './dashboard-sidebar';
+import Image from 'next/image';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 function HeaderUserSection() {
     const { user, loading: isUserLoading } = useUser();
@@ -54,7 +63,7 @@ function HeaderUserSection() {
     if (user) {
         return (
             <div className="flex items-center gap-4">
-                <Button variant="outline" className="hidden sm:flex items-center gap-2 rounded-full">
+                <Button variant="outline" className="hidden sm:flex items-center gap-2 rounded-2xl">
                   <CreditCard className="h-4 w-4" /> 
                    {isCreditLoading ? (
                         <Skeleton className="h-4 w-6" />
@@ -119,33 +128,20 @@ function HeaderUserSection() {
     );
 }
 
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import Image from 'next/image';
-
-
 export function DashboardHeader() {
   const pathname = usePathname();
-
   const currentFeature = features.find((f) => f.path === pathname);
-  const title = currentFeature?.name || 'Dashboard';
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-lg sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-lg sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
         <Sheet>
             <SheetTrigger asChild>
-                <Button size="icon" variant="outline" className="sm:hidden">
+                <Button size="icon" variant="outline" className="sm:hidden rounded-full">
                     <PanelLeft className="h-5 w-5" />
                     <span className="sr-only">Toggle Menu</span>
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="sm:max-w-xs p-0">
+            <SheetContent side="left" className="sm:max-w-xs p-0 bg-sidebar border-r-0">
                 <DashboardSidebar />
             </SheetContent>
         </Sheet>
@@ -159,7 +155,9 @@ export function DashboardHeader() {
                 </BreadcrumbItem>
                 {currentFeature && (
                     <>
-                        <BreadcrumbSeparator />
+                        <BreadcrumbSeparator>
+                            <ChevronRight />
+                        </BreadcrumbSeparator>
                         <BreadcrumbItem>
                             <BreadcrumbPage>{currentFeature.name}</BreadcrumbPage>
                         </BreadcrumbItem>

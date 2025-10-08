@@ -1,3 +1,4 @@
+
 import {
   enhancePhotoAction,
   removeBackgroundAction,
@@ -45,15 +46,6 @@ export const features: Feature[] = [
     creditCost: 1,
     action: colorizePhotoAction,
     showBeforeAfterSlider: true,
-  },
-   {
-    name: 'My Creations',
-    description: 'View your gallery of generated images.',
-    path: '/dashboard/creations',
-    icon: Image,
-    creditCost: 0,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
   },
   {
     name: 'YouTube Thumbnail Creator',
