@@ -43,7 +43,8 @@ export async function uploadToCloudinary(file: File, folder: string = "uploads")
 
     if (!res.ok || data.error) {
       console.error("Cloudinary upload failed:", data.error);
-      throw new Error(data.error?.message || "Upload failed");
+      const errorMessage = data.error?.message || "Upload failed due to an unknown Cloudinary error.";
+      throw new Error(errorMessage);
     }
 
     showToast("✅ Image uploaded successfully!");
