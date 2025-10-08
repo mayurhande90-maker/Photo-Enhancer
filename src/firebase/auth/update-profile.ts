@@ -25,41 +25,52 @@ export async function updateUserProfile(
   const currentUser = authInstance.currentUser;
   if (!currentUser) throw new Error("Current user not found in auth instance.");
 
-
   const firestoreUpdates: { [key: string]: any } = {};
   const authUpdates: { displayName?: string; photoURL?: string } = {};
 
-  if (updates.displayName && updates.displayName !== user.displayName) {
-    firestoreUpdates.displayName = updates.displayName;
-    authUpdates.displayName = updates.displayName;
-  }
-  if (updates.bio !== undefined) firestoreUpdates.bio = updates.bio;
-  if (updates.profession !== undefined) firestoreUpdates.profession = updates.profession;
+  let newPhotoURL = currentUser.photoURL;
 
+  // Step 1: Handle photo upload if a new blob is provided
   if (updates.photoBlob) {
     try {
-      const imageFile = new File([updates.photoBlob], "profile.jpg", { type: 'image/jpeg' });
-      const compressedFile = await imageCompression(imageFile, {
-        maxSizeMB: 0.2,
-        maxWidthOrHeight: 400,
+      const compressedFile = await imageCompression(updates.photoBlob, {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 720,
         useWebWorker: true,
       });
 
-      const storageRef = ref(storage, `profile_images/${user.uid}/profile.jpg`);
-      await uploadBytes(storageRef, compressedFile);
-      const newPhotoURL = await getDownloadURL(storageRef);
+      const fileName = `profile_${Date.now()}.jpg`;
+      const storageRef = ref(storage, `profile_images/${user.uid}/${fileName}`);
       
-      firestoreUpdates.photoURL = newPhotoURL;
-      authUpdates.photoURL = newPhotoURL;
+      // Await the upload and get the snapshot
+      const snapshot = await uploadBytes(storageRef, compressedFile);
+      
+      // Await getting the download URL
+      newPhotoURL = await getDownloadURL(snapshot.ref);
 
     } catch (error) {
       console.error("Error uploading profile image:", error);
-      throw new Error("Failed to upload new profile picture.");
+      throw new Error("Failed to upload new profile picture. Check storage rules.");
     }
+  }
+
+  // Step 2: Prepare updates for Firestore and Auth
+  if (updates.displayName && updates.displayName !== currentUser.displayName) {
+    firestoreUpdates.displayName = updates.displayName;
+    authUpdates.displayName = updates.displayName;
+  }
+  
+  if (updates.bio !== undefined) firestoreUpdates.bio = updates.bio;
+  if (updates.profession !== undefined) firestoreUpdates.profession = updates.profession;
+
+  if (newPhotoURL !== currentUser.photoURL) {
+      firestoreUpdates.photoURL = newPhotoURL;
+      authUpdates.photoURL = newPhotoURL;
   }
 
   const promises = [];
 
+  // Step 3: Execute updates
   if (Object.keys(firestoreUpdates).length > 0) {
     const userDocRef = doc(firestore, "users", user.uid);
     promises.push(updateDoc(userDocRef, firestoreUpdates));
