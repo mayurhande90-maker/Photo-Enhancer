@@ -144,17 +144,10 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                 result.enhancedPhotoDataUri,
                 'image/jpeg'
             );
-             toast({
-                title: '✅ Image saved to "My Creations"!',
-                description: 'You can view and download it from your creations gallery.',
-            });
+             // Toast is shown inside saveAIOutput
         } catch (saveError: any) {
              console.error("Failed to save image to Firestore:", saveError);
-             toast({
-                title: '⚠️ Couldn’t save image automatically.',
-                description: 'You can still download it manually. ' + saveError.message,
-                variant: 'destructive',
-            });
+             // Toast is shown inside saveAIOutput
         }
       } else {
          throw new Error('AI generation failed to return an image.');

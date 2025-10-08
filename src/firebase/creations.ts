@@ -2,52 +2,15 @@
 'use client';
 
 import { getAuth } from "firebase/auth";
-import { getFunctions, httpsCallable } from "firebase/functions";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { v4 as uuidv4 } from 'uuid';
 
-export async function saveAIOutput(featureName: string, fileBlobOrBase64: Blob | string, fileType: string) {
-  try {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (!user) {
-      alert("Please log in to save your creation.");
-      return;
-    }
-
-    // Convert to base64 if Blob or File
-    let base64File = "";
-    if (fileBlobOrBase64 instanceof Blob) {
-      const reader = new FileReader();
-      base64File = await new Promise((resolve) => {
-        reader.onloadend = () => {
-          const result = reader.result as string;
-          resolve(result.split(",")[1]);
-        }
-        reader.readAsDataURL(fileBlobOrBase64);
-      });
-    } else if (typeof fileBlobOrBase64 === "string" && fileBlobOrBase64.startsWith("data:")) {
-      base64File = fileBlobOrBase64.split(",")[1];
-    } else {
-      throw new Error("Unsupported file format provided to saveAIOutput.");
-    }
-
-    const functions = getFunctions();
-    const uploadFn = httpsCallable(functions, "uploadAIOutput");
-    const result: any = await uploadFn({ featureName, base64File, fileType });
-
-    if (result.data.success) {
-      showToast("✅ Saved to My Creations");
-      console.log("File URL:", result.data.downloadURL);
-      return result.data.downloadURL;
-    } else {
-      showToast("⚠️ Upload failed. Please try again.");
-    }
-  } catch (err) {
-    console.error("Error saving AI output:", err);
-    const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
-    showToast(`⚠️ Failed to save creation: ${errorMessage}`);
-  }
+async function dataUriToBlob(dataUri: string): Promise<Blob> {
+    const response = await fetch(dataUri);
+    const blob = await response.blob();
+    return blob;
 }
-
 
 function showToast(msg: string) {
   const t = document.createElement("div");
@@ -66,4 +29,75 @@ function showToast(msg: string) {
   });
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 4000);
+}
+
+export async function saveAIOutput(
+    featureName: string, 
+    fileBlobOrBase64: Blob | string, 
+    fileType: string,
+    userId?: string
+): Promise<string> {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const currentUserId = userId || user?.uid;
+
+    if (!currentUserId) {
+        throw new Error("User is not authenticated. Please log in to save.");
+    }
+    
+    let fileBlob: Blob;
+    if (typeof fileBlobOrBase64 === 'string') {
+        if (fileBlobOrBase64.startsWith('data:')) {
+            fileBlob = await dataUriToBlob(fileBlobOrBase64);
+        } else {
+            // Assume it's a base64 string without the prefix
+            const byteCharacters = atob(fileBlobOrBase64);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            fileBlob = new Blob([byteArray], { type: fileType });
+        }
+    } else {
+        fileBlob = fileBlobOrBase64;
+    }
+
+    try {
+        // 1. Upload to Firebase Storage
+        const storage = getStorage();
+        const fileId = uuidv4();
+        const extension = fileType.split('/')[1] || 'png';
+        const storagePath = `user_creations/${currentUserId}/${featureName}/${fileId}.${extension}`;
+        const storageRef = ref(storage, storagePath);
+        
+        const uploadResult = await uploadBytes(storageRef, fileBlob, {
+            contentType: fileType,
+        });
+        
+        const downloadURL = await getDownloadURL(uploadResult.ref);
+
+        // 2. Save metadata to Firestore
+        const firestore = getFirestore();
+        const creationsCollection = collection(firestore, `users/${currentUserId}/generatedImages`);
+        
+        await addDoc(creationsCollection, {
+            userId: currentUserId,
+            processingType: featureName,
+            processedImageUrl: downloadURL,
+            originalImageUrl: '', // This can be adapted if you pass the original URL
+            createdAt: serverTimestamp(),
+            status: "success",
+            creditsUsed: 1, // Or the actual cost
+        });
+        
+        showToast("✅ Saved to My Creations");
+        return downloadURL;
+
+    } catch (err) {
+        console.error("Error saving AI output:", err);
+        const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
+        showToast(`⚠️ Failed to save creation: ${errorMessage}`);
+        throw err;
+    }
 }
