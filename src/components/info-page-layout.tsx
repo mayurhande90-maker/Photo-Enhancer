@@ -12,6 +12,7 @@ import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 function HeaderUserSection() {
     const { user, loading: isUserLoading } = useUser();
@@ -20,6 +21,7 @@ function HeaderUserSection() {
     const router = useRouter();
 
     const handleLogout = async () => {
+        if (!auth) return;
         try {
             await signOut(auth);
             toast({
@@ -49,6 +51,9 @@ function HeaderUserSection() {
     if (user) {
         return (
             <div className="flex items-center gap-4">
+                 <Button asChild className="hidden sm:flex rounded-2xl">
+                    <Link href="/dashboard">Go to Dashboard</Link>
+                </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                          <Button
@@ -56,7 +61,7 @@ function HeaderUserSection() {
                             size="icon"
                             className="overflow-hidden rounded-full"
                         >
-                            <User />
+                           <Image src={user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`} width={36} height={36} alt="User avatar" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -78,14 +83,14 @@ function HeaderUserSection() {
     }
 
     return (
-        <nav className="hidden items-center space-x-2 md:flex">
+        <div className="hidden items-center space-x-2 md:flex">
             <Button variant="ghost" asChild>
                 <Link href="/login">Login</Link>
             </Button>
             <Button asChild>
                 <Link href="/signup">Sign Up</Link>
             </Button>
-        </nav>
+        </div>
     );
 }
 
@@ -98,12 +103,17 @@ export function InfoPageLayout({
 }) {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
+        <div className="container flex h-16 items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Logo className="h-6 w-6" />
-            <span className="font-bold">Magicpixa</span>
+            <Logo className="h-7 w-7 bg-gradient-to-r from-brand-primary to-brand-secondary text-transparent bg-clip-text" />
+            <span className="font-bold text-lg">Magicpixa</span>
           </Link>
+           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+            <Link href="/#features" className="transition-colors hover:text-foreground/80 text-foreground/70">Features</Link>
+            <Link href="/#pricing" className="transition-colors hover:text-foreground/80 text-foreground/70">Pricing</Link>
+            <Link href="/about" className="transition-colors hover:text-foreground/80 text-foreground/70">About</Link>
+          </nav>
           <div className="flex flex-1 items-center justify-end space-x-4">
             <ThemeToggle />
             <HeaderUserSection />
@@ -118,7 +128,7 @@ export function InfoPageLayout({
           </article>
         </div>
       </main>
-      <footer className="border-t">
+      <footer className="border-t bg-card/50">
         <div className="container py-8 text-center text-sm text-muted-foreground">
             <p>&copy; {new Date().getFullYear()} Magicpixa. All rights reserved. | <Link href="/" className="hover:underline">Back to Home</Link></p>
         </div>

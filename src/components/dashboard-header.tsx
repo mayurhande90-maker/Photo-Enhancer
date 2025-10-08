@@ -4,7 +4,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { features } from '@/lib/features';
 import { Button } from './ui/button';
-import { User, LogOut, CreditCard, PanelLeft, Settings } from 'lucide-react';
+import { User, LogOut, CreditCard, PanelLeft, Settings, Sheet, SheetTrigger, SheetContent } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
 import Link from 'next/link';
@@ -13,6 +13,7 @@ import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
+import { DashboardSidebar } from './dashboard-sidebar';
 
 function HeaderUserSection() {
     const { user, loading: isUserLoading } = useUser();
@@ -22,6 +23,7 @@ function HeaderUserSection() {
     const router = useRouter();
 
     const handleLogout = async () => {
+        if (!auth) return;
         try {
             await signOut(auth);
             toast({
@@ -67,7 +69,7 @@ function HeaderUserSection() {
                             size="icon"
                             className="overflow-hidden rounded-full"
                         >
-                            <User />
+                            <Image src={user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`} width={36} height={36} alt="User avatar" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
@@ -116,6 +118,17 @@ function HeaderUserSection() {
     );
 }
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import Image from 'next/image';
+
+
 export function DashboardHeader() {
   const pathname = usePathname();
 
@@ -123,12 +136,36 @@ export function DashboardHeader() {
   const title = currentFeature?.name || 'Dashboard';
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-lg sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-        <Button size="icon" variant="outline" className="sm:hidden">
-            <PanelLeft className="h-5 w-5" />
-            <span className="sr-only">Toggle Menu</span>
-        </Button>
-      <h1 className="text-xl font-semibold tracking-tight hidden sm:block">{title}</h1>
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-lg sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
+        <Sheet>
+            <SheetTrigger asChild>
+                <Button size="icon" variant="outline" className="sm:hidden">
+                    <PanelLeft className="h-5 w-5" />
+                    <span className="sr-only">Toggle Menu</span>
+                </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="sm:max-w-xs p-0">
+                <DashboardSidebar />
+            </SheetContent>
+        </Sheet>
+
+        <Breadcrumb className="hidden md:flex">
+            <BreadcrumbList>
+                <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                    <Link href="/dashboard">Dashboard</Link>
+                </BreadcrumbLink>
+                </BreadcrumbItem>
+                {currentFeature && (
+                    <>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>{currentFeature.name}</BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </>
+                )}
+            </BreadcrumbList>
+        </Breadcrumb>
       
       <div className="flex items-center gap-2 md:gap-4 ml-auto">
         <ThemeToggle />

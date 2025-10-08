@@ -9,12 +9,14 @@ export function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
+    <div className="flex min-h-dvh flex-col bg-background text-foreground">
+       <div className="absolute inset-0 -z-10 h-full w-full bg-background dark:bg-navy bg-[radial-gradient(theme(colors.border)_1px,transparent_1px)] dark:bg-[radial-gradient(theme(colors.blue.900)_1px,transparent_1px)] [background-size:32px_32px]"></div>
+
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
+        <div className="container flex h-16 items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Logo className="h-6 w-6" />
-            <span className="font-bold">Magicpixa</span>
+            <Logo className="h-7 w-7 bg-gradient-to-r from-brand-primary to-brand-secondary text-transparent bg-clip-text" />
+            <span className="font-bold text-lg">Magicpixa</span>
           </Link>
           <div className="flex flex-1 items-center justify-end space-x-2">
             <ThemeToggle />
