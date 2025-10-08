@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { User, Auth } from "firebase/auth";
