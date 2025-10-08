@@ -148,8 +148,8 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                 firestore,
                 storage,
                 user.uid,
-                dataUri, // original image
-                result.enhancedPhotoDataUri, // processed image
+                dataUri,
+                result.enhancedPhotoDataUri,
                 feature.name
             );
              toast({
@@ -228,9 +228,9 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
   }
 
   const renderResultView = () => {
-    if (!processedImageUrl || !originalDataUri) return null;
+    if (!originalDataUri) return null;
 
-    if (feature.showBeforeAfterSlider) {
+    if (processedImageUrl && feature.showBeforeAfterSlider) {
       return (
         <div className="relative">
              <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
@@ -242,46 +242,48 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
         </div>
       );
     }
-
+    
     return (
-        <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-                        {originalDataUri && (
-                            <Image
-                            src={originalDataUri}
-                            alt="Original upload"
-                            fill
-                            className="object-contain"
-                            />
-                        )}
-                        <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                            Original
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-                        <Image
-                            src={processedImageUrl}
-                            alt="Processed result"
-                            fill
-                            className="object-contain"
-                        />
-                        <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                            Generated
-                        </div>
-                    </div>
-                </div>
+      <div>
+        <div className={cn("grid grid-cols-1 gap-4", processedImageUrl && "md:grid-cols-2")}>
+          <div className={cn(!processedImageUrl && "max-w-xl mx-auto w-full")}>
+            <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+              {originalDataUri && (
+                <Image
+                  src={originalDataUri}
+                  alt="Original upload"
+                  fill
+                  className="object-contain"
+                />
+              )}
+              <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                Original
+              </div>
             </div>
+          </div>
+          {processedImageUrl && (
+            <div>
+              <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+                <Image
+                  src={processedImageUrl}
+                  alt="Processed result"
+                  fill
+                  className="object-contain"
+                />
+                <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                  Generated
+                </div>
+              </div>
+            </div>
+          )}
         </div>
+      </div>
     );
   }
 
-  const showUploader = !originalDataUri;
   const isResultReady = !!processedImageUrl;
-  const isIdle = !!originalDataUri && !isProcessing && !isResultReady;
+  const isAwaitingUpload = !originalDataUri;
+  const isUploaded = originalDataUri && !isProcessing && !isResultReady;
 
   return (
     <div className="space-y-8 animate-fade-in-up">
@@ -307,7 +309,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                 <div className="flex justify-center items-center h-48">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
-             ) : showUploader ? (
+             ) : isAwaitingUpload ? (
                 <FileUploader onFileSelect={handleFileSelect} />
              ) : (
                 renderResultView()
@@ -315,8 +317,8 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
         </section>
         
         {isResultReady ? (
-             <div className="mt-4 flex justify-center">
-              <Card className="rounded-3xl w-full max-w-md">
+            <div className="mt-4 flex justify-center">
+              <Card className="rounded-3xl w-full max-w-md p-2">
                   <CardContent className="p-4">
                       <div className="flex flex-row justify-center items-center gap-4">
                             <Button size="lg" variant="outline" className="flex-1 rounded-2xl h-12" onClick={handleReset}>
@@ -333,12 +335,11 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                   </CardContent>
               </Card>
             </div>
-        ) : (
+        ) : !isAwaitingUpload ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="min-h-[200px]">
-                    {showUploader && <BeforeUploadState />}
                     {isProcessing && <ProcessingState progress={progress} featureName={feature.name} />}
-                    {isIdle && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
+                    {isUploaded && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
                 </div>
 
                 <div>
@@ -381,7 +382,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                 </Card>
                 </div>
             </div>
-        )}
+        ) : null}
     </div>
   );
 }
