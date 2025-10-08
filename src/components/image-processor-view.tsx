@@ -33,7 +33,7 @@ function fileToDataUri(file: File): Promise<string> {
 
 const BeforeUploadState = () => {
     return (
-        <div className="text-center p-8 rounded-3xl border-2 border-dashed border-border mt-6 bg-card/50">
+        <div className="text-center p-8 rounded-3xl border-2 border-dashed border-border h-full bg-card/50 flex flex-col justify-center">
             <Lightbulb className="mx-auto h-10 w-10 text-yellow-400 mb-4" />
             <h3 className="font-semibold text-lg text-foreground">Tip: Upload a clear, front-facing photo for best results.</h3>
             <p className="text-muted-foreground text-sm mt-1">Supported formats: JPG, PNG, WEBP (max 20MB).</p>
@@ -42,8 +42,8 @@ const BeforeUploadState = () => {
 }
 
 const AfterUploadState = ({ file, analysis }: { file: File; analysis: string; }) => (
-    <Card className="mt-6 rounded-3xl animate-fade-in-up">
-        <CardContent className="p-6">
+    <Card className="h-full rounded-3xl animate-fade-in-up">
+        <CardContent className="p-6 flex flex-col justify-center h-full">
             <div className="flex items-center gap-4">
                 <div className="flex-shrink-0">
                     <CheckCircle2 className="h-10 w-10 text-green-500"/>
@@ -66,7 +66,7 @@ const AfterUploadState = ({ file, analysis }: { file: File; analysis: string; })
 );
 
 const ProcessingState = ({ progress, featureName }: { progress: number; featureName: string; }) => (
-    <div className="text-center p-8 rounded-3xl border-2 border-dashed border-primary/50 mt-6 bg-primary/10 animate-pulse">
+    <div className="text-center p-8 rounded-3xl border-2 border-dashed border-primary/50 h-full bg-primary/10 animate-pulse flex flex-col justify-center">
         <h3 className="font-semibold text-lg text-primary">✨ Magicpixa is working on your image…</h3>
         <p className="text-primary/80 text-sm mt-1">Enhancing colors, fixing lighting, and adding clarity.</p>
         <Progress value={progress} className="w-full max-w-sm mx-auto mt-4" />
@@ -230,14 +230,6 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                     after={processedImageUrl}
                 />
             </div>
-            <div className="mt-6 flex justify-center">
-                <Button size="lg" asChild className="rounded-2xl h-12">
-                    <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
-                        <Download className="mr-2 h-5 w-5"/>
-                        Download Image
-                    </a>
-                </Button>
-            </div>
         </div>
       );
     }
@@ -274,14 +266,6 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                     </div>
                 </div>
             </div>
-            <div className="mt-6 flex justify-center">
-                 <Button size="lg" asChild className="rounded-2xl h-12">
-                    <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
-                        <Download className="mr-2 h-5 w-5"/>
-                        Download Image
-                    </a>
-                </Button>
-            </div>
         </div>
     );
   }
@@ -303,35 +287,48 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
 
         <div className="h-px w-full bg-border" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Section B: Action/Upload */}
-            <section className="lg:col-span-2">
-                 <h2 className="text-2xl font-semibold mb-4">Try It Yourself</h2>
-                 {!user && isUserLoading ? (
-                    <div className="flex justify-center items-center h-48">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                ) : !originalFile ? (
-                    <FileUploader onFileSelect={handleFileSelect} />
-                ) : (
-                  <>
-                    {processedImageUrl ? (
-                      renderResultView()
-                    ) : originalDataUri ? (
-                        <div className="relative">
-                            <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-                            <Image src={originalDataUri} alt="Original upload" fill className="object-contain" />
-                            </div>
-                             <Button variant="outline" className="absolute top-4 right-4 rounded-xl" onClick={handleReset}>
-                                <RefreshCw className="mr-2 h-4 w-4" />
-                                Upload Different Image
-                            </Button>
+        {/* Section B: Action/Upload */}
+        <section>
+             <h2 className="text-2xl font-semibold mb-4">Try It Yourself</h2>
+             {!user && isUserLoading ? (
+                <div className="flex justify-center items-center h-48">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+            ) : !originalFile ? (
+                <FileUploader onFileSelect={handleFileSelect} />
+            ) : (
+              <>
+                {processedImageUrl ? (
+                  renderResultView()
+                ) : originalDataUri ? (
+                    <div className="relative">
+                        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+                        <Image src={originalDataUri} alt="Original upload" fill className="object-contain" />
                         </div>
-                    ) : null}
-                  </>
-                )}
+                         <Button variant="outline" className="absolute top-4 right-4 rounded-xl" onClick={handleReset}>
+                            <RefreshCw className="mr-2 h-4 w-4" />
+                            Upload Different Image
+                        </Button>
+                    </div>
+                ) : null}
+              </>
+            )}
 
-                {/* Smart Feedback Zone */}
+            {processedImageUrl && originalDataUri && (
+                 <div className="mt-6 flex justify-center">
+                    <Button size="lg" asChild className="rounded-2xl h-12">
+                        <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
+                            <Download className="mr-2 h-5 w-5"/>
+                            Download Image
+                        </a>
+                    </Button>
+                </div>
+            )}
+        </section>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Smart Feedback Zone */}
+            <div className="min-h-[200px]">
                 {!processedImageUrl && (
                   <>
                     {!originalFile && <BeforeUploadState />}
@@ -339,11 +336,10 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                     {originalFile && !isProcessing && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
                   </>
                 )}
+            </div>
 
-            </section>
-            
-            {/* Section C: Output & Tools */}
-            <section>
+            {/* Actions Card */}
+            <div>
                 <Card className="rounded-3xl sticky top-24">
                   <CardContent className="p-6 space-y-4">
                       <h2 className="text-xl font-semibold">Actions</h2>
@@ -357,14 +353,14 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                       {!isProcessing && renderQuotaAlert()}
 
                       <div className="flex flex-col gap-3">
-                          {!isProcessing && !processedImageUrl && (
+                          {!processedImageUrl && (
                             <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}>
                                <Wand2 className="mr-2 h-5 w-5" />
                               Generate
                             </Button>
                           )}
                           
-                          {(originalFile || processedImageUrl) && !isProcessing && (
+                          {processedImageUrl && (
                               <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset} disabled={isProcessing}>
                                 <RefreshCw className="mr-2 h-5 w-5" />
                                 Generate Another
@@ -387,7 +383,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                         </div>
                   </CardContent>
               </Card>
-            </section>
+            </div>
         </div>
     </div>
   );
