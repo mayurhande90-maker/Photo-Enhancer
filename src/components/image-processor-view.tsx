@@ -1,23 +1,25 @@
-
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import type { Feature } from '@/lib/types';
 import { features } from '@/lib/features';
 import { FileUploader } from '@/components/file-uploader';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BeforeAfterSlider } from './before-after-slider';
 import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Clock, User, Loader2, Download, RefreshCw, Wand2 } from 'lucide-react';
+import { Terminal, Clock, User, Loader2, Download, RefreshCw, Wand2, Lightbulb, FileImage, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
 import { useUser, useFirestore, useStorage } from '@/firebase';
 import { saveGeneratedImageClient } from '@/firebase/images';
 import { Skeleton } from '@/components/ui/skeleton';
+import { analyzeImageAction } from '@/app/actions';
+import { cn } from '@/lib/utils';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 function fileToDataUri(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -28,7 +30,61 @@ function fileToDataUri(file: File): Promise<string> {
   });
 }
 
-export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
+const BeforeUploadState = ({ onSampleSelect }: { onSampleSelect: (file: File) => void; }) => {
+    const handleSample = async () => {
+        const sampleImage = PlaceHolderImages.find(img => img.id === 'feature-enhance-after');
+        if (sampleImage) {
+            const response = await fetch(sampleImage.imageUrl);
+            const blob = await response.blob();
+            const file = new File([blob], "sample.jpg", { type: "image/jpeg" });
+            onSampleSelect(file);
+        }
+    };
+    
+    return (
+        <div className="text-center p-8 rounded-3xl border-2 border-dashed border-border mt-6 bg-card/50">
+            <Lightbulb className="mx-auto h-10 w-10 text-yellow-400 mb-4" />
+            <h3 className="font-semibold text-lg text-foreground">Tip: Upload a clear, front-facing photo for best results.</h3>
+            <p className="text-muted-foreground text-sm mt-1">Supported formats: JPG, PNG, WEBP (max 20MB).</p>
+             <Button variant="outline" className="mt-4 rounded-xl" onClick={handleSample}>Try Sample Image</Button>
+        </div>
+    )
+}
+
+const AfterUploadState = ({ file, analysis }: { file: File; analysis: string; }) => (
+    <Card className="mt-6 rounded-3xl animate-fade-in-up">
+        <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+                <div className="flex-shrink-0">
+                    <CheckCircle2 className="h-10 w-10 text-green-500"/>
+                </div>
+                <div className="flex-grow">
+                    <p className="font-semibold text-foreground">{file.name}</p>
+                    <p className="text-sm text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                </div>
+            </div>
+            {analysis && (
+                 <div className="mt-4 p-4 rounded-2xl bg-primary/10 text-primary-foreground">
+                    <p className="text-sm font-medium text-primary flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-yellow-400" />
+                        {analysis}
+                    </p>
+                 </div>
+            )}
+        </CardContent>
+    </Card>
+);
+
+const ProcessingState = ({ progress, featureName }: { progress: number; featureName: string; }) => (
+    <div className="text-center p-8 rounded-3xl border-2 border-dashed border-primary/50 mt-6 bg-primary/10 animate-pulse">
+        <h3 className="font-semibold text-lg text-primary">✨ Magicpixa is working on your image…</h3>
+        <p className="text-primary/80 text-sm mt-1">Enhancing colors, fixing lighting, and adding clarity.</p>
+        <Progress value={progress} className="w-full max-w-sm mx-auto mt-4" />
+    </div>
+);
+
+
+export function ImageProcessorView({ featureName }: { featureName: string }) {
   const feature = features.find((f) => f.name === featureName);
   const { toast } = useToast();
   const { user, loading: isUserLoading } = useUser();
@@ -40,9 +96,19 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
   const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
   const [processedImageUrl, setProcessedImageUrl] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [imageAnalysis, setImageAnalysis] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
 
+  useEffect(() => {
+    if (originalDataUri) {
+      setImageAnalysis("Analyzing image...");
+      analyzeImageAction(originalDataUri)
+        .then(result => setImageAnalysis(result.analysis))
+        .catch(() => setImageAnalysis("Perfect upload! Let’s see what Magicpixa can do."));
+    }
+  }, [originalDataUri]);
+  
   if (!feature) {
     return <div>Feature not found.</div>;
   }
@@ -52,6 +118,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     fileToDataUri(file).then(setOriginalDataUri);
     setProcessedImageUrl(null);
     setError(null);
+    setImageAnalysis("");
   };
 
   const handleProcessImage = async () => {
@@ -126,6 +193,7 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     setError(null);
     setIsProcessing(false);
     setProgress(0);
+    setImageAnalysis("");
   };
   
   const renderQuotaAlert = () => {
@@ -217,7 +285,6 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
                 </div>
                 <p className="mt-4 max-w-2xl text-muted-foreground">{feature.description} This costs {feature.creditCost} credit(s).</p>
             </div>
-            {/* You can add a before/after slider or carousel here */}
         </section>
 
         <div className="h-px w-full bg-border" />
@@ -234,20 +301,25 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
                     <FileUploader onFileSelect={handleFileSelect} />
                 ) : (
                   <>
-                    {isProcessing ? (
-                        <div className="space-y-4 text-center p-8 rounded-3xl border-2 border-dashed">
-                            <div className="flex justify-center items-center h-48">
-                                <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                            </div>
-                            <p className="text-lg text-muted-foreground font-semibold">Magic in progress...</p>
-                            <p className="text-sm text-muted-foreground">Please wait while our AI enhances your image.</p>
-                            <Progress value={progress} className="w-full max-w-sm mx-auto" />
-                        </div>
-                    ) : (
+                    {processedImageUrl ? (
                       renderResultView()
-                    )}
+                    ) : originalDataUri ? (
+                        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+                          <Image src={originalDataUri} alt="Original upload" fill className="object-contain" />
+                        </div>
+                    ) : null}
                   </>
                 )}
+
+                {/* Smart Feedback Zone */}
+                {!processedImageUrl && (
+                  <>
+                    {!originalFile && <BeforeUploadState onSampleSelect={handleFileSelect}/>}
+                    {isProcessing && <ProcessingState progress={progress} featureName={feature.name} />}
+                    {originalFile && !isProcessing && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
+                  </>
+                )}
+
             </section>
             
             {/* Section C: Output & Tools */}
@@ -266,8 +338,8 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
 
                       <div className="flex flex-col gap-3">
                           {!isProcessing && !processedImageUrl && (
-                            <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isCreditLoading || credits < feature.creditCost}>
-                              <Wand2 className="mr-2 h-5 w-5" />
+                            <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}>
+                               <Wand2 className="mr-2 h-5 w-5" />
                               Generate
                             </Button>
                           )}
@@ -307,3 +379,4 @@ export function ImageProcessorView({ featureName }: ImageProcessorViewProps) {
     </div>
   );
 }
+    

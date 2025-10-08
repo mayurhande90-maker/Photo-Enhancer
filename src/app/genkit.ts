@@ -5,3 +5,6 @@
 
 import '@/ai/flows/enhance-from-prompt';
 import '@/ai/flows/product-shot-ad-copy';
+import '@/ai/flows/analyze-image';
+
+    

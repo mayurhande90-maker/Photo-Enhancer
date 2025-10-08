@@ -1,14 +1,26 @@
+
 'use server';
 
 import { enhanceFromPrompt } from '@/ai/flows/enhance-from-prompt';
+import { analyzeImage } from '@/ai/flows/analyze-image';
+import type { AnalyzeImageOutput } from '@/lib/types';
 
 async function processImageWithAI(
   photoDataUri: string,
   enhancementPrompt: string
 ): Promise<{ enhancedPhotoDataUri: string }> {
-  // AI processing now only returns the image URI. Saving to Firestore is handled on the client.
   const result = await enhanceFromPrompt({ photoDataUri, enhancementPrompt });
   return result;
+}
+
+export async function analyzeImageAction(photoDataUri: string): Promise<AnalyzeImageOutput> {
+    try {
+        const result = await analyzeImage({ photoDataUri });
+        return result;
+    } catch (error) {
+        console.error('Error analyzing image:', error);
+        return { analysis: "Perfect upload! Let’s see what Magicpixa can do." };
+    }
 }
 
 export async function enhancePhotoAction(photoDataUri: string, userId: string) {

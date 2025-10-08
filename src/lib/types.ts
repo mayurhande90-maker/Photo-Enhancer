@@ -1,5 +1,6 @@
 
 import type { LucideIcon } from 'lucide-react';
+import { z } from 'zod';
 
 export type Feature = {
   name: string;
@@ -35,3 +36,21 @@ export interface GeneratedImage {
         nanoseconds: number;
     };
 }
+
+export const AnalyzeImageInputSchema = z.object({
+  photoDataUri: z
+    .string()
+    .describe(
+      "A photo to analyze, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+    ),
+});
+export type AnalyzeImageInput = z.infer<typeof AnalyzeImageInputSchema>;
+
+export const AnalyzeImageOutputSchema = z.object({
+  analysis: z
+    .string()
+    .describe(
+      'A very short, one-sentence, friendly, and encouraging caption for the user based on the image content. Start with a positive observation.'
+    ),
+});
+export type AnalyzeImageOutput = z.infer<typeof AnalyzeImageOutputSchema>;
