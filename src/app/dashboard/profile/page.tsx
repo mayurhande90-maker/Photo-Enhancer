@@ -5,7 +5,7 @@ import { useState, useRef } from "react";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import Cropper, { ReactCropperElement } from "react-cropper";
+import Cropper from "react-cropper";
 import { useUser, useFirestore, useStorage } from "@/firebase";
 import { updateUserProfile } from "@/firebase/auth/update-profile";
 import { useToast } from "@/hooks/use-toast";
@@ -42,7 +42,7 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
   
   const [cropImage, setCropImage] = useState<string | null>(null);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
-  const cropperRef = useRef<ReactCropperElement>(null);
+  const cropperRef = useRef<HTMLImageElement>(null);
   const [croppedBlob, setCroppedBlob] = useState<Blob | null>(null);
 
   const form = useForm<ProfileFormValues>({
@@ -92,9 +92,9 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
   };
 
   const handleCrop = () => {
-    const cropper = cropperRef.current?.cropper;
+    const cropper = (cropperRef.current as any)?.cropper;
     if (typeof cropper !== "undefined") {
-      cropper.getCroppedCanvas().toBlob((blob) => {
+      cropper.getCroppedCanvas().toBlob((blob: Blob | null) => {
         if(blob) {
             setCroppedBlob(blob);
             setPhotoPreview(URL.createObjectURL(blob));
@@ -176,7 +176,7 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
             <DialogHeader><DialogTitle>Crop Your Image</DialogTitle></DialogHeader>
             {cropImage && (
                 <Cropper
-                    ref={cropperRef}
+                    ref={cropperRef as any}
                     src={cropImage}
                     style={{ height: 400, width: "100%" }}
                     aspectRatio={1}
