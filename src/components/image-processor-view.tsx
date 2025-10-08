@@ -42,27 +42,25 @@ const BeforeUploadState = () => {
 }
 
 const AfterUploadState = ({ file, analysis }: { file: File; analysis: string; }) => (
-    <Card className="h-full rounded-3xl animate-fade-in-up">
-        <CardContent className="p-6 flex flex-col justify-center h-full">
-            <div className="flex items-center gap-4">
-                <div className="flex-shrink-0">
-                    <CheckCircle2 className="h-10 w-10 text-green-500"/>
-                </div>
-                <div className="flex-grow">
-                    <p className="font-semibold text-foreground">{file.name}</p>
-                    <p className="text-sm text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                </div>
+    <div className="p-6 rounded-3xl bg-card/50 h-full flex flex-col justify-center animate-fade-in-up">
+        <div className="flex items-center gap-4">
+            <div className="flex-shrink-0">
+                <CheckCircle2 className="h-10 w-10 text-green-500"/>
             </div>
-            {analysis && (
-                 <div className="mt-4 p-4 rounded-2xl bg-primary/10 text-primary-foreground">
-                    <p className="text-sm font-medium text-primary flex items-center gap-2">
-                        <Sparkles className="h-4 w-4 text-yellow-400" />
-                        {analysis}
-                    </p>
-                 </div>
-            )}
-        </CardContent>
-    </Card>
+            <div className="flex-grow">
+                <p className="font-semibold text-foreground">{file.name}</p>
+                <p className="text-sm text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+            </div>
+        </div>
+        {analysis && (
+             <div className="mt-4 p-4 rounded-2xl bg-primary/10 text-primary-foreground">
+                <p className="text-sm font-medium text-primary flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-yellow-400" />
+                    {analysis}
+                </p>
+             </div>
+        )}
+    </div>
 );
 
 const ProcessingState = ({ progress, featureName }: { progress: number; featureName: string; }) => (
@@ -107,7 +105,6 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     handleReset();
     setOriginalFile(file);
     fileToDataUri(file).then(setOriginalDataUri);
-    
   };
 
   const handleProcessImage = async () => {
@@ -148,7 +145,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                 firestore,
                 storage,
                 user.uid,
-                dataUri, // original image
+                dataUri, 
                 result.enhancedPhotoDataUri,
                 feature.name
             );
@@ -228,55 +225,45 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
   }
 
   const renderResultView = () => {
-    if (!originalDataUri) return null;
+    if (!originalDataUri) return <FileUploader onFileSelect={handleFileSelect} />;
 
     if (processedImageUrl && feature.showBeforeAfterSlider) {
       return (
-        <div className="relative">
-             <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-                <BeforeAfterSlider
-                    before={originalDataUri}
-                    after={processedImageUrl}
-                />
-            </div>
+        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+            <BeforeAfterSlider
+                before={originalDataUri}
+                after={processedImageUrl}
+            />
         </div>
       );
     }
     
     return (
-      <div>
-        <div className={cn("grid grid-cols-1 gap-4", processedImageUrl && "md:grid-cols-2")}>
-          <div className={cn(!processedImageUrl && "max-w-xl mx-auto w-full")}>
-            <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-              {originalDataUri && (
-                <Image
-                  src={originalDataUri}
-                  alt="Original upload"
-                  fill
-                  className="object-contain"
-                />
-              )}
-              <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                Original
-              </div>
+      <div className={cn("grid grid-cols-1 gap-4 h-full", processedImageUrl && "md:grid-cols-2")}>
+        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+          <Image
+            src={originalDataUri}
+            alt="Original upload"
+            fill
+            className="object-contain"
+          />
+          <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+            Original
+          </div>
+        </div>
+        {processedImageUrl && (
+          <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+            <Image
+              src={processedImageUrl}
+              alt="Processed result"
+              fill
+              className="object-contain"
+            />
+            <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+              Generated
             </div>
           </div>
-          {processedImageUrl && (
-            <div>
-              <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-                <Image
-                  src={processedImageUrl}
-                  alt="Processed result"
-                  fill
-                  className="object-contain"
-                />
-                <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                  Generated
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+        )}
       </div>
     );
   }
@@ -286,7 +273,6 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
 
   return (
     <div className="space-y-8 animate-fade-in-up">
-        {/* Section A: Feature Overview */}
         <section>
             <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10">
                 <div className="flex items-center gap-4">
@@ -301,104 +287,98 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
 
         <div className="h-px w-full bg-border" />
 
-        {/* Section B: Action/Upload */}
         <section>
              <h2 className="text-2xl font-semibold mb-4">Try It Yourself</h2>
-             {isUserLoading && !user ? (
-                <div className="flex justify-center items-center h-48">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div className="lg:col-span-1">
+                  {isAwaitingUpload && <FileUploader onFileSelect={handleFileSelect} />}
+                  {!isAwaitingUpload && renderResultView()}
                 </div>
-             ) : isAwaitingUpload ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <FileUploader onFileSelect={handleFileSelect} />
-                  <BeforeUploadState />
-                </div>
-             ) : (
-                renderResultView()
-             )}
-        </section>
-        
-        {/* Section C: Post-Upload, Pre-Result Feedback and Actions */}
-        {!isAwaitingUpload && !isResultReady && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch mt-8">
-            <div className="min-h-[200px]">
-              {isProcessing ? (
-                <ProcessingState progress={progress} featureName={feature.name} />
-              ) : (
-                originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />
-              )}
-            </div>
-            
-            <Card className="rounded-3xl sticky top-24 h-full">
-              <CardContent className="p-6 space-y-4 flex flex-col justify-between h-full">
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">Actions</h2>
-                  {error && !isProcessing && (
-                    <Alert variant="destructive" className="rounded-2xl">
-                      <AlertTitle>Error</AlertTitle>
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
+                
+                <div className="lg:col-span-1 sticky top-24">
+                  {!isResultReady ? (
+                    <div className="space-y-8">
+                       <div className="min-h-[200px]">
+                          {isAwaitingUpload && <BeforeUploadState />}
+                          {isProcessing ? (
+                            <ProcessingState progress={progress} featureName={feature.name} />
+                          ) : (
+                            !isAwaitingUpload && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />
+                          )}
+                        </div>
+                        <Card className="rounded-3xl h-full">
+                          <CardContent className="p-6 space-y-4 flex flex-col justify-between h-full">
+                              <div>
+                                <h2 className="text-xl font-semibold mb-4">Actions</h2>
+                                {error && !isProcessing && (
+                                  <Alert variant="destructive" className="rounded-2xl">
+                                    <AlertTitle>Error</AlertTitle>
+                                    <AlertDescription>{error}</AlertDescription>
+                                  </Alert>
+                                )}
+                                {renderQuotaAlert()}
+                              </div>
+                              <div className="flex flex-col gap-3">
+                                  <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isProcessing || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}>
+                                      <Wand2 className="mr-2 h-5 w-5" />
+                                      Generate
+                                  </Button>
+                                  <div className="text-center text-sm text-muted-foreground pt-2">
+                                      {isUserLoading || isCreditLoading ? (
+                                      <Skeleton className="h-4 w-32 mx-auto" />
+                                      ) : user ? (
+                                      <p>You have {credits} credits left.</p>
+                                      ) : (
+                                      <p>
+                                          <Link href="/login" className="underline font-semibold hover:text-primary">
+                                          Sign in
+                                          </Link>{' '}
+                                          to start creating.
+                                      </p>
+                                      )}
+                                  </div>
+                              </div>
+                          </CardContent>
+                        </Card>
+                    </div>
+                  ) : (
+                    <Card className="w-full max-w-md mx-auto rounded-3xl">
+                      <CardHeader>
+                        <CardTitle>Result</CardTitle>
+                        <CardDescription>Your image is ready. Download it or start a new creation.</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-4">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                          <Button
+                            variant="outline"
+                            className="h-12 w-full rounded-2xl"
+                            onClick={handleReset}
+                          >
+                            <RefreshCw className="mr-2 h-5 w-5" />
+                            Generate Another
+                          </Button>
+                          <Button
+                            size="lg"
+                            asChild
+                            className="h-12 w-full rounded-2xl"
+                          >
+                            <a
+                              href={processedImageUrl!}
+                              download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}
+                            >
+                              <Download className="mr-2 h-5 w-5" />
+                              Download Image
+                            </a>
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
                   )}
-                  {renderQuotaAlert()}
                 </div>
-
-                <div className="flex flex-col gap-3">
-                  <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isProcessing || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}>
-                    <Wand2 className="mr-2 h-5 w-5" />
-                    Generate
-                  </Button>
-                  <div className="text-center text-sm text-muted-foreground pt-2">
-                    {isUserLoading || isCreditLoading ? (
-                      <Skeleton className="h-4 w-32 mx-auto" />
-                    ) : user ? (
-                      <p>You have {credits} credits left.</p>
-                    ) : (
-                      <p>
-                        <Link href="/login" className="underline font-semibold hover:text-primary">
-                          Sign in
-                        </Link>{' '}
-                        to start creating.
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* Section D: Final Actions Post-Result */}
-        {isResultReady && (
-          <div className="mt-8 flex justify-center">
-            <Card className="w-full max-w-md rounded-3xl">
-              <CardContent className="p-4">
-                <div className="flex flex-row items-center justify-center gap-4">
-                  <Button
-                    variant="outline"
-                    className="h-12 flex-1 rounded-2xl"
-                    onClick={handleReset}
-                  >
-                    <RefreshCw className="mr-2 h-5 w-5" />
-                    Generate Another
-                  </Button>
-                  <Button
-                    size="lg"
-                    asChild
-                    className="h-12 flex-1 rounded-2xl"
-                  >
-                    <a
-                      href={processedImageUrl!}
-                      download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}
-                    >
-                      <Download className="mr-2 h-5 w-5" />
-                      Download Image
-                    </a>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+             </div>
+        </section>
     </div>
   );
 }
+
+    
