@@ -4,7 +4,8 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { features } from '@/lib/features';
 import { Button } from './ui/button';
-import { User, LogOut, CreditCard, PanelLeft, Settings, Sheet, SheetTrigger, SheetContent } from 'lucide-react';
+import { User, LogOut, CreditCard, PanelLeft, Settings } from 'lucide-react';
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Skeleton } from './ui/skeleton';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
 import Link from 'next/link';
