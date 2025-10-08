@@ -333,6 +333,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                             {error && !isProcessing && (
                                 <Alert variant="destructive" className="rounded-2xl">
                                     <AlertTitle>Error</AlertTitle>
+
                                     <AlertDescription>{error}</AlertDescription>
                                 </Alert>
                                 )}
@@ -341,7 +342,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                         </div>
 
                         <div className="flex flex-col gap-3">
-                            <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}>
+                            <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isProcessing || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}>
                                 <Wand2 className="mr-2 h-5 w-5" />
                                 Generate
                             </Button>
@@ -368,7 +369,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
              <div className="mt-8 flex justify-center">
                 <Card className="rounded-3xl w-full max-w-md">
                   <CardContent className="p-6 space-y-4">
-                      <h2 className="text-xl font-semibold text-center">Actions</h2>
+                      <h2 className="text-xl font-semibold text-center mb-4">Actions</h2>
                         <div className="flex flex-row justify-center gap-4">
                             <Button size="lg" variant="outline" className="rounded-2xl h-12" onClick={handleReset} disabled={isProcessing}>
                                 <RefreshCw className="mr-2 h-5 w-5" />
