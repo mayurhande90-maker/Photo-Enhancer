@@ -59,6 +59,8 @@ const youtubeThumbnailFlow = ai.defineFlow(
       model: 'googleai/gemini-2.5-flash-image-preview',
       config: {
         responseModalities: ['TEXT', 'IMAGE'],
+        width: 1280,
+        height: 720,
       },
     });
 
