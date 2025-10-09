@@ -20,7 +20,6 @@ import { Wand2, Download, RefreshCw, Users, Lightbulb, CheckCircle2, Sparkles, L
 import { features } from '@/lib/features';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
-import { BeforeAfterSlider } from '@/components/before-after-slider';
 
 function fileToDataUri(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -47,9 +46,7 @@ const TipsSection = () => (
 
 const roomTypes = ["Living Room", "Bedroom", "Kitchen", "Bathroom", "Dining Room", "Balcony", "Office"];
 const interiorStyles = [
-  "Modern Minimalist", "Scandinavian", "Industrial Loft", "Mid-Century Modern",
-  "Classic / Neoclassical", "Traditional Indian", "Bohemian / Eclectic",
-  "Futuristic / High-Tech", "Japandi", "Coastal / Tropical"
+  "Japanese", "Italian", "American", "Modern", "Futuristic", "Mid-Century Modern", "Coastal"
 ];
 const colorPalettes = ["Neutral", "Warm", "Cool"];
 const lightingMoods = ["Bright Daylight", "Warm Evening", "Dramatic Spotlight"];
@@ -232,14 +229,14 @@ export default function MagicInteriorPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                     <div className="flex flex-col gap-4">
                          <div className="relative aspect-video w-full max-w-2xl mx-auto overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
-                            {isResultReady && originalDataUri && (
-                                <BeforeAfterSlider
-                                    before={originalDataUri}
-                                    after={processedImageUrl}
+                            {isResultReady ? (
+                                <Image 
+                                    src={processedImageUrl!}
+                                    alt="Generated Interior Design"
+                                    fill 
+                                    className="object-contain" 
                                 />
-                            )}
-                            
-                            {!isResultReady && (
+                            ) : (
                                 originalDataUri ? (
                                     <Image 
                                         src={originalDataUri}
@@ -371,3 +368,5 @@ export default function MagicInteriorPage() {
         </div>
     );
 }
+
+    

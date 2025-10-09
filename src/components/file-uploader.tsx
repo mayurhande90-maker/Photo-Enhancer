@@ -100,7 +100,7 @@ export function FileUploader({ onFileSelect, tips }: FileUploaderProps) {
                 <p className="text-lg font-semibold text-foreground">
                     {isDragActive ? 'Drop the image here' : 'Drag & drop an image, or click to select'}
                 </p>
-                <p className="text-sm">Supports: JPG, PNG, WEBP (max ${MAX_SIZE_MB}MB). Will be compressed to ~${COMPRESSION_MAX_SIZE_MB}MB.</p>
+                <p className="text-sm">Supports: JPG, PNG, WEBP (max {MAX_SIZE_MB}MB). Will be compressed to ~{COMPRESSION_MAX_SIZE_MB}MB.</p>
                 {tips && <div className="mt-4">{tips}</div>}
             </>
         )}
@@ -108,3 +108,5 @@ export function FileUploader({ onFileSelect, tips }: FileUploaderProps) {
     </div>
   );
 }
+
+    
