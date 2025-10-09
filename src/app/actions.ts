@@ -4,6 +4,7 @@
 import { enhanceFromPrompt } from '@/ai/flows/enhance-from-prompt';
 import { analyzeImage } from '@/ai/flows/analyze-image';
 import { pictureWithCelebrity } from '@/ai/flows/celebrity-picture';
+import { colorizePhoto } from '@/ai/flows/colorize-photo';
 import type { AnalyzeImageOutput } from '@/lib/types';
 
 async function processImageWithAI(
@@ -46,9 +47,8 @@ export async function studioEnhanceAction(photoDataUri: string, userId:string) {
 }
 
 export async function colorizePhotoAction(photoDataUri: string, userId:string) {
-  const prompt = `Restore and colourize the provided vintage photograph. Maintain the original composition, lighting, and emotional tone while bringing it to life in full colour. Recreate skin tones, clothes, environment, and background elements in realistic, natural colours — as if the photo was taken recently using a modern camera. Repair any visible damage such as cracks, dust, spots, blurs, or faded patches. Enhance clarity, texture, and fine details (eyes, hair strands, fabrics, background patterns). Preserve every person’s facial features, age, emotion, and body posture exactly as in the original. Do not alter identity, proportions, or composition. Style: photo-realistic restoration with gentle film warmth. Lighting should remain consistent with the original vintage exposure. Avoid artificial brightness or cartoonish tones. The result should feel emotionally authentic — like reliving a precious memory in perfect clarity. Focus on nostalgia, warmth, and realism. Finally, add a small, discreet watermark in a bottom corner that says 'Made by Magicpixa'.`;
-    const result = await processImageWithAI(photoDataUri, prompt);
-    return result;
+  const result = await colorizePhoto({ photoDataUri });
+  return result;
 }
 
 export async function pictureWithCelebrityAction(photoDataUri: string, celebrity: string, location: string, userId: string) {

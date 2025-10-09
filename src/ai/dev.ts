@@ -7,3 +7,4 @@ import '@/ai/flows/product-shot-ad-copy.ts';
 import '@/ai/flows/enhance-from-prompt.ts';
 import '@/ai/flows/analyze-image.ts';
 import '@/ai/flows/celebrity-picture.ts';
+import '@/ai/flows/colorize-photo.ts';
