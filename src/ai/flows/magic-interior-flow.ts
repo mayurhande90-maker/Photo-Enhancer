@@ -69,3 +69,5 @@ const magicInteriorFlow = ai.defineFlow(
     return { redesignedPhotoDataUri: media.url };
   }
 );
+
+    

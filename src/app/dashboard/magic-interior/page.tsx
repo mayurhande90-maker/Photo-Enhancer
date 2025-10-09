@@ -138,10 +138,10 @@ export default function MagicInteriorPage() {
         try {
             const result = await magicInteriorAction(
                 originalDataUri,
+                user.uid,
                 roomType,
                 styleSelected,
-                { colorPalette },
-                user.uid
+                { colorPalette }
             );
             
             if (result.redesignedPhotoDataUri) {
@@ -354,4 +354,5 @@ export default function MagicInteriorPage() {
             </section>
         </div>
     );
-}
+
+    
