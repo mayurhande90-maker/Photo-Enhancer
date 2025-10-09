@@ -16,7 +16,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
 import { useUser, useFirestore } from '@/firebase';
-import { saveAIOutput } from '@/firebase/creations';
+import { saveAIOutput } from '@/firebase/auth/client-update-profile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { analyzeImageAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
@@ -142,7 +142,8 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
             await saveAIOutput(
                 feature.name,
                 result.enhancedPhotoDataUri,
-                'image/jpeg'
+                'image/jpeg',
+                user.uid
             );
              // Toast is shown inside saveAIOutput
         } catch (saveError: any) {
