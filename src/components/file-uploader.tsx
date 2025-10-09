@@ -3,7 +3,7 @@
 
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { UploadCloud, FileImage, X } from 'lucide-react';
+import { UploadCloud, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import imageCompression from 'browser-image-compression';
 
@@ -23,7 +23,7 @@ const ACCEPTED_FORMATS = {
 
 export function FileUploader({ onFileSelect }: FileUploaderProps) {
   const { toast } = useToast();
-  const [preview, setPreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[], rejectedFiles: any[]) => {
@@ -37,6 +37,7 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
       }
 
       if (acceptedFiles.length > 0) {
+        setIsUploading(true);
         let file = acceptedFiles[0];
 
         try {
@@ -51,7 +52,6 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
             const compressedFile = await imageCompression(file, options);
             console.log(`Compressed file size: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
 
-            // Use the compressed file for the upload
             file = new File([compressedFile], file.name, { type: compressedFile.type });
 
         } catch (error) {
@@ -61,11 +61,10 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
                 description: 'Could not compress the image. Please try a smaller file.',
                 variant: 'destructive',
             });
-            // We can still proceed with the original file if compression fails
         }
 
-        setPreview(URL.createObjectURL(file));
         onFileSelect(file);
+        // setIsUploading(false) will be handled by the parent component logic
       }
     },
     [onFileSelect, toast]
@@ -76,21 +75,33 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
     accept: ACCEPTED_FORMATS,
     maxSize: MAX_SIZE_BYTES,
     multiple: false,
+    disabled: isUploading,
   });
 
   return (
     <div
       {...getRootProps()}
       className={`flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors
+      ${isUploading ? 'cursor-default' : 'cursor-pointer'}
       ${isDragActive ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'}`}
     >
       <input {...getInputProps()} />
       <div className="flex flex-col items-center gap-2 text-center text-muted-foreground">
-        <UploadCloud className="size-12" />
-        <p className="text-lg font-semibold text-foreground">
-          {isDragActive ? 'Drop the image here' : 'Drag & drop an image, or click to select'}
-        </p>
-        <p className="text-sm">Supports: JPG, PNG, WEBP (max {MAX_SIZE_MB}MB). Will be compressed to ~{COMPRESSION_MAX_SIZE_MB}MB.</p>
+        {isUploading ? (
+            <>
+                <Loader2 className="size-12 animate-spin text-primary" />
+                <p className="text-lg font-semibold text-foreground">Preparing your image...</p>
+                <p className="text-sm">Compressing and getting things ready.</p>
+            </>
+        ) : (
+            <>
+                <UploadCloud className="size-12" />
+                <p className="text-lg font-semibold text-foreground">
+                    {isDragActive ? 'Drop the image here' : 'Drag & drop an image, or click to select'}
+                </p>
+                <p className="text-sm">Supports: JPG, PNG, WEBP (max {MAX_SIZE_MB}MB). Will be compressed to ~{COMPRESSION_MAX_SIZE_MB}MB.</p>
+            </>
+        )}
       </div>
     </div>
   );
