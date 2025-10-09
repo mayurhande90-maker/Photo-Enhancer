@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/icons';
 import { features, featureCategories } from '@/lib/features';
-import { Home, Settings, Image as CreationsIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon, Image as ImageStudioIcon, Palette, Users } from 'lucide-react';
+import { Home, Settings, Image as CreationsIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon, Image as ImageStudioIcon, Palette, Users, Clock } from 'lucide-react';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -29,8 +29,11 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const categories = Object.values(featureCategories);
   
+  const activeFeatures = features.filter(f => !f.isComingSoon);
+  const comingSoonFeatures = features.filter(f => f.isComingSoon);
+
   const categorizedFeatures = categories.reduce((acc, category) => {
-    const categoryFeatures = features.filter(f => f.category === category);
+    const categoryFeatures = activeFeatures.filter(f => f.category === category);
     if (categoryFeatures.length > 0) {
       acc.push({ name: category, features: categoryFeatures });
     }
@@ -102,6 +105,26 @@ export function DashboardSidebar() {
                             </AccordionItem>
                         )
                     })}
+
+                    {comingSoonFeatures.length > 0 && (
+                       <AccordionItem value="coming-soon" className="border-b-0">
+                            <AccordionTrigger className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground hover:text-foreground hover:no-underline">
+                                <Clock className="h-5 w-5" />
+                                <span>Coming Soon</span>
+                            </AccordionTrigger>
+                            <AccordionContent className="pl-4">
+                                {comingSoonFeatures.map((feature) => (
+                                    <div
+                                    key={feature.name}
+                                    className='flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground opacity-50 pointer-events-none'
+                                    >
+                                    <feature.icon className="h-4 w-4" />
+                                    <span>{feature.name}</span>
+                                    </div>
+                                ))}
+                            </AccordionContent>
+                        </AccordionItem>
+                    )}
                 </Accordion>
             </nav>
         </ScrollArea>
