@@ -35,6 +35,7 @@ const celebrityPictureFlow = ai.defineFlow(
     name: 'celebrityPictureFlow',
     inputSchema: CelebrityPictureInputSchema,
     outputSchema: CelebrityPictureOutputSchema,
+    retries: 2,
   },
   async (input) => {
     let prompt: string;
@@ -145,5 +146,3 @@ const celebrityPictureFlow = ai.defineFlow(
     return { enhancedPhotoDataUri: media.url };
   }
 );
-
-    

@@ -37,6 +37,7 @@ const youtubeThumbnailFlow = ai.defineFlow(
     name: 'youtubeThumbnailFlow',
     inputSchema: YouTubeThumbnailInputSchema,
     outputSchema: YouTubeThumbnailOutputSchema,
+    retries: 2,
   },
   async (input) => {
     const prompt = `
