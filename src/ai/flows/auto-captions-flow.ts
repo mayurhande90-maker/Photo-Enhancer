@@ -23,7 +23,13 @@ const imageAnalysisPrompt = ai.definePrompt(
     name: 'autoCaptionImageAnalysis',
     input: { schema: z.object({ photoDataUri: z.string() }) },
     output: { schema: AutoCaptionImageAnalysisSchema },
-    prompt: `Analyze the provided image and return a structured JSON analysis. Identify the main objects, the overall scene, whether people are present (without identifying them), the dominant colors, and any text you can read in the image.
+    prompt: `You are a Visual Data Extractor. Your task is to analyze the provided image and return a structured JSON analysis. Be precise and objective. Do not infer or add creative details.
+    
+    1.  **Objects**: Identify and list all primary and secondary objects visible in the image. Be specific (e.g., "glass jar with white lid," "dried gooseberries," "green leaves").
+    2.  **Scene**: Describe the setting (e.g., "kitchen counter," "white studio background," "outdoor market").
+    3.  **People**: State if people are present. Do NOT identify or describe them.
+    4.  **Colors**: List the dominant colors in hex or descriptive format.
+    5.  **Text**: Read and transcribe any visible text on labels or packaging exactly as it appears.
 
     Image: {{media url=photoDataUri}}
     `,
