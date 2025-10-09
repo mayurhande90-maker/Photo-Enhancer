@@ -71,6 +71,33 @@ const celebrityPictureFlow = ai.defineFlow(
 
         Generate a single, hyper-realistic 512x512 image based on these strict instructions.
       `;
+    } else if (input.celebrityName === 'Deepika Padukone') {
+      prompt = `
+        You are a world-class expert in photorealistic image synthesis. Your task is to create a new, authentic, and natural-looking **candid photograph** featuring two people: a user (provided as an image) and the celebrity **Deepika Padukone**, placed seamlessly within a specified location.
+
+        **CRITICAL DIRECTIVES - Adherence is mandatory:**
+        1.  **SHOT TYPE:** The final image **MUST** be a **candid mid-shot**. Both the user and Deepika Padukone should appear natural, as if caught in a real-life moment, looking generally towards the camera.
+        2.  **IDENTITY PRESERVATION (IMAGE-REFERENCE ONLY):**
+            *   You **MUST** use the provided reference images of Deepika Padukone to ensure the generated picture represents the real celebrity without distortion or misrepresentation.
+            *   **Do NOT infer, fabricate, or describe her physical features textually.** Her appearance must be consistent with the reference photos.
+            *   The user's identity from their uploaded photo must also be perfectly preserved without any alteration.
+        3.  **SEAMLESS & NATURAL INTEGRATION:**
+            *   Blend the user and Deepika Padukone seamlessly into the chosen location: "${input.locationName}".
+            *   The interaction should look natural and unposed.
+            *   Match the lighting, shadows, and reflections of the environment perfectly.
+            *   Keep proportions natural and maintain professional-photo realism.
+        4.  **PHOTOGRAPHIC REALISM:**
+            *   The final image must look like a real photograph with realistic sharpness and skin texture.
+            *   Apply a subtle, natural filmic grain to enhance authenticity.
+        5.  **WATERMARK:** Add a small, discreet watermark in the bottom-right corner that says 'Magicpixa'.
+
+        **INPUTS:**
+        *   User's Photo: {{media url=userPhotoDataUri}}
+        *   Celebrity: Deepika Padukone
+        *   Location: ${input.locationName}
+
+        Generate a single, hyper-realistic 512x512 image based on these strict, image-reference-driven instructions.
+      `;
     } else {
       // Generic prompt for other celebrities
       prompt = `
@@ -118,3 +145,5 @@ const celebrityPictureFlow = ai.defineFlow(
     return { enhancedPhotoDataUri: media.url };
   }
 );
+
+    
