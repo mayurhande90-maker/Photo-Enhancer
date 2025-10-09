@@ -21,30 +21,24 @@ const memorySceneFlow = ai.defineFlow(
     retries: 2,
   },
   async (input) => {
+    // A more concise prompt to prevent token limit errors.
     const prompt = `
-      System instruction:
-      "You are a professional image-restoration and scene-generation model. Preserve identity and face geometry for any provided reference photos. Never produce pornographic, hateful, or illegal content. If the input appears to include minors (<18) or public figures, abort and return the appropriate error code."
-
-      User instruction (dynamic):
-      "Mode: ${input.mode}
-      ${input.photoDataUri ? `Reference image: {{media url=\'\'\'${input.photoDataUri}\'\'\'}}` : ''}
-      ${input.memoryText ? `Memory text: \\"${input.memoryText}\\"` : ''}
-      Era hint: ${input.eraHint}
+      You are an image restoration and generation model. Preserve identity from any reference photo.
+      Mode: ${input.mode}
+      ${input.memoryText ? `Memory text: "${input.memoryText}"` : ''}
+      Era: ${input.eraHint}
       Style: ${input.style}
-      Options: weather=Clear, crowd=Few, intensity=Moderate
 
       Task:
-      1) If a reference photo is provided — preserve the subject's facial structure, skin tone, and identifying marks; do not alter bone structure or ethnicity.
-      2) Based on the mode:
-        - restore: remove damage, extend background naturally to match original scene and era.
-        - recreate: generate a plausible scene that matches the memory text and era hint.
-        - stylize: apply the selected visual style to the original photo while preserving identity.
-      3) Add or modify background elements consistent with era and place (vehicles, clothing, signage), but do not add identifiable brands or logos unless present in original.
-      4) Respect lighting and perspective; match shadows, light angle, and depth-of-field to ensure seamless integration.
-      5) Provide one high-quality, photo-realistic image.
+      1.  If a reference photo is provided, PRESERVE the subject's facial structure and identity. DO NOT alter bone structure or ethnicity.
+      2.  Based on the mode:
+          - restore: Clean damage, extend background naturally.
+          - recreate: Generate a scene matching the memory text and era.
+          - stylize: Apply the visual style to the photo, keeping identity.
+      3.  Match lighting, perspective, and shadows for seamless integration.
+      4.  Output one high-quality, photo-realistic image.
       
-      Negative prompt:
-      "no face-swapping, no changing fundamental bone structure, no adding copyrighted logos, no nudity, no extreme caricature, no textual watermarks within the face area."
+      Negative prompt: NO face-swapping, no changing bone structure, no copyrighted logos, no nudity, no caricature.
     `;
 
     const { media } = await ai.generate({
@@ -64,7 +58,3 @@ const memorySceneFlow = ai.defineFlow(
     return { enhancedPhotoDataUri: media.url };
   }
 );
-
-    
-
-    

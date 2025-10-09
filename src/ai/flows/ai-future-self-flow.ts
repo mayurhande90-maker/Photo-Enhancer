@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -42,19 +43,15 @@ const aiFutureSelfFlow = ai.defineFlow(
       You are a high-precision, identity-preserving image editor. Your ONLY task is to apply realistic aging effects to the provided photograph.
 
       **CRITICAL DIRECTIVES (NON-NEGOTIABLE):**
-      1.  **IDENTITY LOCK (HIGHEST PRIORITY):** You MUST NOT change the person's core identity. The face in the output image must be the SAME person as in the input image. Preserve their facial bone structure, proportions (jawline, cheekbones, eye spacing), ethnicity, and unique features like moles or scars.
-      2.  **EDIT, DO NOT REPLACE:** This is an image editing task, NOT a generation task. Use the provided photo as the base and apply aging layers on top of it. Do not invent a new face.
-      3.  **REALISTIC AGING:** Apply natural and subtle age-related changes appropriate for the selected age gap of ${input.ageGap} years.
-          -   Introduce forehead lines, crow's feet, skin texture changes, and natural gravitational sagging (jowls, neck) as appropriate for the age.
-          -   Realistically thin the hair and add greying, especially at the temples and roots.
-      4.  **CONSISTENCY:** Match the original photo's lighting, shadows, perspective, and background. The result must be seamless.
-      5.  **WATERMARK:** Add a small, discreet watermark in the bottom-right corner that says 'Magicpixa'.
+      1.  **IDENTITY LOCK:** You MUST NOT change the person's core identity, facial bone structure, proportions, ethnicity, or unique features. This is an image editing task, NOT a generation task. Use the provided photo as the base.
+      2.  **REALISTIC AGING:** Apply natural age-related changes for the selected age gap of ${input.ageGap} years. This includes wrinkles, skin texture changes, and realistic hair greying/thinning.
+      3.  **CONSISTENCY:** Match the original photo's lighting, shadows, and background.
+      4.  **WATERMARK:** Add a small, discreet watermark in the bottom-right corner that says 'Magicpixa'.
 
       **NEGATIVE PROMPT (WHAT NOT TO DO):**
-      - **NO FACE SWAPPING.**
-      - **NO changing the person's fundamental bone structure or facial identity.**
-      - NO creating a different person.
-      - NO exaggerated, cartoonish, or caricature-like features.
+      - NO FACE SWAPPING.
+      - NO changing the person's fundamental identity.
+      - NO exaggerated or caricature-like features.
 
       Based on these strict instructions, edit the provided image to age the person by ${input.ageGap} years while maintaining their exact identity.
     `;
