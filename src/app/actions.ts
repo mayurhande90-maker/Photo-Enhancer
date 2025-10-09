@@ -9,7 +9,6 @@ import { createYouTubeThumbnail } from '@/ai/flows/youtube-thumbnail-flow';
 import { generateCaptions } from '@/ai/flows/auto-captions-flow';
 import { generateFutureSelf } from '@/ai/flows/ai-future-self-flow';
 import { createMagicInterior } from '@/ai/flows/magic-interior-flow';
-import { recreateChildhoodScene } from '@/ai/flows/recreate-childhood-flow';
 import type { AnalyzeImageOutput, AutoCaptionOutput } from '@/lib/types';
 
 async function processImageWithAI(
@@ -120,26 +119,6 @@ export async function magicInteriorAction(
         roomType,
         styleSelected,
         options,
-    });
-    return result;
-}
-
-export async function recreateChildhoodAction(
-    photoDataUri: string,
-    memoryText: string,
-    inputType: "photo" | "text" | "photo+text",
-    placeType: string,
-    style: string,
-    intensity: "mild" | "normal" | "high",
-    userId: string
-) {
-    const result = await recreateChildhoodScene({
-        photoDataUri,
-        memoryText,
-        inputType,
-        placeType,
-        style,
-        intensity,
     });
     return result;
 }
