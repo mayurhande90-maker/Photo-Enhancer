@@ -46,10 +46,9 @@ const TipsSection = () => (
 
 const roomTypes = ["Living Room", "Bedroom", "Kitchen", "Bathroom", "Dining Room", "Balcony", "Office"];
 const interiorStyles = [
-  "Japanese", "American", "Chinese", "Traditional Indian", "Coastal", "Arabic", "Modern", "Futuristic", "African"
+    "Japanese", "American", "Chinese", "Traditional Indian", "Coastal", "Arabic", "Modern", "Futuristic", "African"
 ];
 const colorPalettes = ["Neutral", "Warm", "Cool"];
-const lightingMoods = ["Bright Daylight", "Warm Evening", "Dramatic Spotlight"];
 
 
 export default function MagicInteriorPage() {
@@ -71,7 +70,6 @@ export default function MagicInteriorPage() {
     const [roomType, setRoomType] = useState(roomTypes[0]);
     const [styleSelected, setStyleSelected] = useState(interiorStyles[6]);
     const [colorPalette, setColorPalette] = useState(colorPalettes[0]);
-    const [lightingMood, setLightingMood] = useState(lightingMoods[0]);
     const [consentChecked, setConsentChecked] = useState(false);
     
     const [processingText, setProcessingText] = useState('');
@@ -142,7 +140,7 @@ export default function MagicInteriorPage() {
                 originalDataUri,
                 roomType,
                 styleSelected,
-                { colorPalette, lightingMood },
+                { colorPalette },
                 user.uid
             );
             
@@ -302,23 +300,12 @@ export default function MagicInteriorPage() {
                                         </RadioGroup>
                                     </div>
                                     
-                                     <div className="grid grid-cols-2 gap-4">
+                                     <div className="grid grid-cols-1 gap-4">
                                          <div className="space-y-3">
                                             <Label>Color Palette</Label>
                                             <RadioGroup value={colorPalette} onValueChange={setColorPalette} className="flex flex-wrap gap-2">
                                                 {colorPalettes.map(item => (
                                                     <Label key={item} className={cn("px-3 py-1.5 border rounded-full text-xs cursor-pointer transition-colors", colorPalette === item ? "bg-primary text-primary-foreground border-transparent" : "hover:bg-accent")}>
-                                                        <RadioGroupItem value={item} className="sr-only" />
-                                                        {item}
-                                                    </Label>
-                                                ))}
-                                            </RadioGroup>
-                                        </div>
-                                         <div className="space-y-3">
-                                            <Label>Lighting Mood</Label>
-                                            <RadioGroup value={lightingMood} onValueChange={setLightingMood} className="flex flex-wrap gap-2">
-                                                {lightingMoods.map(item => (
-                                                    <Label key={item} className={cn("px-3 py-1.5 border rounded-full text-xs cursor-pointer transition-colors", lightingMood === item ? "bg-primary text-primary-foreground border-transparent" : "hover:bg-accent")}>
                                                         <RadioGroupItem value={item} className="sr-only" />
                                                         {item}
                                                     </Label>
@@ -368,7 +355,3 @@ export default function MagicInteriorPage() {
         </div>
     );
 }
-
-    
-
-    

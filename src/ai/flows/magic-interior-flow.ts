@@ -44,7 +44,7 @@ const magicInteriorFlow = ai.defineFlow(
       1.  **PRESERVE STRUCTURE & PERSPECTIVE:** You MUST NOT change the room's geometry. Do not move, resize, add, or remove any walls, windows, doors, ceilings, or fixed architectural elements. The camera angle and perspective MUST remain identical.
       2.  **EDIT INTERIORS ONLY:** Only change movable items: furniture, decor, lighting, paint, and finishes.
       3.  **PRESERVE PEOPLE:** If people are in the photo, their identity, face, and body MUST NOT be changed.
-      4.  **APPLY STYLE:** Redesign the interior in the **'${input.styleSelected}'** style using the **'${input.options.colorPalette}'** color palette and **'${input.options.lightingMood}'** lighting.
+      4.  **APPLY STYLE:** Redesign the interior in the **'${input.styleSelected}'** style using the **'${input.options.colorPalette}'** color palette.
       5.  **STYLE DETAILS:** ${stylePrompt}
       6.  **WATERMARK:** Add a small, discreet watermark 'Magicpixa' in the bottom-right corner.
 
@@ -69,5 +69,3 @@ const magicInteriorFlow = ai.defineFlow(
     return { redesignedPhotoDataUri: media.url };
   }
 );
-
-    

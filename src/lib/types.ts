@@ -89,7 +89,6 @@ export const MagicInteriorInputSchema = z.object({
     styleSelected: z.string(),
     options: z.object({
         colorPalette: z.string(),
-        lightingMood: z.string(),
     }),
 });
 export type MagicInteriorInput = z.infer<typeof MagicInteriorInputSchema>;

@@ -110,7 +110,6 @@ export async function magicInteriorAction(
     styleSelected: string,
     options: {
         colorPalette: string;
-        lightingMood: string;
     },
     userId: string
 ) {
@@ -121,4 +120,24 @@ export async function magicInteriorAction(
         options,
     });
     return result;
+}
+
+export async function recreateChildhoodAction(
+  photoDataUri: string,
+  memoryText: string,
+  inputType: 'photo' | 'text' | 'photo+text',
+  placeType: string,
+  style: string,
+  intensity: 'mild' | 'normal' | 'high',
+  userId: string
+) {
+  const result = await (await import('@/ai/flows/recreate-childhood-flow')).recreateChildhoodScene({
+    photoDataUri: inputType.includes('photo') ? photoDataUri : undefined,
+    memoryText: inputType.includes('text') ? memoryText : undefined,
+    inputType,
+    placeType,
+    style,
+    intensity
+  });
+  return result;
 }
