@@ -137,12 +137,14 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
 
       const result = await feature.action(dataUri, user.uid);
       
-      if (result.enhancedPhotoDataUri) {
-         setProcessedImageUrl(result.enhancedPhotoDataUri);
+      const resultImageUri = result.enhancedPhotoDataUri || result.agedPhotoDataUri || result.redesignedPhotoDataUri || result.modernizedPhotoDataUri;
+
+      if (resultImageUri) {
+         setProcessedImageUrl(resultImageUri);
          try {
             await saveAIOutput(
                 feature.name,
-                result.enhancedPhotoDataUri,
+                resultImageUri,
                 'image/jpeg',
                 user.uid
             );
@@ -357,3 +359,5 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     </div>
   );
 }
+
+    
