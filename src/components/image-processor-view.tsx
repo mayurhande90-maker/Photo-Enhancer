@@ -135,6 +135,10 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     try {
       const dataUri = originalDataUri;
 
+      if(feature.isComingSoon) {
+          throw new Error('This feature is coming soon!');
+      }
+
       const result = await feature.action(dataUri, user.uid);
       
       if (feature.outputType === 'image') {
@@ -216,6 +220,18 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
           </AlertDescription>
         </Alert>
       )
+    }
+    
+    if (feature.isComingSoon) {
+      return (
+        <Alert className="mt-4 rounded-2xl">
+          <Clock className="h-4 w-4" />
+          <AlertTitle>Coming Soon!</AlertTitle>
+          <AlertDescription>
+            This feature is currently under development. Stay tuned!
+          </AlertDescription>
+        </Alert>
+      );
     }
 
     return null;
@@ -336,7 +352,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                                 {renderQuotaAlert()}
                             </div>
                             <div className="flex flex-col gap-3">
-                                <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isProcessing || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}>
+                                <Button size="lg" className="rounded-2xl h-12" onClick={handleProcessImage} disabled={!user || !originalFile || isProcessing || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..." || feature.isComingSoon}>
                                     <Wand2 className="mr-2 h-5 w-5" />
                                     Generate
                                 </Button>
@@ -363,3 +379,5 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     </div>
   );
 }
+
+    
