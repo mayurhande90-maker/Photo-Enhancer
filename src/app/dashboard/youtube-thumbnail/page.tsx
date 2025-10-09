@@ -16,7 +16,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from "@/components/ui/input";
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Wand2, Download, RefreshCw, Users, Lightbulb, Type, Video, Palette, Layout } from 'lucide-react';
+import { Wand2, Download, RefreshCw, Users, Lightbulb, Type, Video, Palette, AlignHorizontalJustifyCenter } from 'lucide-react';
 import { features } from '@/lib/features';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
@@ -45,9 +45,9 @@ const TipsSection = () => (
     </div>
 );
 
-const videoTypes = ["Entertainment / Vlog", "Educational / Tutorial", "Gaming", "Podcast / Talk Show", "News / Commentary", "Product Review / Beauty", "Fitness / Motivation", "Travel / Adventure"];
-const moods = ["Energetic / Bold", "Dramatic / Cinematic", "Professional / Clean", "Fun / Playful", "Minimal / Calm"];
-const layouts = ["Big Bold Centered", "Left Aligned + Reaction Face", "Split Text Right Object", "Diagonal Overlay", "Minimal Lower-Third Bar"];
+const channelCategories = ["Vlog / Lifestyle", "Travel / Adventure", "Tech / Product Review", "Podcast / Interview", "Gaming / Entertainment", "Fitness / Motivation", "Educational / Tutorial", "News / Commentary"];
+const thumbnailMoods = ["Dramatic / Serious", "Fun / Playful", "Cinematic / Dark", "Clean / Minimal", "Bright / Vlog Styled"];
+const subjectAlignments = ["Left Aligned", "Centered", "Right Aligned"];
 
 export default function YouTubeThumbnailPage() {
     const feature = features.find(f => f.name === 'YouTube Thumbnail Creator')!;
@@ -63,10 +63,10 @@ export default function YouTubeThumbnailPage() {
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState<string | null>(null);
 
-    const [title, setTitle] = useState('');
     const [videoType, setVideoType] = useState('');
-    const [mood, setMood] = useState('');
-    const [layout, setLayout] = useState('');
+    const [channelCategory, setChannelCategory] = useState('');
+    const [thumbnailMood, setThumbnailMood] = useState('');
+    const [subjectAlignment, setSubjectAlignment] = useState('');
 
     const [processingText, setProcessingText] = useState('');
 
@@ -74,7 +74,7 @@ export default function YouTubeThumbnailPage() {
         let interval: NodeJS.Timeout;
         if (isProcessing) {
           setProgress(0);
-          setProcessingText(`Designing your YouTube thumbnail... this may take a few seconds.`);
+          setProcessingText(`Designing your YouTube thumbnail... please wait.`);
           interval = setInterval(() => {
             setProgress(prev => {
               if (prev >= 95) {
@@ -108,10 +108,10 @@ export default function YouTubeThumbnailPage() {
     };
 
     const handleProcessImage = async () => {
-        if (!originalFile || !user || !originalDataUri || !firestore || !title) {
+        if (!originalFile || !user || !originalDataUri || !firestore || !videoType) {
           toast({
               title: 'Missing Information',
-              description: `Please upload an image and provide a title.`,
+              description: `Please upload an image and provide a video type description.`,
               variant: 'destructive',
           });
           return;
@@ -131,7 +131,7 @@ export default function YouTubeThumbnailPage() {
         setProcessedImageUrl(null);
 
         try {
-            const result = await createYoutubeThumbnailAction(originalDataUri, title, user.uid);
+            const result = await createYoutubeThumbnailAction(originalDataUri, videoType, user.uid);
             
             if (result.enhancedPhotoDataUri) {
                 setProcessedImageUrl(result.enhancedPhotoDataUri);
@@ -156,15 +156,15 @@ export default function YouTubeThumbnailPage() {
         setError(null);
         setIsProcessing(false);
         setProgress(0);
-        setTitle('');
         setVideoType('');
-        setMood('');
-        setLayout('');
+        setChannelCategory('');
+        setThumbnailMood('');
+        setSubjectAlignment('');
     };
 
     const isReadyToGenerate = useMemo(() => {
-        return !!originalFile && !!title && !!user && !isProcessing && !isCreditLoading;
-    }, [originalFile, title, user, isProcessing, isCreditLoading]);
+        return !!originalFile && !!videoType && !!user && !isProcessing && !isCreditLoading;
+    }, [originalFile, videoType, user, isProcessing, isCreditLoading]);
     
     const isResultReady = !!processedImageUrl && !isProcessing;
 
@@ -251,62 +251,62 @@ export default function YouTubeThumbnailPage() {
                              <Card className="rounded-3xl h-full sticky top-24">
                                 <CardHeader>
                                     <CardTitle>Configuration</CardTitle>
-                                    <CardDescription>Enter a title and choose your styles.</CardDescription>
+                                    <CardDescription>Enter a video type and choose your styles.</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="title-input">Video Title</Label>
+                                        <Label htmlFor="video-type-input">Video Type</Label>
                                         <div className="relative">
                                             <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                             <Input 
-                                                id="title-input" 
-                                                placeholder="My Awesome New Video" 
-                                                value={title}
-                                                onChange={(e) => setTitle(e.target.value)}
+                                                id="video-type-input" 
+                                                placeholder="e.g., Daily vlog, Phone unboxing" 
+                                                value={videoType}
+                                                onChange={(e) => setVideoType(e.target.value)}
                                                 className="pl-9"
                                                 disabled={isProcessing || !originalDataUri}
                                             />
                                         </div>
                                     </div>
                                     
+                                    <div className="space-y-2">
+                                        <Label htmlFor="channel-category-select">Channel Category</Label>
+                                        <Select onValueChange={setChannelCategory} value={channelCategory} disabled={isProcessing || !originalDataUri}>
+                                            <SelectTrigger id="channel-category-select" className="w-full">
+                                                <Video className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                                <div className="pl-5"><SelectValue placeholder="Select category..." /></div>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {channelCategories.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
                                     <div className="grid sm:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label htmlFor="video-type-select">Video Type</Label>
-                                            <Select onValueChange={setVideoType} value={videoType} disabled={isProcessing || !originalDataUri}>
-                                                <SelectTrigger id="video-type-select" className="w-full">
-                                                    <Video className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                                    <div className="pl-5"><SelectValue placeholder="Select type..." /></div>
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {videoTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="mood-select">Visual Mood</Label>
-                                            <Select onValueChange={setMood} value={mood} disabled={isProcessing || !originalDataUri}>
+                                            <Label htmlFor="mood-select">Thumbnail Mood / Style</Label>
+                                            <Select onValueChange={setThumbnailMood} value={thumbnailMood} disabled={isProcessing || !originalDataUri}>
                                                 <SelectTrigger id="mood-select" className="w-full">
                                                     <Palette className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                                     <div className="pl-5"><SelectValue placeholder="Select mood..." /></div>
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {moods.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                                                    {thumbnailMoods.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
                                                 </SelectContent>
                                             </Select>
                                         </div>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="layout-select">Text Layout</Label>
-                                        <Select onValueChange={setLayout} value={layout} disabled={isProcessing || !originalDataUri}>
-                                            <SelectTrigger id="layout-select" className="w-full">
-                                                <Layout className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                                <div className="pl-5"><SelectValue placeholder="Select layout..." /></div>
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {layouts.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
-                                            </SelectContent>
-                                        </Select>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="alignment-select">Subject Alignment</Label>
+                                            <Select onValueChange={setSubjectAlignment} value={subjectAlignment} disabled={isProcessing || !originalDataUri}>
+                                                <SelectTrigger id="alignment-select" className="w-full">
+                                                    <AlignHorizontalJustifyCenter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                                    <div className="pl-5"><SelectValue placeholder="Select alignment..." /></div>
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {subjectAlignments.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
                                     </div>
                                     
                                     {renderQuotaAlert()}
@@ -344,6 +344,3 @@ export default function YouTubeThumbnailPage() {
         </div>
     );
 }
-
-
-    

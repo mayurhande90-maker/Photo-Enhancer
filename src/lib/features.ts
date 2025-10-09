@@ -100,7 +100,7 @@ export const features: Feature[] = [
     path: '/dashboard/youtube-thumbnail',
     icon: Type,
     creditCost: 2,
-    action: (photoDataUri, userId, title) => createYoutubeThumbnailAction(photoDataUri, title!, userId),
+    action: (photoDataUri, userId, videoType) => createYoutubeThumbnailAction(photoDataUri, videoType!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
   },

@@ -61,10 +61,10 @@ export async function pictureWithCelebrityAction(photoDataUri: string, celebrity
   return result;
 }
 
-export async function createYoutubeThumbnailAction(photoDataUri: string, title: string, userId: string) {
+export async function createYoutubeThumbnailAction(photoDataUri: string, videoType: string, userId: string) {
     const result = await createYouTubeThumbnail({
         photoDataUri: photoDataUri,
-        title: title
+        videoType: videoType
     });
     return result;
 }

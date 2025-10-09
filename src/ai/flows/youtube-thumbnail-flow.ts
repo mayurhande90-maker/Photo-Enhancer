@@ -14,7 +14,7 @@ const YouTubeThumbnailInputSchema = z.object({
     .describe(
       'The main photo for the thumbnail, as a data URI.'
     ),
-  title: z.string().describe('The title text for the thumbnail.'),
+  videoType: z.string().describe('A short description of the video type, e.g., "Daily vlog" or "Phone unboxing".'),
 });
 export type YouTubeThumbnailInput = z.infer<typeof YouTubeThumbnailInputSchema>;
 
@@ -37,16 +37,18 @@ const youtubeThumbnailFlow = ai.defineFlow(
   },
   async (input) => {
     const prompt = `
-        Generate a vibrant, professional YouTube thumbnail (1280x720) using the uploaded image as the main subject.
-        Keep the subject sharply focused, expressive, and well lit.  
+      Generate a dynamic, photo-realistic YouTube thumbnail at 1280x720 resolution.
 
-        Add bold, readable headline text: "${input.title}".
-        
-        Use vivid but natural colours, dramatic contrast, and strong subject separation.  
-        Lighting should feel realistic yet dynamic, enhancing emotion and energy.  
-        Keep overall design clean, exciting, and scroll-stopping—suitable for direct YouTube upload.  
+      Use the uploaded image as the main subject.
+      Remove background and enhance it. Keep the subject’s face natural, sharp, and expressive.
 
-        Negative prompt: boring composition, dull colors, distorted faces, unreadable text, AI artifacts, cartoonish, low detail
+      Create a clean, balanced composition with bold, clear text overlay.
+      Generate an engaging hook line suitable for a video about '${input.videoType}', similar to trending YouTube thumbnails in India.
+      Style the text to be readable and attention-grabbing without clutter.
+      Use realistic lighting, natural shadows, and vibrant but professional colors.
+      Output should look authentic and human-made, not AI-generated.
+
+      Negative prompt: “distorted faces, over-saturated colors, fake lighting, blurry edges, unreadable text, cartoonish design.”
     `;
 
     const { media } = await ai.generate({
@@ -57,7 +59,6 @@ const youtubeThumbnailFlow = ai.defineFlow(
       model: 'googleai/gemini-2.5-flash-image-preview',
       config: {
         responseModalities: ['TEXT', 'IMAGE'],
-        // You might want to specify dimensions if the model supports it, e.g., in a future API.
       },
     });
 
