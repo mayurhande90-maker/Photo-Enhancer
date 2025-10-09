@@ -46,7 +46,7 @@ const TipsSection = () => (
 
 const roomTypes = ["Living Room", "Bedroom", "Kitchen", "Bathroom", "Dining Room", "Balcony", "Office"];
 const interiorStyles = [
-  "Japanese", "Italian", "American", "Traditional Indian", "Modern", "Futuristic", "Mid-Century Modern", "Coastal"
+  "Japanese", "American", "Chinese", "Traditional Indian", "Coastal", "Arabic", "Modern", "Futuristic", "African"
 ];
 const colorPalettes = ["Neutral", "Warm", "Cool"];
 const lightingMoods = ["Bright Daylight", "Warm Evening", "Dramatic Spotlight"];
@@ -69,7 +69,7 @@ export default function MagicInteriorPage() {
     const [imageAnalysis, setImageAnalysis] = useState<string | null>(null);
 
     const [roomType, setRoomType] = useState(roomTypes[0]);
-    const [styleSelected, setStyleSelected] = useState(interiorStyles[0]);
+    const [styleSelected, setStyleSelected] = useState(interiorStyles[6]);
     const [colorPalette, setColorPalette] = useState(colorPalettes[0]);
     const [lightingMood, setLightingMood] = useState(lightingMoods[0]);
     const [consentChecked, setConsentChecked] = useState(false);
@@ -199,7 +199,7 @@ export default function MagicInteriorPage() {
                     <Clock className="h-4 w-4" />
                     <AlertTitle>Not Enough Credits</AlertTitle>
                     <AlertDescription>
-                        You need {feature.creditCost} credits for this action. <Link href="/#pricing" className="underline font-bold">Upgrade your plan</Link> for more.
+                        You need ${feature.creditCost} credits for this action. <Link href="/#pricing" className="underline font-bold">Upgrade your plan</Link> for more.
                     </AlertDescription>
                 </Alert>
             );
@@ -217,7 +217,7 @@ export default function MagicInteriorPage() {
                         </div>
                         <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{feature.name}</h1>
                     </div>
-                    <p className="mt-4 max-w-2xl text-muted-foreground">{feature.description} This costs {feature.creditCost} credits.</p>
+                    <p className="mt-4 max-w-2xl text-muted-foreground">{feature.description} This costs ${feature.creditCost} credits.</p>
                 </div>
             </section>
 
@@ -368,5 +368,7 @@ export default function MagicInteriorPage() {
         </div>
     );
 }
+
+    
 
     
