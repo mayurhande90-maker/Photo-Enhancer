@@ -41,21 +41,13 @@ const youtubeThumbnailFlow = ai.defineFlow(
   },
   async (input) => {
     const prompt = `
-      Create a cinematic, scroll-stopping YouTube thumbnail.
-      Output Requirements: 16:9 aspect ratio, 1280x720 resolution, JPG format, photo-realistic style.
+      You are a professional YouTube thumbnail designer. Create a single, cinematic, scroll-stopping YouTube thumbnail (16:9 aspect ratio, 1280x720, JPG, photo-realistic).
 
-      Inputs:
-      - Category: ${input.categorySelected}
-      - Mood: ${input.moodSelected}
-      - Subject Alignment: ${input.alignmentSelected}
-      - Video Type: ${input.videoType}
-      - Subject Image: {{media url=${input.photoDataUri}}}
-
-      Key Instructions:
-      1.  **Subject:** Use the provided image. Remove the background, make the subject prominent.
-      2.  **Background:** Create a dynamic, blurred background related to the category: "${input.categorySelected}".
-      3.  **Text:** Generate a catchy hook line based on the video type: "${input.videoType}".
-      4.  **Finish:** Apply color correction for the selected mood. Ensure the entire composition is photo-realistic.
+      **CRITICAL INSTRUCTIONS:**
+      1.  **SUBJECT:** Use the provided image. Remove its background and make the subject prominent, aligned to the **'${input.alignmentSelected}'** setting.
+      2.  **BACKGROUND:** Create a new, dynamic, blurred background related to the channel category: "${input.categorySelected}".
+      3.  **TEXT:** Generate a short, catchy, high-impact hook line based on the video type: "${input.videoType}". Place it strategically on the thumbnail.
+      4.  **MOOD & FINISH:** Apply professional color correction and lighting to match the selected mood: "${input.moodSelected}". Ensure the final composition is photo-realistic and visually appealing.
     `;
 
     const { media } = await ai.generate({

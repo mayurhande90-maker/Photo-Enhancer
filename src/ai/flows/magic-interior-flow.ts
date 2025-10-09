@@ -24,22 +24,16 @@ const magicInteriorFlow = ai.defineFlow(
   },
   async (input) => {
     const prompt = `
-      You are a professional interior design image editor. Your goal is to redesign an interior space based on a user's photo and selected style.
+      You are a hyper-realistic interior design image editor. Your ONLY task is to redesign the provided room photo.
 
       **CRITICAL RULES (NON-NEGOTIABLE):**
-      1.  **PRESERVE STRUCTURE:** You MUST NOT change the structural geometry. Do not move, resize, add, or remove walls, windows, doors, ceilings, or any fixed architectural elements.
-      2.  **PRESERVE PERSPECTIVE:** The camera angle, perspective, and vanishing points of the original photo MUST be maintained perfectly.
-      3.  **EDIT ONLY INTERIORS:** You can only change interior finishes, furniture, lighting, decor, and paint.
-      4.  **PRESERVE PEOPLE:** If people are in the photo, their identity, face, and body must be preserved without any changes.
+      1.  **PRESERVE STRUCTURE & PERSPECTIVE:** You MUST NOT change the room's geometry. Do not move, resize, add, or remove any walls, windows, doors, ceilings, or fixed architectural elements. The camera angle and perspective MUST remain identical.
+      2.  **EDIT INTERIORS ONLY:** Only change movable items: furniture, decor, lighting, paint, and finishes.
+      3.  **PRESERVE PEOPLE:** If people are in the photo, their identity, face, and body MUST NOT be changed.
+      4.  **APPLY STYLE:** Redesign the interior in the **'${input.styleSelected}'** style using the **'${input.options.colorPalette}'** color palette and **'${input.options.lightingMood}'** lighting.
+      5.  **WATERMARK:** Add a small, discreet watermark 'Magicpixa' in the bottom-right corner.
 
-      **INPUTS:**
-      -   Source Photo: {{media url=${input.photoDataUri}}}
-      -   Room Type: ${input.roomType}
-      -   Style: ${input.styleSelected}
-      -   Options: Color Palette=${input.options.colorPalette}, Lighting=${input.options.lightingMood}
-
-      **TASK:**
-      Redesign the interior of the provided photo in the **'${input.styleSelected}'** style. Apply changes only to movable furniture, decor, and finishes. Ensure the result is hyper-realistic and looks like a professionally taken photograph of a real room. Add a small, discreet watermark 'Magicpixa' in the bottom-right corner.
+      Based on these strict rules, edit the provided photo of the '${input.roomType}'.
     `;
 
     const { media } = await ai.generate({
