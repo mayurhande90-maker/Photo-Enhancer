@@ -353,5 +353,4 @@ export default function MagicInteriorPage() {
             </section>
         </div>
     );
-
-    
+}
