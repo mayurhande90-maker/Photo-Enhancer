@@ -7,7 +7,7 @@ import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { doc } from 'firebase/firestore';
 
 const ANONYMOUS_QUOTA_KEY = 'anonymousUserQuota';
-const ANONYMOUS_LIMIT = 1;
+const ANONYMOUS_LIMIT = 1; // Only 1 credit for anonymous users
 
 interface AnonymousQuota {
   credits: number;
@@ -22,6 +22,10 @@ export function useCredit() {
 
   // Determine credits from the user object if available, otherwise from local state
   const credits = useMemo(() => {
+      // Handle unlimited credits for VIP plan
+      if (user && user.planName === 'VIP') {
+        return Infinity;
+      }
       if (user && typeof user.credits === 'number') {
           return user.credits;
       }
@@ -51,8 +55,9 @@ export function useCredit() {
 
       if (user) {
         // For logged-in users, the `useUser` hook's profile data is the source of truth.
-        // `user.credits` will be updated via the `useUser` hook's listener.
-        // We don't need to set local credits here.
+        // We also need to check for monthly reset logic here.
+        // NOTE: The actual reset logic would be handled by a backend function (e.g., Firebase Cloud Function)
+        // that runs on a schedule. This client-side code assumes the backend handles the reset.
       } else {
         // Anonymous user
         const storedQuota = getAnonymousQuota();
@@ -73,9 +78,13 @@ export function useCredit() {
   const consumeCredits = useCallback(async (amount: number) => {
     const amountToDeduct = Math.max(0, amount);
     
+    // VIP users have unlimited credits
+    if (user && user.planName === 'VIP') {
+        return;
+    }
+
     if (user && firestore) {
         // Logged-in user: Update Firestore
-        // The optimistic update is now handled by the `useUser` hook's real-time listener.
         const currentCredits = user.credits ?? 0;
         const newCreditValue = Math.max(0, currentCredits - amountToDeduct);
         const userRef = doc(firestore, 'users', user.uid);

@@ -49,23 +49,38 @@ const pricingTiers = [
       'Access to premium templates',
       'Priority processing',
     ],
-    cta: 'Start Free Trial',
+    cta: 'Get Pro',
     ctaPath: 'https://rzp.io/l/magicpixa-pro',
     popular: true,
   },
   {
-    name: 'Premium+ — Live Fully',
+    name: 'Premium+ — Power User',
     price: '₹499',
     yearlyPrice: '₹4,999',
     priceSuffix: '/ month',
     features: [
-      'Unlimited credits',
-      'Exclusive new AI tools',
+      '350 credits/month',
+      'Access to all features',
       'Dedicated support',
       'Highest priority queue',
     ],
-    cta: 'Start Free Trial',
+    cta: 'Get Premium+',
     ctaPath: 'https://rzp.io/l/magicpixa-premium',
+    popular: false,
+  },
+   {
+    name: 'VIP — Unlimited',
+    price: '₹1999',
+    yearlyPrice: '₹19,999',
+    priceSuffix: '/ month',
+    features: [
+      'Unlimited credits/month',
+      'Exclusive early access to new tools',
+      'Personalized onboarding & support',
+      'Top priority queue',
+    ],
+    cta: 'Go VIP',
+    ctaPath: 'https://rzp.io/l/magicpixa-vip', // Assuming a new Razorpay link
     popular: false,
   },
 ];
@@ -76,42 +91,42 @@ const testimonials = [
       city: 'Pune',
       quote: "Best AI app for creators! The background removal is flawless and saved me hours.",
       rating: 5,
-      avatar: 'https://picsum.photos/seed/aarav/150/150'
+      avatar: 'https://i.pravatar.cc/150?u=aarav'
     },
     {
       name: 'Ritika Menon',
       city: 'Mumbai',
       quote: "My brand posters look like they were designed by a professional agency. Truly magical!",
       rating: 5,
-      avatar: 'https://picsum.photos/seed/ritika/150/150'
+      avatar: 'https://i.pravatar.cc/150?u=ritika'
     },
     {
       name: 'Karan Patel',
       city: 'Ahmedabad',
       quote: "So easy and addictive. I've enhanced my entire family photo collection.",
       rating: 4,
-      avatar: 'https://picsum.photos/seed/karan/150/150'
+      avatar: 'https://i.pravatar.cc/150?u=karan'
     },
     {
       name: 'Sneha Desai',
       city: 'Nashik',
       quote: "Turned my grainy, old black-and-white photo into a vibrant memory. I was speechless.",
       rating: 5,
-      avatar: 'https://picsum.photos/seed/sneha/150/150'
+      avatar: 'https://i.pravatar.cc/150?u=sneha'
     },
     {
       name: 'Aditya Khanna',
       city: 'Delhi',
       quote: "The YouTube thumbnail creator is a game-changer. My click-through rate has visibly improved.",
       rating: 4,
-      avatar: 'https://picsum.photos/seed/aditya/150/150'
+      avatar: 'https://i.pravatar.cc/150?u=aditya'
     },
     {
       name: 'Priya Singh',
       city: 'Bangalore',
       quote: "As a student, the notes generator is my secret weapon for exam prep. Highly recommended!",
       rating: 5,
-      avatar: 'https://picsum.photos/seed/priya/150/150'
+      avatar: 'https://i.pravatar.cc/150?u=priya'
     }
 ]
 
@@ -393,7 +408,7 @@ export default function Home() {
                 Start free, upgrade anytime. Simple plans for every creator.
               </p>
             </div>
-             <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-3 max-w-5xl mx-auto">
+             <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto">
               {pricingTiers.map((tier) => (
                 <Card key={tier.name} className={cn(
                   'flex flex-col rounded-3xl border-2 transition-all duration-300',

@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -27,7 +28,7 @@ const signupSchema = z.object({
 
 type SignupFormInputs = z.infer<typeof signupSchema>;
 
-const INITIAL_CREDITS = 200;
+const INITIAL_CREDITS = 10;
 
 export default function SignupPage() {
     const router = useRouter();
