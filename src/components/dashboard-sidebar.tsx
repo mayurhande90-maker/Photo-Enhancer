@@ -75,7 +75,7 @@ export function DashboardSidebar() {
                     <CreationsIcon className="h-5 w-5" />
                     <span>My Creations</span>
                 </Link>
-                 <Accordion type="multiple" defaultValue={categories} className="w-full">
+                 <Accordion type="multiple" defaultValue={[...categories, "coming-soon"]} className="w-full">
                     {categorizedFeatures.map(({ name, features: categoryFeatures }) => {
                         const CategoryIcon = categoryIcons[name as keyof typeof categoryIcons];
                         return (
