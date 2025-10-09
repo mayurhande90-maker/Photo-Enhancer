@@ -14,7 +14,10 @@ import {
 import type { Feature } from '@/lib/types';
 import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star, MapPin, Sofa } from 'lucide-react';
 
-const placeholderAction = async () => ({ enhancedPhotoDataUri: '', creditCost: 1 });
+const placeholderAction = async (photoDataUri?: string, userId?: string, ...args: any[]): Promise<any> => {
+  console.log('Placeholder action called for a feature in development.');
+  return { enhancedPhotoDataUri: '', creditCost: 1 };
+};
 
 export const featureCategories = {
   IMAGE_STUDIO: 'Image Studio',
