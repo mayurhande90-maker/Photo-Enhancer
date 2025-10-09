@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/icons';
 import { features, featureCategories } from '@/lib/features';
-import { Home, Settings, Image as CreationsIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon, Image as ImageStudioIcon } from 'lucide-react';
+import { Home, Settings, Image as CreationsIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon, Image as ImageStudioIcon, Palette, Users } from 'lucide-react';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
