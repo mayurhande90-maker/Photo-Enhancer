@@ -199,9 +199,9 @@ export const features: Feature[] = [
     isComingSoon: true,
   },
   {
-    name: 'AI Bill Reader',
-    description: 'Scan bills → breakdown + savings tips.',
-    path: '/dashboard/bill-reader',
+    name: 'Magic Bills',
+    description: 'Upload bills → get a monthly spending summary.',
+    path: '/dashboard/magic-bills',
     icon: Wallet,
     creditCost: 1,
     action: placeholderAction,
@@ -228,7 +228,7 @@ export const features: Feature[] = [
     icon: Sofa,
     creditCost: 3,
     action: (photoDataUri, userId, roomType, styleSelected, options) => magicInteriorAction(photoDataUri, roomType!, styleSelected!, options!, userId),
-    showBeforeAfterSlider: true,
+    showBeforeAfterSlider: false,
     category: featureCategories.PERSONAL_MAGIC,
   },
   {
