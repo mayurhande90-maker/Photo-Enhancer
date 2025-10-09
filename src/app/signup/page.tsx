@@ -27,7 +27,7 @@ const signupSchema = z.object({
 
 type SignupFormInputs = z.infer<typeof signupSchema>;
 
-const INITIAL_CREDITS = 100;
+const INITIAL_CREDITS = 200;
 
 export default function SignupPage() {
     const router = useRouter();
