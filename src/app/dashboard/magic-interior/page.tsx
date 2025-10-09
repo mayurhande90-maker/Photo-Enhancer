@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -6,19 +7,16 @@ import Image from 'next/image';
 import { useUser, useFirestore } from '@/firebase';
 import { useCredit } from '@/hooks/use-credit';
 import { useToast } from '@/hooks/use-toast';
-import { memorySceneAction } from '@/app/actions';
+import { magicInteriorAction, analyzeImageAction } from '@/app/actions';
 import { saveAIOutput } from '@/firebase/auth/client-update-profile';
 import { FileUploader } from '@/components/file-uploader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Wand2, Download, RefreshCw, Users, Lightbulb, CheckCircle2, Sparkles, Loader2, Bot, Clock, Home, Image as ImageIcon, FileText } from 'lucide-react';
+import { Wand2, Download, RefreshCw, Users, Lightbulb, CheckCircle2, Sparkles, Loader2, Bot, Clock, Home, Sofa, Palette, Sun } from 'lucide-react';
 import { features } from '@/lib/features';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
@@ -40,37 +38,43 @@ const TipsSection = () => (
             <h3 className="font-semibold text-base text-foreground">Tips for Best Results</h3>
         </div>
         <ul className="text-muted-foreground text-xs mt-2 space-y-1 list-disc list-inside">
-            <li>Use a clear, front-facing photo or a short 1-2 line memory.</li>
-            <li>For photos, landscape or mid-shots work best.</li>
-            <li>Avoid heavy sunglasses or face obstructions.</li>
+            <li>Upload a clear, front-facing or wide-angle shot of your room.</li>
+            <li>Make sure the room is well-lit.</li>
+            <li>Structural elements like walls, windows, and doors will NOT be changed.</li>
         </ul>
     </div>
 );
 
-const modes = ["Restore Photo", "Recreate from Memory", "Stylize Photo"];
-const eras = ["Original", "1990s", "2000s", "2010s", "Modern"];
-const styles = ["Photo-realistic", "Cinematic", "Vintage Film Grain", "Painterly"];
+const roomTypes = ["Living Room", "Bedroom", "Kitchen", "Bathroom", "Dining Room", "Balcony", "Office"];
+const interiorStyles = [
+  "Modern Minimalist", "Scandinavian", "Industrial Loft", "Mid-Century Modern",
+  "Classic / Neoclassical", "Traditional Indian", "Bohemian / Eclectic",
+  "Futuristic / High-Tech", "Japandi", "Coastal / Tropical"
+];
+const colorPalettes = ["Neutral", "Warm", "Cool"];
+const lightingMoods = ["Bright Daylight", "Warm Evening", "Dramatic Spotlight"];
 
-export default function MemoryScenePage() {
-    const feature = features.find(f => f.name === 'Memory Scene')!;
+
+export default function MagicInteriorPage() {
+    const feature = features.find(f => f.name === 'Magic Interior')!;
     const { toast } = useToast();
     const { user, loading: isUserLoading } = useUser();
     const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
     const firestore = useFirestore();
 
-    const [inputType, setInputType] = useState('photo');
     const [originalFile, setOriginalFile] = useState<File | null>(null);
     const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
-    const [memoryText, setMemoryText] = useState('');
     
     const [processedImageUrl, setProcessedImageUrl] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState<string | null>(null);
+    const [imageAnalysis, setImageAnalysis] = useState<string | null>(null);
 
-    const [mode, setMode] = useState(modes[0]);
-    const [eraHint, setEraHint] = useState(eras[0]);
-    const [style, setStyle] = useState(styles[0]);
+    const [roomType, setRoomType] = useState(roomTypes[0]);
+    const [styleSelected, setStyleSelected] = useState(interiorStyles[0]);
+    const [colorPalette, setColorPalette] = useState(colorPalettes[0]);
+    const [lightingMood, setLightingMood] = useState(lightingMoods[0]);
     const [consentChecked, setConsentChecked] = useState(false);
     
     const [processingText, setProcessingText] = useState('');
@@ -79,7 +83,7 @@ export default function MemoryScenePage() {
         let interval: NodeJS.Timeout;
         if (isProcessing) {
           setProgress(0);
-          setProcessingText(`Recreating your memory... this is complex, please wait!`);
+          setProcessingText(`Redesigning your ${roomType.toLowerCase()}... this is complex, please wait!`);
           interval = setInterval(() => {
             setProgress(prev => {
               if (prev >= 95) {
@@ -94,7 +98,7 @@ export default function MemoryScenePage() {
         return () => {
             if(interval) clearInterval(interval);
         };
-    }, [isProcessing]);
+    }, [isProcessing, roomType]);
 
     useEffect(() => {
         if(processedImageUrl){
@@ -102,6 +106,16 @@ export default function MemoryScenePage() {
             setIsProcessing(false);
         }
     }, [processedImageUrl]);
+
+    useEffect(() => {
+        if (originalDataUri && !processedImageUrl) {
+            setImageAnalysis("Analyzing room...");
+            analyzeImageAction(originalDataUri)
+                .then(result => setImageAnalysis(result.analysis))
+                .catch(() => setImageAnalysis("Great photo! Ready to redesign."));
+        }
+    }, [originalDataUri, processedImageUrl]);
+
 
     const handleFileSelect = (file: File) => {
         handleReset();
@@ -112,16 +126,11 @@ export default function MemoryScenePage() {
     };
 
     const handleProcessImage = async () => {
-        if (!user || !firestore || !consentChecked) {
-            toast({ title: 'Missing Information', description: 'Please provide input and give consent.', variant: 'destructive' });
+        if (!originalFile || !user || !originalDataUri || !firestore || !consentChecked) {
+            toast({ title: 'Missing Information', description: 'Please upload a photo and give consent.', variant: 'destructive' });
             return;
         }
 
-        if ((inputType === 'photo' && !originalFile) || (inputType === 'text' && !memoryText)) {
-            toast({ title: 'Missing Input', description: `Please ${inputType === 'photo' ? 'upload a photo' : 'enter a memory'}.`, variant: 'destructive' });
-            return;
-        }
-        
         if (!isCreditLoading && credits < feature.creditCost) {
             toast({ title: 'Not Enough Credits', description: `You need ${feature.creditCost} credits for this.`, variant: 'destructive' });
             return;
@@ -132,18 +141,17 @@ export default function MemoryScenePage() {
         setProcessedImageUrl(null);
 
         try {
-            const result = await memorySceneAction(
-                originalDataUri || '',
-                memoryText,
-                mode,
-                eraHint,
-                style,
+            const result = await magicInteriorAction(
+                originalDataUri,
+                roomType,
+                styleSelected,
+                { colorPalette, lightingMood },
                 user.uid
             );
             
-            if (result.enhancedPhotoDataUri) {
-                setProcessedImageUrl(result.enhancedPhotoDataUri);
-                await saveAIOutput(feature.name, result.enhancedPhotoDataUri, 'image/jpeg', user.uid);
+            if (result.redesignedPhotoDataUri) {
+                setProcessedImageUrl(result.redesignedPhotoDataUri);
+                await saveAIOutput(feature.name, result.redesignedPhotoDataUri, 'image/jpeg', user.uid);
                 await consumeCredits(feature.creditCost);
             } else {
                 throw new Error('AI generation failed to return an image.');
@@ -160,17 +168,16 @@ export default function MemoryScenePage() {
     const handleReset = () => {
         setOriginalFile(null);
         setOriginalDataUri(null);
-        setMemoryText('');
         setProcessedImageUrl(null);
         setError(null);
         setIsProcessing(false);
         setProgress(0);
+        setImageAnalysis(null);
     };
 
     const isReadyToGenerate = useMemo(() => {
-        const hasInput = (inputType === 'photo' && !!originalFile) || (inputType === 'text' && !!memoryText);
-        return hasInput && !!user && !isProcessing && !isCreditLoading && consentChecked;
-    }, [inputType, originalFile, memoryText, user, isProcessing, isCreditLoading, consentChecked]);
+        return !!originalFile && !!user && !isProcessing && !isCreditLoading && consentChecked && imageAnalysis !== "Analyzing room...";
+    }, [originalFile, user, isProcessing, isCreditLoading, consentChecked, imageAnalysis]);
     
     const isResultReady = !!processedImageUrl && !isProcessing;
 
@@ -206,9 +213,9 @@ export default function MemoryScenePage() {
     return (
         <div className="space-y-8 animate-fade-in-up">
             <section>
-                <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-br from-yellow-500/10 to-orange-500/10">
+                <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-br from-green-500/10 to-blue-500/10">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 rounded-2xl bg-gradient-to-br from-yellow-500 to-orange-500 text-white">
+                        <div className="p-3 rounded-2xl bg-gradient-to-br from-green-500 to-blue-500 text-white">
                             <feature.icon className="h-8 w-8" />
                         </div>
                         <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{feature.name}</h1>
@@ -220,12 +227,11 @@ export default function MemoryScenePage() {
             <div className="h-px w-full bg-border" />
 
             <section>
-                <h2 className="text-2xl font-semibold mb-4">Recreate Your Memory</h2>
+                <h2 className="text-2xl font-semibold mb-4">Redesign Your Space</h2>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                     <div className="flex flex-col gap-4">
-                        <div className="relative aspect-video w-full max-w-md mx-auto overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
-                            
+                         <div className="relative aspect-video w-full max-w-2xl mx-auto overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
                             {isResultReady && originalDataUri && (
                                 <BeforeAfterSlider
                                     before={originalDataUri}
@@ -233,25 +239,18 @@ export default function MemoryScenePage() {
                                 />
                             )}
                             
-                            {!isResultReady && !originalDataUri && inputType === 'photo' && (
-                                <FileUploader onFileSelect={handleFileSelect} />
+                            {!isResultReady && (
+                                originalDataUri ? (
+                                    <Image 
+                                        src={originalDataUri}
+                                        alt="Original upload"
+                                        fill 
+                                        className={cn("object-contain transition-all duration-500", isProcessing && "opacity-50 blur-sm")} 
+                                    />
+                                ) : (
+                                     <FileUploader onFileSelect={handleFileSelect} />
+                                )
                             )}
-
-                             {!isResultReady && originalDataUri && (
-                                <Image 
-                                    src={originalDataUri}
-                                    alt="Original upload"
-                                    fill 
-                                    className={cn("object-contain transition-all duration-500", isProcessing && "opacity-50 blur-sm")} 
-                                />
-                             )}
-
-                             {!isResultReady && !originalDataUri && inputType === 'text' && (
-                                 <div className="p-8 text-center text-muted-foreground">
-                                     <FileText className="h-12 w-12 mx-auto mb-4" />
-                                     <p>The generated scene for your memory will appear here.</p>
-                                 </div>
-                             )}
 
                             {isProcessing && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white backdrop-blur-sm p-4">
@@ -262,6 +261,14 @@ export default function MemoryScenePage() {
                                 </div>
                             )}
                         </div>
+                        {imageAnalysis && !isResultReady && (
+                            <div className="p-4 rounded-2xl bg-primary/10 text-primary-foreground max-w-2xl mx-auto w-full">
+                                <p className="text-sm font-medium text-primary flex items-center gap-2">
+                                    <Sparkles className="h-4 w-4 text-yellow-400" />
+                                    {imageAnalysis}
+                                </p>
+                            </div>
+                        )}
                         {!isResultReady && <TipsSection />}
                     </div>
                    
@@ -270,34 +277,15 @@ export default function MemoryScenePage() {
                              <Card className="rounded-3xl h-full sticky top-24">
                                 <CardHeader>
                                     <CardTitle>Configuration</CardTitle>
-                                    <CardDescription>Upload a photo or describe a memory, then choose your styles.</CardDescription>
+                                    <CardDescription>Choose your room type and desired style.</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     
-                                    <Tabs value={inputType} onValueChange={setInputType}>
-                                        <TabsList className="grid w-full grid-cols-2">
-                                            <TabsTrigger value="photo"><ImageIcon className="mr-2 h-4 w-4" />Photo</TabsTrigger>
-                                            <TabsTrigger value="text"><FileText className="mr-2 h-4 w-4" />Text</TabsTrigger>
-                                        </TabsList>
-                                        <TabsContent value="photo" className="pt-4">
-                                            {!originalFile && <p className="text-sm text-muted-foreground">Upload a photo to get started.</p>}
-                                            {originalFile && <p className="text-sm text-green-500 font-medium">Photo uploaded: {originalFile.name}</p>}
-                                        </TabsContent>
-                                        <TabsContent value="text" className="pt-4">
-                                            <Input
-                                                placeholder='e.g. "My first bike at the beach, sunset, 2009"'
-                                                value={memoryText}
-                                                onChange={(e) => setMemoryText(e.target.value)}
-                                                disabled={isProcessing}
-                                            />
-                                        </TabsContent>
-                                    </Tabs>
-
-                                    <div className="space-y-3">
-                                        <Label>Mode</Label>
-                                        <RadioGroup value={mode} onValueChange={setMode} className="flex flex-wrap gap-2">
-                                            {modes.map(item => (
-                                                <Label key={item} className={cn("px-3 py-1.5 border rounded-full text-xs cursor-pointer transition-colors", mode === item ? "bg-primary text-primary-foreground border-transparent" : "hover:bg-accent")}>
+                                     <div className="space-y-3">
+                                        <Label>Room Type</Label>
+                                        <RadioGroup value={roomType} onValueChange={setRoomType} className="flex flex-wrap gap-2">
+                                            {roomTypes.map(item => (
+                                                <Label key={item} className={cn("px-3 py-1.5 border rounded-full text-xs cursor-pointer transition-colors", roomType === item ? "bg-primary text-primary-foreground border-transparent" : "hover:bg-accent")}>
                                                     <RadioGroupItem value={item} className="sr-only" />
                                                     {item}
                                                 </Label>
@@ -305,31 +293,47 @@ export default function MemoryScenePage() {
                                         </RadioGroup>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label>Era Hint</Label>
-                                            <Select onValueChange={setEraHint} value={eraHint}>
-                                                <SelectTrigger><SelectValue /></SelectTrigger>
-                                                <SelectContent>
-                                                    {eras.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
-                                                </SelectContent>
-                                            </Select>
+                                    <div className="space-y-3">
+                                        <Label>Style</Label>
+                                         <RadioGroup value={styleSelected} onValueChange={setStyleSelected} className="flex flex-wrap gap-2">
+                                            {interiorStyles.map(item => (
+                                                <Label key={item} className={cn("px-3 py-1.5 border rounded-full text-xs cursor-pointer transition-colors", styleSelected === item ? "bg-primary text-primary-foreground border-transparent" : "hover:bg-accent")}>
+                                                    <RadioGroupItem value={item} className="sr-only" />
+                                                    {item}
+                                                </Label>
+                                            ))}
+                                        </RadioGroup>
+                                    </div>
+                                    
+                                     <div className="grid grid-cols-2 gap-4">
+                                         <div className="space-y-3">
+                                            <Label>Color Palette</Label>
+                                            <RadioGroup value={colorPalette} onValueChange={setColorPalette} className="flex flex-wrap gap-2">
+                                                {colorPalettes.map(item => (
+                                                    <Label key={item} className={cn("px-3 py-1.5 border rounded-full text-xs cursor-pointer transition-colors", colorPalette === item ? "bg-primary text-primary-foreground border-transparent" : "hover:bg-accent")}>
+                                                        <RadioGroupItem value={item} className="sr-only" />
+                                                        {item}
+                                                    </Label>
+                                                ))}
+                                            </RadioGroup>
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label>Style</Label>
-                                             <Select onValueChange={setStyle} value={style}>
-                                                <SelectTrigger><SelectValue /></SelectTrigger>
-                                                <SelectContent>
-                                                    {styles.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                                                </SelectContent>
-                                            </Select>
+                                         <div className="space-y-3">
+                                            <Label>Lighting Mood</Label>
+                                            <RadioGroup value={lightingMood} onValueChange={setLightingMood} className="flex flex-wrap gap-2">
+                                                {lightingMoods.map(item => (
+                                                    <Label key={item} className={cn("px-3 py-1.5 border rounded-full text-xs cursor-pointer transition-colors", lightingMood === item ? "bg-primary text-primary-foreground border-transparent" : "hover:bg-accent")}>
+                                                        <RadioGroupItem value={item} className="sr-only" />
+                                                        {item}
+                                                    </Label>
+                                                ))}
+                                            </RadioGroup>
                                         </div>
                                     </div>
                                     
                                     <div className="flex items-start space-x-3 pt-2">
                                         <Checkbox id="consent" checked={consentChecked} onCheckedChange={(checked) => setConsentChecked(checked as boolean)} className="mt-1" disabled={isProcessing}/>
                                         <Label htmlFor="consent" className="text-xs font-normal text-muted-foreground">
-                                            I confirm I own or have permission to use this content and will not use generated images to impersonate or defame.
+                                           By generating, you confirm you own or have permission to edit this photo.
                                         </Label>
                                     </div>
                                     {renderQuotaAlert()}
@@ -342,8 +346,8 @@ export default function MemoryScenePage() {
                         ) : (
                              <Card className="w-full rounded-3xl">
                                 <CardHeader className="text-center">
-                                    <CardTitle>Memory Recreated!</CardTitle>
-                                    <CardDescription>Download your image or start over.</CardDescription>
+                                    <CardTitle>Design Ready!</CardTitle>
+                                    <CardDescription>Download your new interior design or start over.</CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -352,7 +356,7 @@ export default function MemoryScenePage() {
                                             Generate Another
                                         </Button>
                                         <Button size="lg" asChild className="h-12 w-full rounded-2xl" disabled={!processedImageUrl}>
-                                            <a href={processedImageUrl!} download={`magicpixa-memory-scene.png`}>
+                                            <a href={processedImageUrl!} download={`magicpixa-interior-design.png`}>
                                                 <Download className="mr-2 h-5 w-5" />
                                                 Download Image
                                             </a>
@@ -367,5 +371,3 @@ export default function MemoryScenePage() {
         </div>
     );
 }
-
-    

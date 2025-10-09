@@ -8,7 +8,7 @@ import { colorizePhoto } from '@/ai/flows/colorize-photo';
 import { createYouTubeThumbnail } from '@/ai/flows/youtube-thumbnail-flow';
 import { generateCaptions } from '@/ai/flows/auto-captions-flow';
 import { generateFutureSelf } from '@/ai/flows/ai-future-self-flow';
-import { createMemoryScene } from '@/ai/flows/memory-scene-flow';
+import { createMagicInterior } from '@/ai/flows/magic-interior-flow';
 import { recreateChildhoodScene } from '@/ai/flows/recreate-childhood-flow';
 import type { AnalyzeImageOutput, AutoCaptionOutput } from '@/lib/types';
 
@@ -105,20 +105,21 @@ export async function aiFutureSelfAction(photoDataUri: string, ageGap: number, u
     return result;
 }
 
-export async function memorySceneAction(
-    photoDataUri: string, 
-    memoryText: string, 
-    mode: string,
-    eraHint: string,
-    style: string,
+export async function magicInteriorAction(
+    photoDataUri: string,
+    roomType: string,
+    styleSelected: string,
+    options: {
+        colorPalette: string;
+        lightingMood: string;
+    },
     userId: string
 ) {
-    const result = await createMemoryScene({
+    const result = await createMagicInterior({
         photoDataUri,
-        memoryText,
-        mode,
-        eraHint,
-        style,
+        roomType,
+        styleSelected,
+        options,
     });
     return result;
 }

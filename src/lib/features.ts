@@ -8,11 +8,11 @@ import {
   createYoutubeThumbnailAction,
   autoCaptionsAction,
   aiFutureSelfAction,
-  memorySceneAction,
+  magicInteriorAction,
   recreateChildhoodAction,
 } from '@/app/actions';
 import type { Feature } from '@/lib/types';
-import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star, MapPin } from 'lucide-react';
+import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star, MapPin, Sofa } from 'lucide-react';
 
 const placeholderAction = async () => ({ enhancedPhotoDataUri: '', creditCost: 1 });
 
@@ -77,14 +77,14 @@ export const features: Feature[] = [
     category: featureCategories.IMAGE_STUDIO,
   },
   {
-    name: 'Memory Scene',
-    description: 'Recreate how your childhood place looks today.',
-    path: '/dashboard/memory-scene',
-    icon: Home,
-    creditCost: 2,
-    action: (photoDataUri, userId, memoryText, mode, era, style) => memorySceneAction(photoDataUri, memoryText!, mode!, era!, style!, userId),
+    name: 'Magic Interior',
+    description: 'Redesign your room with AI.',
+    path: '/dashboard/magic-interior',
+    icon: Sofa,
+    creditCost: 3,
+    action: (photoDataUri, userId, roomType, styleSelected, options) => magicInteriorAction(photoDataUri, roomType!, styleSelected!, options!, userId),
     showBeforeAfterSlider: true,
-    category: featureCategories.IMAGE_STUDIO,
+    category: featureCategories.PERSONAL_MAGIC,
   },
   
   // Content & Brand
