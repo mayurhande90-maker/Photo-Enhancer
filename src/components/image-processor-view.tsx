@@ -306,7 +306,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                                         <Download className="mr-2 h-5 w-5" />
                                         Download Image
                                     </a>
-                                </Button>
+                                 </Button>
                             </div>
                         </CardContent>
                     </Card>
@@ -359,5 +359,3 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     </div>
   );
 }
-
-    

@@ -9,6 +9,7 @@ import { createYouTubeThumbnail } from '@/ai/flows/youtube-thumbnail-flow';
 import { generateCaptions } from '@/ai/flows/auto-captions-flow';
 import { generateFutureSelf } from '@/ai/flows/ai-future-self-flow';
 import { createMagicInterior } from '@/ai/flows/magic-interior-flow';
+import { recreateChildhoodScene } from '@/ai/flows/recreate-childhood-flow';
 import type { AnalyzeImageOutput, AutoCaptionOutput } from '@/lib/types';
 
 async function processImageWithAI(
@@ -84,10 +85,10 @@ export async function createYoutubeThumbnailAction(
 
 export async function autoCaptionsAction(
     photoDataUri: string,
+    userId: string,
     platform: string,
     tone: string,
-    goal: string,
-    userId: string
+    goal: string
 ): Promise<AutoCaptionOutput> {
     const result = await generateCaptions({
         photoDataUri,
@@ -106,12 +107,12 @@ export async function aiFutureSelfAction(photoDataUri: string, ageGap: number, u
 
 export async function magicInteriorAction(
     photoDataUri: string,
+    userId: string,
     roomType: string,
     styleSelected: string,
     options: {
         colorPalette: string;
-    },
-    userId: string
+    }
 ) {
     const result = await createMagicInterior({
         photoDataUri,
@@ -124,14 +125,14 @@ export async function magicInteriorAction(
 
 export async function recreateChildhoodAction(
   photoDataUri: string,
+  userId: string,
   memoryText: string,
   inputType: 'photo' | 'text' | 'photo+text',
   placeType: string,
   style: string,
-  intensity: 'mild' | 'normal' | 'high',
-  userId: string
+  intensity: 'mild' | 'normal' | 'high'
 ) {
-  const result = await (await import('@/ai/flows/recreate-childhood-flow')).recreateChildhoodScene({
+  const result = await recreateChildhoodScene({
     photoDataUri: inputType.includes('photo') ? photoDataUri : undefined,
     memoryText: inputType.includes('text') ? memoryText : undefined,
     inputType,
