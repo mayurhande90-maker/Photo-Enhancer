@@ -32,15 +32,6 @@ export async function enhanceFromPrompt(input: EnhanceFromPromptInput): Promise<
   return enhanceFromPromptFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'enhanceFromPromptPrompt',
-  input: {schema: EnhanceFromPromptInputSchema},
-  output: {schema: EnhanceFromPromptOutputSchema},
-  prompt: `You are an expert photo enhancer. Enhance the provided photo based on the following user instructions: {{{enhancementPrompt}}}. Preserve faces and body shapes unchanged.
-
-Original Photo: {{media url=photoDataUri}}`,
-});
-
 const enhanceFromPromptFlow = ai.defineFlow(
   {
     name: 'enhanceFromPromptFlow',
@@ -49,10 +40,18 @@ const enhanceFromPromptFlow = ai.defineFlow(
     retries: 2,
   },
   async input => {
+    const prompt = `
+      You are an expert photo editor. Enhance the provided photo based on the user's instructions below.
+
+      **Instructions:** "${input.enhancementPrompt}"
+
+      **CRITICAL RULE:** Preserve the identity and shape of faces and bodies. Do not alter core features. Finally, add a small, discreet watermark in a bottom corner that says 'Made by Magicpixa'.
+    `;
+    
     const {media} = await ai.generate({
       prompt: [
         {media: {url: input.photoDataUri}},
-        {text: `Enhance this photo according to the following instructions: ${input.enhancementPrompt}. Finally, add a small, discreet watermark in a bottom corner that says 'Made by Magicpixa'.`},
+        {text: prompt},
       ],
       model: 'googleai/gemini-2.5-flash-image-preview',
       config: {
@@ -60,6 +59,10 @@ const enhanceFromPromptFlow = ai.defineFlow(
       },
     });
 
-    return {enhancedPhotoDataUri: media.url!};
+    if (!media?.url) {
+      throw new Error('Image generation failed to produce a result.');
+    }
+
+    return {enhancedPhotoDataUri: media.url};
   }
 );
