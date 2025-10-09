@@ -3,6 +3,7 @@
 
 import { enhanceFromPrompt } from '@/ai/flows/enhance-from-prompt';
 import { analyzeImage } from '@/ai/flows/analyze-image';
+import { pictureWithCelebrity } from '@/ai/flows/celebrity-picture';
 import type { AnalyzeImageOutput } from '@/lib/types';
 
 async function processImageWithAI(
@@ -49,4 +50,13 @@ export async function colorizePhotoAction(photoDataUri: string, userId:string) {
     'Colorize this black and white photo naturally and professionally. If the photo is blurry or has low resolution, please enhance its quality as well. The colors should be realistic for the era the photo was taken.';
     const result = await processImageWithAI(photoDataUri, prompt);
     return result;
+}
+
+export async function pictureWithCelebrityAction(photoDataUri: string, celebrity: string, location: string, userId: string) {
+  const result = await pictureWithCelebrity({ 
+    userPhotoDataUri: photoDataUri, 
+    celebrityName: celebrity,
+    locationName: location 
+  });
+  return result;
 }
