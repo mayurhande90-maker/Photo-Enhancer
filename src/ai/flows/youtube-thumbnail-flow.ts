@@ -15,6 +15,9 @@ const YouTubeThumbnailInputSchema = z.object({
       'The main photo for the thumbnail, as a data URI.'
     ),
   videoType: z.string().describe('A short description of the video type, e.g., "Daily vlog" or "Phone unboxing".'),
+  categorySelected: z.string().describe('The selected channel category.'),
+  moodSelected: z.string().describe('The selected visual mood.'),
+  alignmentSelected: z.string().describe('The selected subject alignment.'),
 });
 export type YouTubeThumbnailInput = z.infer<typeof YouTubeThumbnailInputSchema>;
 
@@ -37,18 +40,63 @@ const youtubeThumbnailFlow = ai.defineFlow(
   },
   async (input) => {
     const prompt = `
-      Generate a dynamic, photo-realistic YouTube thumbnail at 1280x720 resolution.
+      Create a cinematic, scroll-stopping YouTube thumbnail at 1280x720 resolution.
 
+      Inputs:
+      Category: ${input.categorySelected}
+      Mood: ${input.moodSelected}
+      Subject Alignment: ${input.alignmentSelected}
+      Video Type: ${input.videoType}
+
+      Step 1 — Subject Enhancement:
       Use the uploaded image as the main subject.
-      Remove background and enhance it. Keep the subject’s face natural, sharp, and expressive.
+      Remove background cleanly and upscale the subject so it appears prominent, close, and engaging within the frame — as if shot with a professional camera at shallow depth.
+      The subject should occupy roughly 40–60% of the frame.
+      Reposition the subject to the ${input.alignmentSelected} area:
+      - Left Alignment → subject on left one-third of frame, facing inward if possible.
+      - Right Alignment → subject on right one-third of frame, facing inward if possible.
+      - Center Alignment → subject in middle, large and dominant.
 
-      Create a clean, balanced composition with bold, clear text overlay.
-      Generate an engaging hook line suitable for a video about '${input.videoType}', similar to trending YouTube thumbnails in India.
-      Style the text to be readable and attention-grabbing without clutter.
-      Use realistic lighting, natural shadows, and vibrant but professional colors.
-      Output should look authentic and human-made, not AI-generated.
+      Step 2 — Composition & Background:
+      Create a dynamic, depth-based background related to the selected category (${input.categorySelected}) and video type (${input.videoType}).
+      Blend the background naturally with correct perspective, blur depth, and realistic lighting.
+      Ensure the background complements the mood (${input.moodSelected}):
+      - Dramatic: darker gradient, strong contrast light.
+      - Fun: bright, saturated backdrop with playful tones.
+      - Cinematic: soft contrast, moody hues.
+      - Vlog Styled: warm, daylight tone.
+      - Clean: minimal blurred gradient with brand tone.
 
-      Negative prompt: “distorted faces, over-saturated colors, fake lighting, blurry edges, unreadable text, cartoonish design.”
+      Step 3 — Text & Hook Line:
+      Generate a catchy, relevant hook line based on ${input.videoType} and ${input.categorySelected}.
+      Example:
+        - Travel: “Exploring the Unseen 🌍”
+        - Tech: “This Gadget Changed Everything ⚡”
+        - Lifestyle: “A Day You Won’t Forget”
+        - Podcast: “The Conversation That Matters”
+        - Gaming: “You Won’t Believe This Moment!”
+
+      Place the text compositionally opposite to the subject alignment:
+      - If subject is on left → text on right.
+      - If subject is on right → text on left.
+      - If centered → text above or below subject.
+      Use bold, readable typography with clear contrast and subtle shadow.
+      Do NOT overlap key facial features.
+
+      Step 4 — Lighting & Finishing:
+      Match lighting between subject and background for realism.
+      Add soft glow behind subject (light wrap) for natural blend.
+      Apply color correction consistent with ${input.moodSelected}.
+      Enhance eyes, contrast, and clarity subtly for camera-like finish.
+      Ensure entire composition feels integrated and photo-realistic, not pasted.
+
+      Output Requirements:
+      - Resolution: 1280x720 px (16:9)
+      - Style: photo-realistic, cinematic
+      - Format: JPG (under 1.5MB)
+
+      Negative prompt:
+      "flat subject, unrealistic lighting, random background, small subject, poor alignment, dull colors, unreadable text, distorted proportions, cutout look."
     `;
 
     const { media } = await ai.generate({

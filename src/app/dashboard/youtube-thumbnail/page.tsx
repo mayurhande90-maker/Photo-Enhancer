@@ -108,10 +108,10 @@ export default function YouTubeThumbnailPage() {
     };
 
     const handleProcessImage = async () => {
-        if (!originalFile || !user || !originalDataUri || !firestore || !videoType) {
+        if (!originalFile || !user || !originalDataUri || !firestore || !videoType || !channelCategory || !thumbnailMood || !subjectAlignment) {
           toast({
               title: 'Missing Information',
-              description: `Please upload an image and provide a video type description.`,
+              description: `Please upload an image and fill out all configuration options.`,
               variant: 'destructive',
           });
           return;
@@ -131,7 +131,14 @@ export default function YouTubeThumbnailPage() {
         setProcessedImageUrl(null);
 
         try {
-            const result = await createYoutubeThumbnailAction(originalDataUri, videoType, user.uid);
+            const result = await createYoutubeThumbnailAction(
+                originalDataUri, 
+                videoType, 
+                channelCategory,
+                thumbnailMood,
+                subjectAlignment,
+                user.uid
+            );
             
             if (result.enhancedPhotoDataUri) {
                 setProcessedImageUrl(result.enhancedPhotoDataUri);
@@ -163,8 +170,8 @@ export default function YouTubeThumbnailPage() {
     };
 
     const isReadyToGenerate = useMemo(() => {
-        return !!originalFile && !!videoType && !!user && !isProcessing && !isCreditLoading;
-    }, [originalFile, videoType, user, isProcessing, isCreditLoading]);
+        return !!originalFile && !!videoType && !!channelCategory && !!thumbnailMood && !!subjectAlignment && !!user && !isProcessing && !isCreditLoading;
+    }, [originalFile, videoType, channelCategory, thumbnailMood, subjectAlignment, user, isProcessing, isCreditLoading]);
     
     const isResultReady = !!processedImageUrl && !isProcessing;
 

@@ -47,7 +47,7 @@ export async function studioEnhanceAction(photoDataUri: string, userId:string) {
   return result;
 }
 
-export async function colorizePhotoAction(photoDataUri: string, userId:string) {
+export async function colorizePhotoAction(photoDataUri: string, userId: string) {
   const result = await colorizePhoto({ photoDataUri });
   return result;
 }
@@ -61,10 +61,20 @@ export async function pictureWithCelebrityAction(photoDataUri: string, celebrity
   return result;
 }
 
-export async function createYoutubeThumbnailAction(photoDataUri: string, videoType: string, userId: string) {
+export async function createYoutubeThumbnailAction(
+    photoDataUri: string, 
+    videoType: string, 
+    categorySelected: string,
+    moodSelected: string,
+    alignmentSelected: string,
+    userId: string
+) {
     const result = await createYouTubeThumbnail({
-        photoDataUri: photoDataUri,
-        videoType: videoType
+        photoDataUri,
+        videoType,
+        categorySelected,
+        moodSelected,
+        alignmentSelected
     });
     return result;
 }

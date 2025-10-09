@@ -134,11 +134,8 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
 
     try {
       const dataUri = originalDataUri;
-      // This is a temporary solution for features requiring extra params.
-      // In the future, we'd have custom views for these features.
-      const extraParams = feature.name === 'YouTube Thumbnail Creator' ? 'My Awesome Video' : undefined;
 
-      const result = await feature.action(dataUri, user.uid, extraParams);
+      const result = await feature.action(dataUri, user.uid);
       
       if (result.enhancedPhotoDataUri) {
          setProcessedImageUrl(result.enhancedPhotoDataUri);
