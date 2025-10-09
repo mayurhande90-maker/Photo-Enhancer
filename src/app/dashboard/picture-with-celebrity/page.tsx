@@ -32,7 +32,7 @@ const celebrityList = {
 };
 
 const locationList = [
-    "Party", "Stadium", "Trek", "Garden", "Office", "Home", "Red carpet", "Beach", "Film set", "Event"
+    "Party", "Stadium", "Trek", "Garden", "Office", "Home", "Red carpet", "Film set", "Beach", "Event"
 ];
 
 function fileToDataUri(file: File): Promise<string> {
@@ -92,18 +92,20 @@ export default function PictureWithCelebrityPage() {
               return prev + 5;
             });
           }, 600);
-        } else {
-            setProcessingText('');
-            setProgress(0);
         }
         
-        if (processedImageUrl) {
+        return () => {
+            if(interval) clearInterval(interval);
+        };
+    }, [isProcessing, selectedCelebrity]);
+
+    useEffect(() => {
+        if(processedImageUrl){
             setProgress(100);
             setIsProcessing(false);
         }
+    }, [processedImageUrl]);
 
-        return () => clearInterval(interval);
-    }, [isProcessing, processedImageUrl, selectedCelebrity]);
 
     const handleFileSelect = (file: File) => {
         handleReset();
@@ -143,7 +145,6 @@ export default function PictureWithCelebrityPage() {
             const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
             setError(errorMessage);
             toast({ title: 'Processing Error', description: errorMessage, variant: 'destructive' });
-        } finally {
             setIsProcessing(false);
         }
     };
@@ -193,20 +194,6 @@ export default function PictureWithCelebrityPage() {
         return null;
     };
     
-    const tipsNode = (
-        <div className="text-left mt-4">
-            <div className="flex items-center gap-2">
-                <Lightbulb className="h-5 w-5 text-yellow-400" />
-                <h3 className="font-semibold text-base text-foreground">Tips for Best Results</h3>
-            </div>
-            <ul className="text-muted-foreground text-xs mt-2 space-y-1 list-disc list-inside">
-                <li>Upload only high-quality, front-facing photos.</li>
-                <li>Avoid group photos or side profiles.</li>
-                <li>Ensure good lighting and clear face visibility.</li>
-            </ul>
-        </div>
-    );
-
     return (
         <div className="space-y-8 animate-fade-in-up">
             <section>
@@ -228,28 +215,31 @@ export default function PictureWithCelebrityPage() {
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                     {/* Left Column */}
-                    <div className="relative aspect-video w-full overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
-                        {!originalDataUri && !isResultReady && (
-                            <FileUploader onFileSelect={handleFileSelect} tips={tipsNode} />
-                        )}
+                    <div className="flex flex-col gap-4">
+                        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
+                            {!originalDataUri && !isResultReady && (
+                                <FileUploader onFileSelect={handleFileSelect} />
+                            )}
 
-                        {(originalDataUri || isResultReady) && (
-                            <Image 
-                                src={processedImageUrl || originalDataUri!} 
-                                alt={processedImageUrl ? "Generated image" : "Original upload"} 
-                                fill 
-                                className={cn("object-contain transition-all duration-500", isProcessing && "opacity-50 blur-sm")} 
-                            />
-                        )}
+                            {(originalDataUri || isResultReady) && (
+                                <Image 
+                                    src={processedImageUrl || originalDataUri!} 
+                                    alt={processedImageUrl ? "Generated image" : "Original upload"} 
+                                    fill 
+                                    className={cn("object-contain transition-all duration-500", isProcessing && "opacity-50 blur-sm")} 
+                                />
+                            )}
 
-                        {isProcessing && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white backdrop-blur-sm p-4">
-                                <Wand2 className="h-12 w-12 animate-pulse" />
-                                <p className="mt-4 font-semibold text-lg text-center">{processingText}</p>
-                                <Progress value={progress} className="w-4/5 max-w-sm mx-auto mt-2" />
-                                <p className="text-sm mt-1">{progress}%</p>
-                            </div>
-                        )}
+                            {isProcessing && (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white backdrop-blur-sm p-4">
+                                    <Wand2 className="h-12 w-12 animate-pulse" />
+                                    <p className="mt-4 font-semibold text-lg text-center">{processingText}</p>
+                                    <Progress value={progress} className="w-4/5 max-w-sm mx-auto mt-2" />
+                                    <p className="text-sm mt-1">{progress}%</p>
+                                </div>
+                            )}
+                        </div>
+                        {!isResultReady && <TipsSection />}
                     </div>
                    
                     {/* Right Column */}
@@ -328,5 +318,3 @@ export default function PictureWithCelebrityPage() {
         </div>
     );
 }
-
-    
