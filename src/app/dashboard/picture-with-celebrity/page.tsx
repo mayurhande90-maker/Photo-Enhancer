@@ -126,10 +126,10 @@ export default function PictureWithCelebrityPage() {
             if (result.enhancedPhotoDataUri) {
                 setProcessedImageUrl(result.enhancedPhotoDataUri);
                 await saveAIOutput(feature.name, result.enhancedPhotoDataUri, 'image/jpeg', user.uid);
+                await consumeCredits(feature.creditCost);
             } else {
                 throw new Error('AI generation failed to return an image.');
             }
-            await consumeCredits(feature.creditCost);
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
             setError(errorMessage);
@@ -246,52 +246,50 @@ export default function PictureWithCelebrityPage() {
 
                          </div>
                        
-                        {!isResultReady && (
-                            <Card className="rounded-3xl h-full sticky top-24">
-                                 <CardHeader>
-                                    <CardTitle>Configuration</CardTitle>
-                                    <CardDescription>Choose your celebrity and location to generate the image.</CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-6">
-                                    <div className="grid sm:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="celebrity-select">Celebrity</Label>
-                                            <Select onValueChange={setSelectedCelebrity} value={selectedCelebrity} disabled={isProcessing}>
-                                                <SelectTrigger id="celebrity-select"><SelectValue placeholder="Choose one..." /></SelectTrigger>
-                                                <SelectContent>
-                                                    {Object.entries(celebrityList).map(([group, celebs]) => (
-                                                        <div key={group}>
-                                                            <p className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{group}</p>
-                                                            {celebs.map(celeb => <SelectItem key={celeb} value={celeb}>{celeb}</SelectItem>)}
-                                                        </div>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="location-select">Location</Label>
-                                            <Select onValueChange={setSelectedLocation} value={selectedLocation} disabled={isProcessing}>
-                                                <SelectTrigger id="location-select"><SelectValue placeholder="Choose one..." /></SelectTrigger>
-                                                <SelectContent>
-                                                    {locationList.map(loc => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
+                        <Card className="rounded-3xl h-full sticky top-24">
+                                <CardHeader>
+                                <CardTitle>Configuration</CardTitle>
+                                <CardDescription>Choose your celebrity and location to generate the image.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="grid sm:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="celebrity-select">Celebrity</Label>
+                                        <Select onValueChange={setSelectedCelebrity} value={selectedCelebrity} disabled={isProcessing}>
+                                            <SelectTrigger id="celebrity-select"><SelectValue placeholder="Choose one..." /></SelectTrigger>
+                                            <SelectContent>
+                                                {Object.entries(celebrityList).map(([group, celebs]) => (
+                                                    <div key={group}>
+                                                        <p className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{group}</p>
+                                                        {celebs.map(celeb => <SelectItem key={celeb} value={celeb}>{celeb}</SelectItem>)}
+                                                    </div>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
-                                    <div className="flex items-start space-x-3 pt-2">
-                                        <Checkbox id="consent" checked={consentChecked} onCheckedChange={(checked) => setConsentChecked(checked as boolean)} className="mt-1" disabled={isProcessing}/>
-                                        <Label htmlFor="consent" className="text-xs font-normal text-muted-foreground">
-                                            By continuing, I understand that the generated image is for entertainment purposes only and should not be used for impersonation, defamation, or any form of misuse.
-                                        </Label>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="location-select">Location</Label>
+                                        <Select onValueChange={setSelectedLocation} value={selectedLocation} disabled={isProcessing}>
+                                            <SelectTrigger id="location-select"><SelectValue placeholder="Choose one..." /></SelectTrigger>
+                                            <SelectContent>
+                                                {locationList.map(loc => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
-                                    {renderQuotaAlert()}
-                                    <Button size="lg" className="rounded-2xl h-12 w-full" onClick={handleProcessImage} disabled={!isReadyToGenerate}>
-                                        <Wand2 className="mr-2 h-5 w-5" />
-                                        {`Generate for ${feature.creditCost} Credits`}
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        )}
+                                </div>
+                                <div className="flex items-start space-x-3 pt-2">
+                                    <Checkbox id="consent" checked={consentChecked} onCheckedChange={(checked) => setConsentChecked(checked as boolean)} className="mt-1" disabled={isProcessing}/>
+                                    <Label htmlFor="consent" className="text-xs font-normal text-muted-foreground">
+                                        By continuing, I understand that the generated image is for entertainment purposes only and should not be used for impersonation, defamation, or any form of misuse.
+                                    </Label>
+                                </div>
+                                {renderQuotaAlert()}
+                                <Button size="lg" className="rounded-2xl h-12 w-full" onClick={handleProcessImage} disabled={!isReadyToGenerate}>
+                                    <Wand2 className="mr-2 h-5 w-5" />
+                                    {`Generate for ${feature.creditCost} Credits`}
+                                </Button>
+                            </CardContent>
+                        </Card>
                     </div>
                 )}
             </section>
