@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -72,15 +73,6 @@ const AfterUploadState = ({ file, analysis }: { file: File; analysis: string; })
         )}
     </div>
 );
-
-const ProcessingState = ({ progress }: { progress: number; }) => (
-    <div className="text-center p-8 rounded-3xl border-2 border-dashed border-primary/50 h-full bg-primary/10 animate-pulse flex flex-col justify-center">
-        <h3 className="font-semibold text-lg text-primary">✨ Magicpixa is working on your photo...</h3>
-        <p className="text-primary/80 text-sm mt-1">Blending you with the celebrity. This may take a moment.</p>
-        <Progress value={progress} className="w-full max-w-sm mx-auto mt-4" />
-    </div>
-);
-
 
 export default function PictureWithCelebrityPage() {
     const feature = features.find(f => f.name === 'Picture with Celebrity')!;
@@ -277,7 +269,6 @@ export default function PictureWithCelebrityPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                         <div className="space-y-6">
                             {isAwaitingUpload && <BeforeUploadState />}
-                            {isProcessing && <ProcessingState progress={progress} />}
                             {!isAwaitingUpload && !isProcessing && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
                         </div>
 
@@ -330,4 +321,3 @@ export default function PictureWithCelebrityPage() {
             </section>
         </div>
     );
-}
