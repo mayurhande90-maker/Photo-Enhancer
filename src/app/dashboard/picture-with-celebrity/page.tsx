@@ -94,6 +94,7 @@ export default function PictureWithCelebrityPage() {
           }, 600);
         } else {
             setProcessingText('');
+            setProgress(0);
         }
         
         if (processedImageUrl) {
@@ -191,6 +192,20 @@ export default function PictureWithCelebrityPage() {
         }
         return null;
     };
+    
+    const tipsNode = (
+        <div className="text-left mt-4">
+            <div className="flex items-center gap-2">
+                <Lightbulb className="h-5 w-5 text-yellow-400" />
+                <h3 className="font-semibold text-base text-foreground">Tips for Best Results</h3>
+            </div>
+            <ul className="text-muted-foreground text-xs mt-2 space-y-1 list-disc list-inside">
+                <li>Upload only high-quality, front-facing photos.</li>
+                <li>Avoid group photos or side profiles.</li>
+                <li>Ensure good lighting and clear face visibility.</li>
+            </ul>
+        </div>
+    );
 
     return (
         <div className="space-y-8 animate-fade-in-up">
@@ -213,31 +228,80 @@ export default function PictureWithCelebrityPage() {
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                     {/* Left Column */}
-                    <div>
-                        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
-                            {!originalDataUri ? (
-                                <FileUploader onFileSelect={handleFileSelect} />
-                            ) : (
-                                <Image 
-                                    src={processedImageUrl || originalDataUri} 
-                                    alt={processedImageUrl ? "Generated image" : "Original upload"} 
-                                    fill 
-                                    className={cn("object-contain transition-all duration-500", isProcessing && "opacity-50 blur-sm")} 
-                                />
-                            )}
+                    <div className="relative aspect-video w-full overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
+                        {!originalDataUri && !isResultReady && (
+                            <FileUploader onFileSelect={handleFileSelect} tips={tipsNode} />
+                        )}
 
-                            {isProcessing && (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white backdrop-blur-sm p-4">
-                                    <Wand2 className="h-12 w-12 animate-pulse" />
-                                    <p className="mt-4 font-semibold text-lg text-center">{processingText}</p>
-                                    <Progress value={progress} className="w-4/5 max-w-sm mx-auto mt-2" />
-                                    <p className="text-sm mt-1">{progress}%</p>
-                                </div>
-                            )}
-                        </div>
-                        
-                        {isResultReady && (
-                             <Card className="w-full mt-4 rounded-3xl">
+                        {(originalDataUri || isResultReady) && (
+                            <Image 
+                                src={processedImageUrl || originalDataUri!} 
+                                alt={processedImageUrl ? "Generated image" : "Original upload"} 
+                                fill 
+                                className={cn("object-contain transition-all duration-500", isProcessing && "opacity-50 blur-sm")} 
+                            />
+                        )}
+
+                        {isProcessing && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white backdrop-blur-sm p-4">
+                                <Wand2 className="h-12 w-12 animate-pulse" />
+                                <p className="mt-4 font-semibold text-lg text-center">{processingText}</p>
+                                <Progress value={progress} className="w-4/5 max-w-sm mx-auto mt-2" />
+                                <p className="text-sm mt-1">{progress}%</p>
+                            </div>
+                        )}
+                    </div>
+                   
+                    {/* Right Column */}
+                     <div>
+                        {!isResultReady ? (
+                             <Card className="rounded-3xl h-full sticky top-24">
+                                <CardHeader>
+                                    <CardTitle>Configuration</CardTitle>
+                                    <CardDescription>Choose your celebrity and location to generate the image.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-6">
+                                    <div className="grid sm:grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="celebrity-select">Celebrity</Label>
+                                            <Select onValueChange={setSelectedCelebrity} value={selectedCelebrity} disabled={isProcessing || !originalDataUri}>
+                                                <SelectTrigger id="celebrity-select"><SelectValue placeholder="Choose one..." /></SelectTrigger>
+                                                <SelectContent>
+                                                    {Object.entries(celebrityList).map(([group, celebs]) => (
+                                                        <div key={group}>
+                                                            <p className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{group}</p>
+                                                            {celebs.map(celeb => <SelectItem key={celeb} value={celeb}>{celeb}</SelectItem>)}
+                                                        </div>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="location-select">Location</Label>
+                                            <Select onValueChange={setSelectedLocation} value={selectedLocation} disabled={isProcessing || !originalDataUri}>
+                                                <SelectTrigger id="location-select"><SelectValue placeholder="Choose one..." /></SelectTrigger>
+                                                <SelectContent>
+                                                    {locationList.map(loc => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex items-start space-x-3 pt-2">
+                                        <Checkbox id="consent" checked={consentChecked} onCheckedChange={(checked) => setConsentChecked(checked as boolean)} className="mt-1" disabled={isProcessing || !originalDataUri}/>
+                                        <Label htmlFor="consent" className="text-xs font-normal text-muted-foreground">
+                                            By continuing, I understand that the generated image is for entertainment purposes only and should not be used for impersonation, defamation, or any form of misuse.
+                                        </Label>
+                                    </div>
+                                    {renderQuotaAlert()}
+                                    <Button size="lg" className="rounded-2xl h-12 w-full" onClick={handleProcessImage} disabled={!isReadyToGenerate}>
+                                        {isProcessing ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Wand2 className="mr-2 h-5 w-5" />}
+                                        {isProcessing ? 'Generating...' : `Generate for ${feature.creditCost} Credits`}
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        ) : (
+                             <Card className="w-full rounded-3xl">
                                 <CardHeader className="text-center">
                                     <CardTitle>Result Ready</CardTitle>
                                     <CardDescription>Your image is ready. Download it or start over.</CardDescription>
@@ -259,59 +323,10 @@ export default function PictureWithCelebrityPage() {
                             </Card>
                         )}
                     </div>
-                   
-                    {/* Right Column */}
-                    <div className="sticky top-24">
-                        <Card className="rounded-3xl h-full">
-                            <CardHeader>
-                                <CardTitle>Configuration</CardTitle>
-                                <CardDescription>Choose your celebrity and location to generate the image.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-6">
-                                <div className="grid sm:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="celebrity-select">Celebrity</Label>
-                                        <Select onValueChange={setSelectedCelebrity} value={selectedCelebrity} disabled={isProcessing || isResultReady || !originalDataUri}>
-                                            <SelectTrigger id="celebrity-select"><SelectValue placeholder="Choose one..." /></SelectTrigger>
-                                            <SelectContent>
-                                                {Object.entries(celebrityList).map(([group, celebs]) => (
-                                                    <div key={group}>
-                                                        <p className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{group}</p>
-                                                        {celebs.map(celeb => <SelectItem key={celeb} value={celeb}>{celeb}</SelectItem>)}
-                                                    </div>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="location-select">Location</Label>
-                                        <Select onValueChange={setSelectedLocation} value={selectedLocation} disabled={isProcessing || isResultReady || !originalDataUri}>
-                                            <SelectTrigger id="location-select"><SelectValue placeholder="Choose one..." /></SelectTrigger>
-                                            <SelectContent>
-                                                {locationList.map(loc => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-                                
-                                <TipsSection />
-
-                                <div className="flex items-start space-x-3 pt-2">
-                                    <Checkbox id="consent" checked={consentChecked} onCheckedChange={(checked) => setConsentChecked(checked as boolean)} className="mt-1" disabled={isProcessing || isResultReady || !originalDataUri}/>
-                                    <Label htmlFor="consent" className="text-xs font-normal text-muted-foreground">
-                                        By continuing, I understand that the generated image is for entertainment purposes only and should not be used for impersonation, defamation, or any form of misuse.
-                                    </Label>
-                                </div>
-                                {renderQuotaAlert()}
-                                <Button size="lg" className="rounded-2xl h-12 w-full" onClick={handleProcessImage} disabled={!isReadyToGenerate || isResultReady}>
-                                    {isProcessing ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Wand2 className="mr-2 h-5 w-5" />}
-                                    {isProcessing ? 'Generating...' : `Generate for ${feature.creditCost} Credits`}
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </div>
                 </div>
             </section>
         </div>
     );
 }
+
+    

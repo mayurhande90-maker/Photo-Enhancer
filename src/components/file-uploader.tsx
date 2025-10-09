@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, type ReactNode } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -9,6 +9,7 @@ import imageCompression from 'browser-image-compression';
 
 interface FileUploaderProps {
   onFileSelect: (file: File) => void;
+  tips?: ReactNode;
 }
 
 const MAX_SIZE_MB = 20;
@@ -21,7 +22,7 @@ const ACCEPTED_FORMATS = {
   'image/webp': ['.webp'],
 };
 
-export function FileUploader({ onFileSelect }: FileUploaderProps) {
+export function FileUploader({ onFileSelect, tips }: FileUploaderProps) {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
 
@@ -81,7 +82,7 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
   return (
     <div
       {...getRootProps()}
-      className={`flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors
+      className={`flex h-full w-full p-4 flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors
       ${isUploading ? 'cursor-default' : 'cursor-pointer'}
       ${isDragActive ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'}`}
     >
@@ -100,9 +101,12 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
                     {isDragActive ? 'Drop the image here' : 'Drag & drop an image, or click to select'}
                 </p>
                 <p className="text-sm">Supports: JPG, PNG, WEBP (max {MAX_SIZE_MB}MB). Will be compressed to ~{COMPRESSION_MAX_SIZE_MB}MB.</p>
+                {tips && <div className="mt-4">{tips}</div>}
             </>
         )}
       </div>
     </div>
   );
 }
+
+    
