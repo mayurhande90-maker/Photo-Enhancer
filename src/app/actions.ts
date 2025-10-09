@@ -8,6 +8,7 @@ import { colorizePhoto } from '@/ai/flows/colorize-photo';
 import { createYouTubeThumbnail } from '@/ai/flows/youtube-thumbnail-flow';
 import { generateCaptions } from '@/ai/flows/auto-captions-flow';
 import { generateFutureSelf } from '@/ai/flows/ai-future-self-flow';
+import { createMemoryScene } from '@/ai/flows/memory-scene-flow';
 import type { AnalyzeImageOutput, AutoCaptionOutput } from '@/lib/types';
 
 async function processImageWithAI(
@@ -102,3 +103,23 @@ export async function aiFutureSelfAction(photoDataUri: string, ageGap: number, u
     const result = await generateFutureSelf({ photoDataUri, ageGap });
     return result;
 }
+
+export async function memorySceneAction(
+    photoDataUri: string, 
+    memoryText: string, 
+    mode: string,
+    eraHint: string,
+    style: string,
+    userId: string
+) {
+    const result = await createMemoryScene({
+        photoDataUri,
+        memoryText,
+        mode,
+        eraHint,
+        style,
+    });
+    return result;
+}
+
+    

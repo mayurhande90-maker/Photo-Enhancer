@@ -8,6 +8,7 @@ import {
   createYoutubeThumbnailAction,
   autoCaptionsAction,
   aiFutureSelfAction,
+  memorySceneAction,
 } from '@/app/actions';
 import type { Feature } from '@/lib/types';
 import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star } from 'lucide-react';
@@ -80,10 +81,9 @@ export const features: Feature[] = [
     path: '/dashboard/memory-scene',
     icon: Home,
     creditCost: 2,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
+    action: (photoDataUri, userId, memoryText, mode, era, style) => memorySceneAction(photoDataUri, memoryText!, mode!, era!, style!, userId),
+    showBeforeAfterSlider: true,
     category: featureCategories.IMAGE_STUDIO,
-    isComingSoon: true,
   },
   
   // Content & Brand
@@ -278,3 +278,5 @@ export const features: Feature[] = [
     isPremium: true,
   },
 ];
+
+    

@@ -81,3 +81,20 @@ export const AIFutureSelfOutputSchema = z.object({
     agedPhotoDataUri: z.string().describe("The generated aged photo as a data URI."),
 });
 export type AIFutureSelfOutput = z.infer<typeof AIFutureSelfOutputSchema>;
+
+// Types for Memory Scene
+export const MemorySceneInputSchema = z.object({
+    photoDataUri: z.string().optional().describe("User's photo as a data URI."),
+    memoryText: z.string().optional().describe("A short text description of a memory."),
+    mode: z.string().describe("The generation mode: Restore, Recreate, or Stylize."),
+    eraHint: z.string().describe("The historical era to replicate."),
+    style: z.string().describe("The visual style for the output."),
+});
+export type MemorySceneInput = z.infer<typeof MemorySceneInputSchema>;
+
+export const MemorySceneOutputSchema = z.object({
+    enhancedPhotoDataUri: z.string().describe("The generated scene as a data URI."),
+});
+export type MemorySceneOutput = z.infer<typeof MemorySceneOutputSchema>;
+
+    
