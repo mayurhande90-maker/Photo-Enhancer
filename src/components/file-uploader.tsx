@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useCallback } from 'react';
@@ -12,7 +13,7 @@ interface FileUploaderProps {
 
 const MAX_SIZE_MB = 20;
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
-const COMPRESSION_MAX_SIZE_MB = 5;
+const COMPRESSION_MAX_SIZE_MB = 1.5;
 
 const ACCEPTED_FORMATS = {
   'image/jpeg': ['.jpg', '.jpeg'],
@@ -39,18 +40,19 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
         let file = acceptedFiles[0];
 
         try {
-            console.log(`Original file size: ${file.size / 1024 / 1024} MB`);
+            console.log(`Original file size: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
             
             const options = {
                 maxSizeMB: COMPRESSION_MAX_SIZE_MB,
-                maxWidthOrHeight: 1920,
+                maxWidthOrHeight: 1024,
                 useWebWorker: true,
             };
 
             const compressedFile = await imageCompression(file, options);
-            console.log(`Compressed file size: ${compressedFile.size / 1024 / 1024} MB`);
+            console.log(`Compressed file size: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
 
-            file = compressedFile;
+            // Use the compressed file for the upload
+            file = new File([compressedFile], file.name, { type: compressedFile.type });
 
         } catch (error) {
             console.error('Image compression failed:', error);
@@ -59,7 +61,7 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
                 description: 'Could not compress the image. Please try a smaller file.',
                 variant: 'destructive',
             });
-            return;
+            // We can still proceed with the original file if compression fails
         }
 
         setPreview(URL.createObjectURL(file));
@@ -88,7 +90,7 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
         <p className="text-lg font-semibold text-foreground">
           {isDragActive ? 'Drop the image here' : 'Drag & drop an image, or click to select'}
         </p>
-        <p className="text-sm">Supports: JPG, PNG, WEBP (max 20MB). Images will be compressed to ~5MB.</p>
+        <p className="text-sm">Supports: JPG, PNG, WEBP (max {MAX_SIZE_MB}MB). Will be compressed to ~{COMPRESSION_MAX_SIZE_MB}MB.</p>
       </div>
     </div>
   );
