@@ -43,62 +43,20 @@ const youtubeThumbnailFlow = ai.defineFlow(
       Create a cinematic, scroll-stopping YouTube thumbnail with a strict 16:9 aspect ratio (1280x720 resolution).
 
       Inputs:
-      Category: ${input.categorySelected}
-      Mood: ${input.moodSelected}
-      Subject Alignment: ${input.alignmentSelected}
-      Video Type: ${input.videoType}
-      Subject Image: {{media url=${input.photoDataUri}}}
+      - Category: ${input.categorySelected}
+      - Mood: ${input.moodSelected}
+      - Subject Alignment: ${input.alignmentSelected}
+      - Video Type: ${input.videoType}
+      - Subject Image: {{media url=${input.photoDataUri}}}
 
-      Step 1 — Subject Enhancement:
-      Use the provided image as the main subject.
-      Remove the background cleanly and upscale the subject so it appears prominent, close, and engaging within the frame — as if shot with a professional camera at shallow depth.
-      The subject should occupy roughly 40–60% of the frame.
-      Reposition the subject to the ${input.alignmentSelected} area:
-      - Left Alignment → subject on left one-third of frame, facing inward if possible.
-      - Right Alignment → subject on right one-third of frame, facing inward if possible.
-      - Center Alignment → subject in middle, large and dominant.
+      Key Instructions:
+      1.  **Subject:** Use the provided image. Remove the background, make the subject prominent (40-60% of frame), and align it to ${input.alignmentSelected}.
+      2.  **Background:** Create a dynamic, blurred background related to the category: "${input.categorySelected}". Match the lighting and mood: "${input.moodSelected}".
+      3.  **Text:** Generate a catchy, relevant hook line based on the video type: "${input.videoType}". Place it opposite the subject for balance using bold, readable typography.
+      4.  **Finish:** Apply color correction for the selected mood. Ensure the entire composition is photo-realistic and integrated.
 
-      Step 2 — Composition & Background:
-      Create a dynamic, depth-based background related to the selected category (${input.categorySelected}) and video type (${input.videoType}).
-      Blend the background naturally with correct perspective, blur depth, and realistic lighting.
-      Ensure the background complements the mood (${input.moodSelected}):
-      - Dramatic: darker gradient, strong contrast light.
-      - Fun: bright, saturated backdrop with playful tones.
-      - Cinematic: soft contrast, moody hues.
-      - Vlog Styled: warm, daylight tone.
-      - Clean: minimal blurred gradient with brand tone.
-
-      Step 3 — Text & Hook Line:
-      Generate a catchy, relevant hook line based on ${input.videoType} and ${input.categorySelected}.
-      Example:
-        - Travel: “Exploring the Unseen 🌍”
-        - Tech: “This Gadget Changed Everything ⚡”
-        - Lifestyle: “A Day You Won’t Forget”
-        - Podcast: “The Conversation That Matters”
-        - Gaming: “You Won’t Believe This Moment!”
-
-      Place the text compositionally opposite to the subject alignment:
-      - If subject is on left → text on right.
-      - If subject is on right → text on left.
-      - If centered → text above or below subject.
-      Use bold, readable typography with clear contrast and subtle shadow.
-      Do NOT overlap key facial features.
-
-      Step 4 — Lighting & Finishing:
-      Match lighting between subject and background for realism.
-      Add soft glow behind subject (light wrap) for natural blend.
-      Apply color correction consistent with ${input.moodSelected}.
-      Enhance eyes, contrast, and clarity subtly for camera-like finish.
-      Ensure entire composition feels integrated and photo-realistic, not pasted.
-
-      Output Requirements:
-      - Aspect Ratio: 16:9
-      - Resolution: 1280x720 px
-      - Style: photo-realistic, cinematic
-      - Format: JPG (under 1.5MB)
-
-      Negative prompt:
-      "flat subject, unrealistic lighting, random background, small subject, poor alignment, dull colors, unreadable text, distorted proportions, cutout look."
+      Output Requirements: 16:9 aspect ratio, 1280x720 resolution, JPG format, photo-realistic style.
+      Negative prompt: flat, dull, unrealistic lighting, poor alignment, unreadable text, distorted, cutout look.
     `;
 
     const { media } = await ai.generate({
