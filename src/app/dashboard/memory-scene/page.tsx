@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -133,7 +132,14 @@ export default function MemoryScenePage() {
         setProcessedImageUrl(null);
 
         try {
-            const result = await memorySceneAction(originalDataUri || '', memoryText, mode, eraHint, style, user.uid);
+            const result = await memorySceneAction(
+                originalDataUri || '',
+                memoryText,
+                mode,
+                eraHint,
+                style,
+                user.uid
+            );
             
             if (result.enhancedPhotoDataUri) {
                 setProcessedImageUrl(result.enhancedPhotoDataUri);

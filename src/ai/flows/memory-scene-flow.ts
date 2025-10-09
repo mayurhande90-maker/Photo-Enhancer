@@ -27,7 +27,7 @@ const memorySceneFlow = ai.defineFlow(
 
       User instruction (dynamic):
       "Mode: ${input.mode}
-      ${input.photoDataUri ? `Reference image: {{media url=${input.photoDataUri}}}` : ''}
+      ${input.photoDataUri ? `Reference image: {{media url=\'\'\'${input.photoDataUri}\'\'\'}}` : ''}
       ${input.memoryText ? `Memory text: \\"${input.memoryText}\\"` : ''}
       Era hint: ${input.eraHint}
       Style: ${input.style}
@@ -64,5 +64,7 @@ const memorySceneFlow = ai.defineFlow(
     return { enhancedPhotoDataUri: media.url };
   }
 );
+
+    
 
     
