@@ -40,17 +40,18 @@ const youtubeThumbnailFlow = ai.defineFlow(
   },
   async (input) => {
     const prompt = `
-      Create a cinematic, scroll-stopping YouTube thumbnail at 1280x720 resolution.
+      Create a cinematic, scroll-stopping YouTube thumbnail with a strict 16:9 aspect ratio (1280x720 resolution).
 
       Inputs:
       Category: ${input.categorySelected}
       Mood: ${input.moodSelected}
       Subject Alignment: ${input.alignmentSelected}
       Video Type: ${input.videoType}
+      Subject Image: {{media url=${input.photoDataUri}}}
 
       Step 1 — Subject Enhancement:
-      Generate a main subject based on the Video Type. For instance, if the video type is 'Phone unboxing', the subject could be a person looking excited at a new phone.
-      The subject should appear prominent, close, and engaging within the frame — as if shot with a professional camera at shallow depth.
+      Use the provided image as the main subject.
+      Remove the background cleanly and upscale the subject so it appears prominent, close, and engaging within the frame — as if shot with a professional camera at shallow depth.
       The subject should occupy roughly 40–60% of the frame.
       Reposition the subject to the ${input.alignmentSelected} area:
       - Left Alignment → subject on left one-third of frame, facing inward if possible.
@@ -91,6 +92,8 @@ const youtubeThumbnailFlow = ai.defineFlow(
       Ensure entire composition feels integrated and photo-realistic, not pasted.
 
       Output Requirements:
+      - Aspect Ratio: 16:9
+      - Resolution: 1280x720 px
       - Style: photo-realistic, cinematic
       - Format: JPG (under 1.5MB)
 
@@ -99,10 +102,13 @@ const youtubeThumbnailFlow = ai.defineFlow(
     `;
 
     const { media } = await ai.generate({
-      prompt: prompt,
-      model: 'googleai/imagen-4.0-fast-generate-001',
+      prompt: [
+        { media: { url: input.photoDataUri } },
+        { text: prompt },
+      ],
+      model: 'googleai/gemini-2.5-flash-image-preview',
       config: {
-        aspectRatio: '16:9'
+        responseModalities: ['TEXT', 'IMAGE'],
       },
     });
 

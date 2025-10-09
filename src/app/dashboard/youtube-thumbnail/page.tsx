@@ -63,7 +63,7 @@ export default function YouTubeThumbnailPage() {
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState<string | null>(null);
 
-    const [videoType, setVideoType] = useState('');
+    const [videoType, setVideoType] = useState('My Awesome Video');
     const [channelCategory, setChannelCategory] = useState('');
     const [thumbnailMood, setThumbnailMood] = useState('');
     const [subjectAlignment, setSubjectAlignment] = useState('');
