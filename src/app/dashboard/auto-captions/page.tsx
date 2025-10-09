@@ -50,7 +50,37 @@ const CopyButton = ({ text }: { text: string }) => {
     );
 };
 
-const ResultDisplay = ({ results }: { results: AutoCaptionOutput }) => {
+const ResultDisplay = ({ results }: { results: string }) => {
+    const parsedResults = useMemo(() => {
+        const sections = {
+            short: '',
+            medium: '',
+            long: '',
+            hashtags: '',
+            notes: ''
+        };
+
+        if(!results) return sections;
+
+        const shortMatch = results.match(/🪶 \*\*Caption \(Short\):\*\*\n([\s\S]*?)(?=\n\n💬|\n\n📝|\n\n🏷️|\n\n⚙️|$)/);
+        if (shortMatch) sections.short = shortMatch[1].trim();
+
+        const mediumMatch = results.match(/💬 \*\*Caption \(Medium\):\*\*\n([\s\S]*?)(?=\n\n📝|\n\n🏷️|\n\n⚙️|$)/);
+        if (mediumMatch) sections.medium = mediumMatch[1].trim();
+        
+        const longMatch = results.match(/📝 \*\*Caption \(Long\):\*\*\n([\s\S]*?)(?=\n\n🏷️|\n\n⚙️|$)/);
+        if (longMatch) sections.long = longMatch[1].trim();
+
+        const hashtagsMatch = results.match(/🏷️ \*\*Hashtags \(Recommended\):\*\*\n([\s\S]*?)(?=\n\n⚙️|$)/);
+        if (hashtagsMatch) sections.hashtags = hashtagsMatch[1].trim();
+
+        const notesMatch = results.match(/⚙️ \*\*Auto Notes:\*\*\n([\s\S]*?)$/);
+        if (notesMatch) sections.notes = notesMatch[1].trim();
+
+        return sections;
+
+    }, [results]);
+
     return (
         <Card className="rounded-3xl w-full">
             <CardHeader>
@@ -60,55 +90,51 @@ const ResultDisplay = ({ results }: { results: AutoCaptionOutput }) => {
             <CardContent>
                 <ScrollArea className="h-96 w-full">
                     <div className="space-y-6 pr-4">
-                         <div className="space-y-2">
-                            <Label>Short Caption</Label>
-                            <div className="flex items-start justify-between gap-2 rounded-lg border p-3">
-                                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{results.caption_short}</p>
-                                <CopyButton text={results.caption_short} />
+                        {parsedResults.short && (
+                            <div className="space-y-2">
+                                <Label>🪶 Short Caption</Label>
+                                <div className="flex items-start justify-between gap-2 rounded-lg border p-3">
+                                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{parsedResults.short}</p>
+                                    <CopyButton text={parsedResults.short} />
+                                </div>
                             </div>
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Medium Caption</Label>
-                            <div className="flex items-start justify-between gap-2 rounded-lg border p-3">
-                                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{results.caption_mid}</p>
-                                <CopyButton text={results.caption_mid} />
+                        )}
+                        {parsedResults.medium && (
+                            <div className="space-y-2">
+                                <Label>💬 Medium Caption</Label>
+                                <div className="flex items-start justify-between gap-2 rounded-lg border p-3">
+                                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{parsedResults.medium}</p>
+                                    <CopyButton text={parsedResults.medium} />
+                                </div>
                             </div>
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Long Caption</Label>
-                             <div className="flex items-start justify-between gap-2 rounded-lg border p-3">
-                                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{results.caption_long}</p>
-                                <CopyButton text={results.caption_long} />
+                        )}
+                         {parsedResults.long && (
+                            <div className="space-y-2">
+                                <Label>📝 Long Caption</Label>
+                                <div className="flex items-start justify-between gap-2 rounded-lg border p-3">
+                                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{parsedResults.long}</p>
+                                    <CopyButton text={parsedResults.long} />
+                                </div>
                             </div>
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Primary Hashtags</Label>
-                             <div className="flex items-start justify-between gap-2 rounded-lg border p-3">
-                                <p className="text-sm text-muted-foreground">{results.hashtags.primary.join(' ')}</p>
-                                <CopyButton text={results.hashtags.primary.join(' ')} />
+                         )}
+                         {parsedResults.hashtags && (
+                            <div className="space-y-2">
+                                <Label>🏷️ Recommended Hashtags</Label>
+                                <div className="flex items-start justify-between gap-2 rounded-lg border p-3">
+                                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{parsedResults.hashtags}</p>
+                                    <CopyButton text={parsedResults.hashtags} />
+                                </div>
                             </div>
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Secondary Hashtags</Label>
-                            <div className="flex items-start justify-between gap-2 rounded-lg border p-3">
-                                <p className="text-sm text-muted-foreground">{results.hashtags.secondary.join(' ')}</p>
-                                <CopyButton text={results.hashtags.secondary.join(' ')} />
+                         )}
+                         {parsedResults.notes && (
+                            <div className="space-y-2">
+                                <Label>⚙️ Auto Notes</Label>
+                                <div className="flex items-start justify-between gap-2 rounded-lg border p-3">
+                                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{parsedResults.notes}</p>
+                                    <CopyButton text={parsedResults.notes} />
+                                </div>
                             </div>
-                        </div>
-                        <div className="space-y-2">
-                            <Label>First Comment Hashtags</Label>
-                             <div className="flex items-start justify-between gap-2 rounded-lg border p-3">
-                                <p className="text-sm text-muted-foreground">{results.hashtags.firstComment}</p>
-                                <CopyButton text={results.hashtags.firstComment} />
-                            </div>
-                        </div>
-                         <div className="space-y-2">
-                            <Label>Alt Text</Label>
-                             <div className="flex items-start justify-between gap-2 rounded-lg border p-3">
-                                <p className="text-sm text-muted-foreground">{results.alt_text}</p>
-                                <CopyButton text={results.alt_text} />
-                            </div>
-                        </div>
+                         )}
                     </div>
                 </ScrollArea>
             </CardContent>
@@ -192,9 +218,9 @@ export default function AutoCaptionsPage() {
         try {
             const result = await autoCaptionsAction(originalDataUri, platform, tone, goal, user.uid);
             
-            if (result.caption_short) {
-                setResults(result as AutoCaptionOutput);
-                // await saveAIOutput(feature.name, JSON.stringify(result), 'application/json', user.uid);
+            if (result) {
+                setResults(result);
+                // await saveAIOutput(feature.name, result, 'text/plain', user.uid);
                 await consumeCredits(feature.creditCost);
             } else {
                 throw new Error('AI generation failed to return captions.');

@@ -56,16 +56,6 @@ export const AnalyzeImageOutputSchema = z.object({
 export type AnalyzeImageOutput = z.infer<typeof AnalyzeImageOutputSchema>;
 
 // Types for Auto Captions feature
-export const AutoCaptionImageAnalysisSchema = z.object({
-    objects: z.array(z.string()).describe("List of detected objects in the image."),
-    scene: z.string().describe("The overall scene or setting of the image."),
-    people_present: z.boolean().describe("Whether people are present in the image."),
-    colors: z.array(z.string()).describe("Dominant colors in the image."),
-    detected_text: z.string().optional().describe("Any text found in the image."),
-});
-export type AutoCaptionImageAnalysis = z.infer<typeof AutoCaptionImageAnalysisSchema>;
-
-
 export const AutoCaptionInputSchema = z.object({
   photoDataUri: z.string().describe("The user-uploaded image as a data URI."),
   platform: z.string(),
@@ -76,22 +66,5 @@ export const AutoCaptionInputSchema = z.object({
 export type AutoCaptionInput = z.infer<typeof AutoCaptionInputSchema>;
 
 
-export const AutoCaptionOutputSchema = z.object({
-  caption_short: z.string(),
-  caption_mid: z.string(),
-  caption_long: z.string(),
-  cta_short: z.string(),
-  cta_mid: z.string(),
-  cta_long: z.string(),
-  hashtags: z.object({
-    primary: z.array(z.string()),
-    secondary: z.array(z.string()),
-    firstComment: z.string(),
-  }),
-  alt_text: z.string(),
-  seo_description: z.string(),
-  emoji_suggestions: z.array(z.string()),
-  needs_manual_review: z.boolean(),
-  safety_notes: z.string(),
-});
+export const AutoCaptionOutputSchema = z.string().describe("The formatted string containing captions, hashtags, and notes.");
 export type AutoCaptionOutput = z.infer<typeof AutoCaptionOutputSchema>;

@@ -4,8 +4,6 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import {
-    AutoCaptionImageAnalysis,
-    AutoCaptionImageAnalysisSchema,
     AutoCaptionInput,
     AutoCaptionInputSchema,
     AutoCaptionOutput,
@@ -17,71 +15,69 @@ export async function generateCaptions(input: AutoCaptionInput): Promise<AutoCap
   return autoCaptionsFlow(input);
 }
 
-
 const captionGenerationPrompt = `
-System instruction:
-"You are a professional social media copywriter and content strategist. Your first task is to meticulously analyze the provided image. After analysis, you will output a structured JSON object containing production-ready social captions and optimized hashtag groups. Always follow safety rules: never identify or name people in the image, never invent personal data or claims. Keep text ad-friendly and policy-compliant. Ensure spacing, line breaks and punctuation are formatted for direct posting."
+You are a professional social media strategist and caption writer.  
+You will receive an uploaded image. First, perform a detailed visual analysis of this photo before generating any caption or hashtags.
 
-Image to Analyze: {{media url=photoDataUri}}
+Analyze the following:
+1. Main subject(s) — what or who is in the photo.  
+2. Objects, background, environment, and setting.  
+3. Any visible text or product logos.  
+4. Emotions, color palette, and lighting tone.  
+5. Overall theme — for example: travel, tech, fashion, food, podcast, fitness, education, event, nature, etc.  
+6. Scene composition — indoor, outdoor, studio, natural light, crowd, etc.
 
-User Preferences:
-{
-  "platform": "{{platform}}",
-  "tone": "{{tone}}",
-  "goal": "{{goal}}",
-  "language": "{{language}}"
-}
+After the visual analysis:
+- Write **3 caption options** (Short, Medium, Long).  
+  - The short caption should be punchy and expressive (ideal for Reels or YouTube Shorts).  
+  - The medium caption should tell a short story or context (Instagram posts).  
+  - The long caption should include context + a strong CTA line (LinkedIn or Facebook).  
 
-Generation instructions:
-"Task:
-1) Based directly on the visual information in the image provided, produce:
-   - Three caption variations (short, mid, long). Each caption must be coherent, emotionally resonant, platform-appropriate, and inline with the chosen tone and goal.
-   - A suggested CTA for each caption (e.g., 'Link in bio', 'Watch full video', 'Comment your thoughts', 'Tap to shop').
-2) Generate hashtag groups:
-   - primary: 3–5 high-impact, relevant hashtags
-   - secondary: 8–15 supporting hashtags (mix of broad + niche)
-   - firstComment: a ready-to-paste first comment block that contains 10–25 hashtags optimized for reach (space-separated OR newline separated). Make sure hashtags are relevant and not banned.
-3) Provide alt_text (one-liner, 125 characters max) and seo_description (short paragraph 150–200 chars).
-4) Ensure final caption is ad-friendly: no hateful, sexual, defamatory, or shockbait claims. If image indicates potentially sensitive topics, produce a safe, neutral caption and flag for human review (include "needs_manual_review": true).
-5) Check formatting:
-   - Provide captions with explicit line breaks where needed.
-   - Provide emoji suggestions inline where appropriate (no emoji abuse).
-   - Ensure readability: short sentences, clear spacing, no long unbroken lines.
-6) Output must be a single JSON object exactly in this schema (so it can be parsed by the frontend):
+- Generate **hashtags** that are:
+  - 100% relevant to what’s visible in the photo.
+  - Trending, clean, and ad-safe.
+  - Include both broad and niche tags.
+  - Format hashtags clearly — separated by spaces, with line breaks if needed.
 
-{
-  "caption_short": "<string>",
-  "caption_mid": "<string>",
-  "caption_long": "<string>",
-  "cta_short": "<string>",
-  "cta_mid": "<string>",
-  "cta_long": "<string>",
-  "hashtags": {
-    "primary": ["#tag1", "#tag2", "#tag3"],
-    "secondary": ["#tag4", "#tag5", ...],
-    "firstComment": "#tag1 #tag2 #tag3 ... (10-25 hashtags as second comment)"
-  },
-  "alt_text": "<string up to 125 chars>",
-  "seo_description": "<150-200 char paragraph>",
-  "emoji_suggestions": ["😊","🔥"],
-  "needs_manual_review": false,
-  "safety_notes": "<if any, otherwise empty>"
-}
+- Maintain a professional layout and readability:
+  - Add line breaks, spacing, and emojis only where contextually natural.
+  - Captions should feel real and human — no robotic tone.
+  - Avoid generic filler lines like “A beautiful day!” unless contextually correct.
 
-Rules:
-- Do not include any newline or extraneous text outside the JSON.
-- Never guess or identify people in the image. Use neutral phrasings like 'a person' or 'two people'.
-- Do not produce hashtags that are banned or obviously spammy (e.g., excessive repeated tags).
-- Prioritize relevance over generic reach. Use mix of top-level tags (#travel) and niche tags (#GoaHiddenBeaches).
-- For platform Instagram — keep mid caption to <= 2200 characters and suggest firstComment as hashtags (if user selected 'first comment').
-- For X/Twitter — produce short caption <= 280 chars and fewer hashtags (1–3).
-- For LinkedIn — produce professional tone and avoid emoji or casual slang (unless toneSelected requests otherwise).
-- For each caption include one clear CTA line at end.
-- If the input image contains product(s), generate product phrases and include shopping-related hashtags if the goal includes 'Promote Product'.
-- If the model detects potential copyright/logo in image, warn in "safety_notes" and set "needs_manual_review": true.
-"
+Output must be **ready to post** directly on platforms like Instagram, YouTube Community, or Facebook.
+
+-----------------------------------------
+FORMAT THE OUTPUT EXACTLY LIKE THIS:
+-----------------------------------------
+
+🪶 **Caption (Short):**
+<short caption text>
+
+💬 **Caption (Medium):**
+<medium caption text>
+
+📝 **Caption (Long):**
+<long caption text>
+
+🏷️ **Hashtags (Recommended):**
+#hashtag1 #hashtag2 #hashtag3 #hashtag4 #hashtag5 #hashtag6 ...
+
+⚙️ **Auto Notes:**
+<one-line explanation of what the image contains>
+
+-----------------------------------------
+ADDITIONAL INSTRUCTIONS
+-----------------------------------------
+- The captions must sound human and contextual to the image.
+- If the image contains a person, describe the vibe or emotion — never identify who they are.
+- If it’s a product or object, mention features or purpose naturally.
+- If it’s travel/nature — highlight place, vibe, and mood.
+- If text is detected on image, use that to understand theme (e.g., “Podcast” or “Full Episode”).
+- Use relevant emojis only when it fits the tone.
+- Do not overuse hashtags (15–20 max).
+- Do not include any banned or misleading hashtags.
+- The final output should look balanced and properly spaced for direct posting.
 `;
-
 
 const autoCaptionsFlow = ai.defineFlow(
   {
@@ -91,16 +87,13 @@ const autoCaptionsFlow = ai.defineFlow(
     retries: 2,
   },
   async (input) => {
-    // Combined single-step flow: analyze image and generate captions together
-    const { output } = await ai.generate({
-      prompt: captionGenerationPrompt,
+    const { text } = await ai.generate({
+      prompt: [
+        { media: { url: input.photoDataUri } },
+        { text: captionGenerationPrompt },
+      ],
       model: 'googleai/gemini-2.5-flash',
-      output: {
-          format: 'json',
-          schema: AutoCaptionOutputSchema,
-      },
       context: {
-        photoDataUri: input.photoDataUri,
         platform: input.platform,
         tone: input.tone,
         goal: input.goal,
@@ -108,10 +101,10 @@ const autoCaptionsFlow = ai.defineFlow(
       }
     });
 
-    if (!output) {
+    if (!text) {
       throw new Error('Caption generation failed.');
     }
 
-    return output;
+    return text;
   }
 );
