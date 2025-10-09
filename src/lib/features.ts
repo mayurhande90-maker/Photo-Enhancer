@@ -241,7 +241,7 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.PREMIUM,
-    isPremium: true,
+    isComingSoon: true,
     outputType: 'image',
   },
 ];
