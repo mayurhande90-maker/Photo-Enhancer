@@ -9,13 +9,13 @@ import {
   autoCaptionsAction,
   aiFutureSelfAction,
   magicInteriorAction,
-  recreateChildhoodAction,
 } from '@/app/actions';
 import type { Feature } from '@/lib/types';
 import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star, MapPin, Sofa } from 'lucide-react';
 
 const placeholderAction = async (photoDataUri?: string, userId?: string, ...args: any[]): Promise<any> => {
   console.log('Placeholder action called for a feature in development.');
+  // To prevent crashes, we must ensure this function can accept any arguments.
   return { enhancedPhotoDataUri: '', creditCost: 1 };
 };
 
@@ -109,30 +109,6 @@ export const features: Feature[] = [
     outputType: 'text',
   },
   {
-    name: 'Ad Creative Generator',
-    description: 'Product → ready ad poster.',
-    path: '/dashboard/ad-creative',
-    icon: PenTool,
-    creditCost: 3,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
-    category: featureCategories.CONTENT_BRAND,
-    isComingSoon: true,
-    outputType: 'image',
-  },
-  {
-    name: 'Brand Guidelines Generator',
-    description: 'Upload logo → full style guide.',
-    path: '/dashboard/brand-guidelines',
-    icon: Braces,
-    creditCost: 5,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
-    category: featureCategories.CONTENT_BRAND,
-    isComingSoon: true,
-    outputType: 'text',
-  },
-  {
     name: 'Mockup Generator',
     description: 'Visualize products on objects.',
     path: '/dashboard/mockup-generator',
@@ -155,18 +131,6 @@ export const features: Feature[] = [
     category: featureCategories.CONTENT_BRAND,
     isComingSoon: true,
     outputType: 'image',
-  },
-  {
-    name: 'Post Scheduler',
-    description: 'Plan & auto-post content.',
-    path: '/dashboard/post-scheduler',
-    icon: Calendar,
-    creditCost: 1,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
-    category: featureCategories.CONTENT_BRAND,
-    isComingSoon: true,
-    outputType: 'text',
   },
 
   // Smart Office
@@ -192,6 +156,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.SMART_OFFICE,
     outputType: 'text',
+    isComingSoon: true,
   },
   {
     name: 'PDF Tools',
@@ -217,19 +182,6 @@ export const features: Feature[] = [
     isComingSoon: true,
     outputType: 'text',
   },
-   {
-    name: 'House Budget Simplifier',
-    description: 'Auto expense visualizer.',
-    path: '/dashboard/budget-simplifier',
-    icon: Home,
-    creditCost: 1,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
-    category: featureCategories.SMART_OFFICE,
-    isComingSoon: true,
-    outputType: 'text',
-  },
-
 
   // Personal Magic
   {
@@ -254,30 +206,6 @@ export const features: Feature[] = [
     category: featureCategories.PERSONAL_MAGIC,
     outputType: 'image',
   },
-  {
-    name: 'AI Time Capsule',
-    description: 'Store memories for future.',
-    path: '/dashboard/time-capsule',
-    icon: Briefcase,
-    creditCost: 1,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
-    category: featureCategories.PERSONAL_MAGIC,
-    isComingSoon: true,
-    outputType: 'text',
-  },
-  {
-    name: 'Recreate Childhood Place',
-    description: 'Travel back to your memories.',
-    path: '/dashboard/recreate-childhood',
-    icon: MapPin,
-    creditCost: 3,
-    action: (photoDataUri, userId, memoryText, inputType, placeType, style, intensity) => recreateChildhoodAction(photoDataUri, userId, memoryText!, inputType!, placeType!, style!, intensity!),
-    showBeforeAfterSlider: true,
-    category: featureCategories.PERSONAL_MAGIC,
-    outputType: 'image',
-  },
-
 
   // Premium & Coming Soon
   {
