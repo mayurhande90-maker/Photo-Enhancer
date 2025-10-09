@@ -97,4 +97,18 @@ export const MemorySceneOutputSchema = z.object({
 });
 export type MemorySceneOutput = z.infer<typeof MemorySceneOutputSchema>;
 
-    
+// Types for Recreate Childhood Place
+export const RecreateChildhoodInputSchema = z.object({
+    photoDataUri: z.string().optional().describe("User's old photo as a data URI."),
+    memoryText: z.string().optional().describe("A short text description of the memory."),
+    inputType: z.enum(["photo", "text", "photo+text"]),
+    placeType: z.string(),
+    style: z.string(),
+    intensity: z.enum(["mild", "normal", "high"]),
+});
+export type RecreateChildhoodInput = z.infer<typeof RecreateChildhoodInputSchema>;
+
+export const RecreateChildhoodOutputSchema = z.object({
+    modernizedPhotoDataUri: z.string().describe("The generated modernized scene as a data URI."),
+});
+export type RecreateChildhoodOutput = z.infer<typeof RecreateChildhoodOutputSchema>;

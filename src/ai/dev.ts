@@ -12,5 +12,4 @@ import '@/ai/flows/youtube-thumbnail-flow.ts';
 import '@/ai/flows/auto-captions-flow.ts';
 import '@/ai/flows/ai-future-self-flow.ts';
 import '@/ai/flows/memory-scene-flow.ts';
-
-    
+import '@/ai/flows/recreate-childhood-flow.ts';

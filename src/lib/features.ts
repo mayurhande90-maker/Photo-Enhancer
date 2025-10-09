@@ -9,9 +9,10 @@ import {
   autoCaptionsAction,
   aiFutureSelfAction,
   memorySceneAction,
+  recreateChildhoodAction,
 } from '@/app/actions';
 import type { Feature } from '@/lib/types';
-import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star } from 'lucide-react';
+import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star, MapPin } from 'lucide-react';
 
 const placeholderAction = async () => ({ enhancedPhotoDataUri: '', creditCost: 1 });
 
@@ -232,6 +233,16 @@ export const features: Feature[] = [
     category: featureCategories.PERSONAL_MAGIC,
   },
   {
+    name: 'Recreate Childhood Place',
+    description: 'See how your childhood place looks today.',
+    path: '/dashboard/recreate-childhood',
+    icon: MapPin,
+    creditCost: 3,
+    action: (photoDataUri, userId, memoryText, inputType, placeType, style, intensity) => recreateChildhoodAction(photoDataUri, memoryText!, inputType!, placeType!, style!, intensity!, userId),
+    showBeforeAfterSlider: true,
+    category: featureCategories.PERSONAL_MAGIC,
+  },
+  {
     name: 'AI Time Capsule',
     description: 'Store memories for future.',
     path: '/dashboard/time-capsule',
@@ -278,5 +289,3 @@ export const features: Feature[] = [
     isPremium: true,
   },
 ];
-
-    
