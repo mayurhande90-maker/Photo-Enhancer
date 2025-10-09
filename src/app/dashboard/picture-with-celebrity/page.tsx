@@ -13,13 +13,13 @@ import { FileUploader } from '@/components/file-uploader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Wand2, Download, RefreshCw, Star, Users, Lightbulb, CheckCircle2, Sparkles, Loader2 } from 'lucide-react';
 import { features } from '@/lib/features';
 import { analyzeImageAction } from '@/app/actions';
+import { cn } from '@/lib/utils';
 
 const celebrityList = {
     "Bollywood": ["Shah Rukh Khan", "Deepika Padukone", "Salman Khan", "Alia Bhatt", "Ranbir Kapoor"],
@@ -44,12 +44,8 @@ function fileToDataUri(file: File): Promise<string> {
   });
 }
 
-const BeforeUploadState = () => (
-    <div className="text-center p-8 rounded-3xl border-2 border-dashed border-border h-full bg-card/50 flex flex-col justify-center">
-        <Lightbulb className="mx-auto h-10 w-10 text-yellow-400 mb-4" />
-        <h3 className="font-semibold text-lg text-foreground">Tip: Upload a clear, high-quality, front-facing photo.</h3>
-        <p className="text-muted-foreground text-sm mt-1">Avoid group photos or side profiles. For best results.</p>
-    </div>
+const BeforeUploadState = ({ onFileSelect }: { onFileSelect: (file: File) => void }) => (
+    <FileUploader onFileSelect={onFileSelect} />
 );
 
 const AfterUploadState = ({ file, analysis }: { file: File; analysis: string; }) => (
@@ -74,13 +70,6 @@ const AfterUploadState = ({ file, analysis }: { file: File; analysis: string; })
     </div>
 );
 
-const ProcessingState = ({ progress }: { progress: number; }) => (
-    <div className="text-center p-8 rounded-3xl border-2 border-dashed border-primary/50 h-full bg-primary/10 animate-pulse flex flex-col justify-center">
-        <h3 className="font-semibold text-lg text-primary">✨ Magicpixa is working on your image…</h3>
-        <p className="text-primary/80 text-sm mt-1">Blending realities, adjusting lighting, and adding clarity.</p>
-        <Progress value={progress} className="w-full max-w-sm mx-auto mt-4" />
-    </div>
-);
 
 export default function PictureWithCelebrityPage() {
     const feature = features.find(f => f.name === 'Picture with Celebrity')!;
@@ -95,7 +84,6 @@ export default function PictureWithCelebrityPage() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [imageAnalysis, setImageAnalysis] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
-    const [progress, setProgress] = useState(0);
 
     const [selectedCelebrity, setSelectedCelebrity] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
@@ -127,12 +115,7 @@ export default function PictureWithCelebrityPage() {
 
         setIsProcessing(true);
         setError(null);
-        setProgress(0);
         setProcessedImageUrl(null);
-
-        const loadingInterval = setInterval(() => {
-            setProgress(prev => Math.min(prev + 5, 95));
-        }, 500);
 
         try {
             const result = await pictureWithCelebrityAction(originalDataUri, selectedCelebrity, selectedLocation, user.uid);
@@ -149,8 +132,6 @@ export default function PictureWithCelebrityPage() {
             setError(errorMessage);
             toast({ title: 'Processing Error', description: errorMessage, variant: 'destructive' });
         } finally {
-            clearInterval(loadingInterval);
-            setProgress(100);
             setIsProcessing(false);
         }
     };
@@ -161,7 +142,6 @@ export default function PictureWithCelebrityPage() {
         setProcessedImageUrl(null);
         setError(null);
         setIsProcessing(false);
-        setProgress(0);
         setImageAnalysis("");
     };
 
@@ -170,7 +150,6 @@ export default function PictureWithCelebrityPage() {
     }, [originalFile, selectedCelebrity, selectedLocation, consentChecked, user, isProcessing, isCreditLoading, imageAnalysis]);
     
     const isResultReady = !!processedImageUrl && !isProcessing;
-    const isAwaitingUpload = !originalDataUri;
 
     const renderQuotaAlert = () => {
         if (isUserLoading || isCreditLoading) return null;
@@ -220,67 +199,58 @@ export default function PictureWithCelebrityPage() {
             <section>
                 <h2 className="text-2xl font-semibold mb-4">Try It Yourself</h2>
                 
-                <div className="mb-8">
-                  {isAwaitingUpload && <FileUploader onFileSelect={handleFileSelect} />}
-                  {!isAwaitingUpload && (
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="relative aspect-square w-full overflow-hidden rounded-3xl border">
-                            <Image src={originalDataUri!} alt="Original upload" fill className="object-contain" />
-                            <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">Original</div>
-                        </div>
-                        <div className="relative aspect-square w-full overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
-                           {isProcessing ? (
-                                <div className="text-center p-4 text-muted-foreground">
-                                    <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
-                                    <p className="mt-2 font-semibold">Generating your photo...</p>
-                                </div>
-                           ) : processedImageUrl ? (
-                                <>
-                                    <Image src={processedImageUrl} alt="Generated" layout="fill" className="object-contain" />
-                                    <div className="absolute bottom-2 left-2 rounded-md bg-black/50 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">Generated</div>
-                                </>
-                           ) : (
-                                <div className="text-center text-muted-foreground p-4">
-                                    <Star className="mx-auto h-12 w-12" />
-                                    <p className="mt-2">Output will appear here</p>
-                                </div>
-                           )}
-                        </div>
-                    </div>
-                  )}
-                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                     <div className="space-y-4">
+                        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
+                            {!originalDataUri && <BeforeUploadState onFileSelect={handleFileSelect} />}
+                            
+                            {originalDataUri && !processedImageUrl && (
+                                <Image src={originalDataUri} alt="Original upload" fill className={cn("object-contain transition-all duration-500", isProcessing && "opacity-50 blur-sm")} />
+                            )}
+                            
+                            {processedImageUrl && (
+                                <Image src={processedImageUrl} alt="Generated" layout="fill" className="object-contain animate-fade-in-up" />
+                            )}
 
-                {isResultReady ? (
-                    <div className="flex justify-center">
-                        <Card className="w-full max-w-md rounded-3xl">
-                            <CardHeader className="text-center">
-                                <CardTitle>Result Ready</CardTitle>
-                                <CardDescription>Your image is ready. Download it or start over.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                                    <Button variant="outline" className="h-12 w-full rounded-2xl" onClick={handleReset}>
-                                        <RefreshCw className="mr-2 h-5 w-5" />
-                                        Generate Another
-                                    </Button>
-                                    <Button size="lg" asChild className="h-12 w-full rounded-2xl" disabled={!processedImageUrl}>
-                                        <a href={processedImageUrl!} download={`magicpixa-celebrity-${Date.now()}.png`}>
-                                            <Download className="mr-2 h-5 w-5" />
-                                            Download Image
-                                        </a>
-                                    </Button>
+                            {isProcessing && (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white animate-pulse">
+                                    <Wand2 className="h-12 w-12" />
+                                    <p className="mt-2 font-semibold text-lg">Generating your masterpiece...</p>
                                 </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                        <div className="space-y-6 min-h-[200px] flex flex-col justify-center">
-                            {isAwaitingUpload && <BeforeUploadState />}
-                            {isProcessing && <ProcessingState progress={progress} />}
-                            {!isAwaitingUpload && !isProcessing && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
+                            )}
                         </div>
 
+                        {!isResultReady && originalFile && (
+                            <AfterUploadState file={originalFile} analysis={imageAnalysis} />
+                        )}
+
+                        {isResultReady && (
+                            <div className="flex justify-center">
+                                <Card className="w-full max-w-md rounded-3xl">
+                                    <CardHeader className="text-center">
+                                        <CardTitle>Result Ready</CardTitle>
+                                        <CardDescription>Your image is ready. Download it or start over.</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                            <Button variant="outline" className="h-12 w-full rounded-2xl" onClick={handleReset}>
+                                                <RefreshCw className="mr-2 h-5 w-5" />
+                                                Generate Another
+                                            </Button>
+                                            <Button size="lg" asChild className="h-12 w-full rounded-2xl" disabled={!processedImageUrl}>
+                                                <a href={processedImageUrl!} download={`magicpixa-celebrity-${Date.now()}.png`}>
+                                                    <Download className="mr-2 h-5 w-5" />
+                                                    Download Image
+                                                </a>
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        )}
+                    </div>
+                   
+                    {!isResultReady && (
                         <Card className="rounded-3xl h-full sticky top-24">
                              <CardHeader>
                                 <CardTitle>Configuration</CardTitle>
@@ -325,9 +295,10 @@ export default function PictureWithCelebrityPage() {
                                 </Button>
                             </CardContent>
                         </Card>
-                    </div>
-                )}
+                    )}
+                </div>
             </section>
         </div>
     );
-}
+
+    
