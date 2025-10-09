@@ -24,7 +24,7 @@ export const featureCategories = {
   CONTENT_BRAND: 'Content & Brand',
   SMART_OFFICE: 'Smart Office',
   PERSONAL_MAGIC: 'Personal Magic',
-  PREMIUM: 'Premium & Coming Soon',
+  PREMIUM: 'Premium',
 };
 
 export const features: Feature[] = [
@@ -207,7 +207,7 @@ export const features: Feature[] = [
     outputType: 'image',
   },
 
-  // Premium & Coming Soon
+  // Premium
   {
     name: 'AI Voice Studio',
     description: 'Generate realistic voiceovers.',
