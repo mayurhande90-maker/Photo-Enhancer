@@ -68,3 +68,16 @@ export type AutoCaptionInput = z.infer<typeof AutoCaptionInputSchema>;
 
 export const AutoCaptionOutputSchema = z.string().describe("The formatted string containing captions, hashtags, and notes.");
 export type AutoCaptionOutput = z.infer<typeof AutoCaptionOutputSchema>;
+
+
+// Types for AI Future Self
+export const AIFutureSelfInputSchema = z.object({
+    photoDataUri: z.string().describe("User's photo as a data URI."),
+    ageGap: z.number().describe("Number of years to age the person."),
+});
+export type AIFutureSelfInput = z.infer<typeof AIFutureSelfInputSchema>;
+
+export const AIFutureSelfOutputSchema = z.object({
+    agedPhotoDataUri: z.string().describe("The generated aged photo as a data URI."),
+});
+export type AIFutureSelfOutput = z.infer<typeof AIFutureSelfOutputSchema>;

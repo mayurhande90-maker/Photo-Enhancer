@@ -10,3 +10,4 @@ import '@/ai/flows/celebrity-picture.ts';
 import '@/ai/flows/colorize-photo.ts';
 import '@/ai/flows/youtube-thumbnail-flow.ts';
 import '@/ai/flows/auto-captions-flow.ts';
+import '@/ai/flows/ai-future-self-flow.ts';

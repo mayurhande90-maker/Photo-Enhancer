@@ -7,6 +7,7 @@ import {
   pictureWithCelebrityAction,
   createYoutubeThumbnailAction,
   autoCaptionsAction,
+  aiFutureSelfAction,
 } from '@/app/actions';
 import type { Feature } from '@/lib/types';
 import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star } from 'lucide-react';
@@ -82,16 +83,7 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.IMAGE_STUDIO,
-  },
-  {
-    name: 'AI Future Self',
-    description: 'See your cinematic future version.',
-    path: '/dashboard/future-self',
-    icon: User,
-    creditCost: 2,
-    action: placeholderAction,
-    showBeforeAfterSlider: false,
-    category: featureCategories.IMAGE_STUDIO,
+    isComingSoon: true,
   },
   
   // Content & Brand
@@ -124,6 +116,7 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
+    isComingSoon: true,
   },
   {
     name: 'Brand Guidelines Generator',
@@ -134,6 +127,7 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
+    isComingSoon: true,
   },
   {
     name: 'Mockup Generator',
@@ -144,6 +138,7 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
+    isComingSoon: true,
   },
   {
     name: 'Festive Post Generator',
@@ -154,6 +149,7 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
+    isComingSoon: true,
   },
   {
     name: 'Post Scheduler',
@@ -164,6 +160,7 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
+    isComingSoon: true,
   },
 
   // Smart Office
@@ -176,6 +173,7 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.SMART_OFFICE,
+    isComingSoon: true,
   },
   {
     name: 'PDF Tools',
@@ -186,6 +184,7 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.SMART_OFFICE,
+    isComingSoon: true,
   },
   {
     name: 'Notes Generator',
@@ -196,6 +195,7 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.SMART_OFFICE,
+    isComingSoon: true,
   },
    {
     name: 'House Budget Simplifier',
@@ -206,6 +206,7 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.SMART_OFFICE,
+    isComingSoon: true,
   },
   {
     name: 'AI Bill Reader',
@@ -216,9 +217,20 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.SMART_OFFICE,
+    isComingSoon: true,
   },
 
   // Personal Magic
+  {
+    name: 'AI Future Self',
+    description: 'See your cinematic future version.',
+    path: '/dashboard/future-self',
+    icon: User,
+    creditCost: 2,
+    action: (photoDataUri, userId, ageGap) => aiFutureSelfAction(photoDataUri, ageGap!, userId),
+    showBeforeAfterSlider: false,
+    category: featureCategories.PERSONAL_MAGIC,
+  },
   {
     name: 'AI Time Capsule',
     description: 'Store memories for future.',
@@ -228,6 +240,7 @@ export const features: Feature[] = [
     action: placeholderAction,
     showBeforeAfterSlider: false,
     category: featureCategories.PERSONAL_MAGIC,
+    isComingSoon: true,
   },
 
   // Premium & Coming Soon

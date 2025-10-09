@@ -7,6 +7,7 @@ import { pictureWithCelebrity } from '@/ai/flows/celebrity-picture';
 import { colorizePhoto } from '@/ai/flows/colorize-photo';
 import { createYouTubeThumbnail } from '@/ai/flows/youtube-thumbnail-flow';
 import { generateCaptions } from '@/ai/flows/auto-captions-flow';
+import { generateFutureSelf } from '@/ai/flows/ai-future-self-flow';
 import type { AnalyzeImageOutput, AutoCaptionOutput } from '@/lib/types';
 
 async function processImageWithAI(
@@ -94,5 +95,10 @@ export async function autoCaptionsAction(
         goal,
         language: 'en',
     });
+    return result;
+}
+
+export async function aiFutureSelfAction(photoDataUri: string, ageGap: number, userId: string) {
+    const result = await generateFutureSelf({ photoDataUri, ageGap });
     return result;
 }
