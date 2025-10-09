@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState } from 'react';
@@ -40,11 +39,6 @@ export default function SignupPage() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<SignupFormInputs>({
         resolver: zodResolver(signupSchema),
-        defaultValues: {
-            displayName: 'Test User',
-            email: 'test@magicpixa.com',
-            password: 'password123',
-        }
     });
 
     const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
@@ -69,6 +63,7 @@ export default function SignupPage() {
                 credits: INITIAL_CREDITS,
                 planName: 'Free',
                 createdAt: serverTimestamp(),
+                subscriptionStartDate: serverTimestamp(),
             });
 
             toast({

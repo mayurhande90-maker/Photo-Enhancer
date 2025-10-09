@@ -34,10 +34,6 @@ export default function LoginPage() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
         resolver: zodResolver(loginSchema),
-        defaultValues: {
-            email: 'test@magicpixa.com',
-            password: 'password123',
-        }
     });
 
     const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
