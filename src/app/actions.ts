@@ -121,5 +121,3 @@ export async function magicInteriorAction(
     });
     return result;
 }
-
-    
