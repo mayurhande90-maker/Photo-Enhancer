@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Link from 'next/link';
@@ -159,7 +160,7 @@ function HeaderUserSection() {
         return (
             <div className="flex items-center gap-2">
                  <Button asChild className="hidden sm:flex">
-                    <Link href="/dashboard">Go to App</Link>
+                    <Link href="/dashboard">Dashboard</Link>
                 </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
