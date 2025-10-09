@@ -40,7 +40,7 @@ const youtubeThumbnailFlow = ai.defineFlow(
   },
   async (input) => {
     const prompt = `
-      Create a cinematic, scroll-stopping YouTube thumbnail at a strict resolution of 1280x720 pixels (16:9 aspect ratio).
+      Create a cinematic, scroll-stopping YouTube thumbnail.
 
       Inputs:
       Category: ${input.categorySelected}
@@ -49,7 +49,7 @@ const youtubeThumbnailFlow = ai.defineFlow(
       Video Type: ${input.videoType}
 
       Step 1 — Subject Enhancement:
-      Use the uploaded image as the main subject.
+      Use the provided user image as the main subject.
       Remove background cleanly and upscale the subject so it appears prominent, close, and engaging within the frame — as if shot with a professional camera at shallow depth.
       The subject should occupy roughly 40–60% of the frame.
       Reposition the subject to the ${input.alignmentSelected} area:
@@ -91,7 +91,7 @@ const youtubeThumbnailFlow = ai.defineFlow(
       Ensure entire composition feels integrated and photo-realistic, not pasted.
 
       Output Requirements:
-      - Resolution: MUST BE EXACTLY 1280x720 px (16:9). This is critical.
+      - Aspect Ratio: MUST BE EXACTLY 16:9. This is critical.
       - Style: photo-realistic, cinematic
       - Format: JPG (under 1.5MB)
 
@@ -104,9 +104,9 @@ const youtubeThumbnailFlow = ai.defineFlow(
         { media: { url: input.photoDataUri } },
         { text: prompt },
       ],
-      model: 'googleai/gemini-2.5-flash-image-preview',
+      model: 'googleai/imagen-4.0-fast-generate-001',
       config: {
-        responseModalities: ['TEXT', 'IMAGE'],
+        aspectRatio: '16:9'
       },
     });
 
