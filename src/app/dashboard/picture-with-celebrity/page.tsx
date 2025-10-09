@@ -90,9 +90,13 @@ export default function PictureWithCelebrityPage() {
               return prev + 5;
             });
           }, 600);
-        } else if (processedImageUrl) {
-            setProgress(100);
         }
+        
+        if (processedImageUrl) {
+            setProgress(100);
+            setIsProcessing(false);
+        }
+
         return () => clearInterval(interval);
     }, [isProcessing, processedImageUrl]);
 
@@ -146,9 +150,7 @@ export default function PictureWithCelebrityPage() {
         setError(null);
         setIsProcessing(false);
         setProgress(0);
-        setSelectedCelebrity('');
-        setSelectedLocation('');
-        setConsentChecked(false);
+        // Keep celebrity and location selections
     };
 
     const isReadyToGenerate = useMemo(() => {
@@ -209,7 +211,10 @@ export default function PictureWithCelebrityPage() {
                     {/* Left Column */}
                     <div>
                         {!originalDataUri ? (
-                            <FileUploader onFileSelect={handleFileSelect} />
+                            <>
+                                <FileUploader onFileSelect={handleFileSelect} />
+                                <TipsSection />
+                            </>
                         ) : (
                             <div className="relative aspect-video w-full overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
                                 <Image 
@@ -256,9 +261,6 @@ export default function PictureWithCelebrityPage() {
                    
                     {/* Right Column */}
                     <div className="sticky top-24">
-                       {!originalDataUri ? (
-                           <TipsSection />
-                       ) : (
                         <Card className="rounded-3xl h-full">
                             <CardHeader>
                                 <CardTitle>Configuration</CardTitle>
@@ -268,7 +270,7 @@ export default function PictureWithCelebrityPage() {
                                 <div className="grid sm:grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="celebrity-select">Celebrity</Label>
-                                        <Select onValueChange={setSelectedCelebrity} value={selectedCelebrity} disabled={isProcessing || isResultReady}>
+                                        <Select onValueChange={setSelectedCelebrity} value={selectedCelebrity} disabled={isProcessing || isResultReady || !originalDataUri}>
                                             <SelectTrigger id="celebrity-select"><SelectValue placeholder="Choose one..." /></SelectTrigger>
                                             <SelectContent>
                                                 {Object.entries(celebrityList).map(([group, celebs]) => (
@@ -282,7 +284,7 @@ export default function PictureWithCelebrityPage() {
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="location-select">Location</Label>
-                                        <Select onValueChange={setSelectedLocation} value={selectedLocation} disabled={isProcessing || isResultReady}>
+                                        <Select onValueChange={setSelectedLocation} value={selectedLocation} disabled={isProcessing || isResultReady || !originalDataUri}>
                                             <SelectTrigger id="location-select"><SelectValue placeholder="Choose one..." /></SelectTrigger>
                                             <SelectContent>
                                                 {locationList.map(loc => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}
@@ -291,22 +293,23 @@ export default function PictureWithCelebrityPage() {
                                     </div>
                                 </div>
                                 <div className="flex items-start space-x-3 pt-2">
-                                    <Checkbox id="consent" checked={consentChecked} onCheckedChange={(checked) => setConsentChecked(checked as boolean)} className="mt-1" disabled={isProcessing || isResultReady}/>
+                                    <Checkbox id="consent" checked={consentChecked} onCheckedChange={(checked) => setConsentChecked(checked as boolean)} className="mt-1" disabled={isProcessing || isResultReady || !originalDataUri}/>
                                     <Label htmlFor="consent" className="text-xs font-normal text-muted-foreground">
                                         By continuing, I understand that the generated image is for entertainment purposes only and should not be used for impersonation, defamation, or any form of misuse.
                                     </Label>
                                 </div>
                                 {renderQuotaAlert()}
                                 <Button size="lg" className="rounded-2xl h-12 w-full" onClick={handleProcessImage} disabled={!isReadyToGenerate || isResultReady}>
-                                    <Wand2 className="mr-2 h-5 w-5" />
-                                    {`Generate for ${feature.creditCost} Credits`}
+                                    {isProcessing ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Wand2 className="mr-2 h-5 w-5" />}
+                                    {isProcessing ? 'Generating...' : `Generate for ${feature.creditCost} Credits`}
                                 </Button>
                             </CardContent>
                         </Card>
-                       )}
                     </div>
                 </div>
             </section>
         </div>
     );
 }
+
+    
