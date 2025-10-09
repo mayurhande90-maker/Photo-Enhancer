@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -197,7 +196,7 @@ export default function MagicInteriorPage() {
                     <Clock className="h-4 w-4" />
                     <AlertTitle>Not Enough Credits</AlertTitle>
                     <AlertDescription>
-                        You need ${feature.creditCost} credits for this action. <Link href="/#pricing" className="underline font-bold">Upgrade your plan</Link> for more.
+                        You need {feature.creditCost} credits for this action. <Link href="/#pricing" className="underline font-bold">Upgrade your plan</Link> for more.
                     </AlertDescription>
                 </Alert>
             );
@@ -215,7 +214,7 @@ export default function MagicInteriorPage() {
                         </div>
                         <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{feature.name}</h1>
                     </div>
-                    <p className="mt-4 max-w-2xl text-muted-foreground">{feature.description} This costs ${feature.creditCost} credits.</p>
+                    <p className="mt-4 max-w-2xl text-muted-foreground">{feature.description} This costs {feature.creditCost} credits.</p>
                 </div>
             </section>
 
