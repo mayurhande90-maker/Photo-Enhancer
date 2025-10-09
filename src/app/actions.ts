@@ -6,7 +6,8 @@ import { analyzeImage } from '@/ai/flows/analyze-image';
 import { pictureWithCelebrity } from '@/ai/flows/celebrity-picture';
 import { colorizePhoto } from '@/ai/flows/colorize-photo';
 import { createYouTubeThumbnail } from '@/ai/flows/youtube-thumbnail-flow';
-import type { AnalyzeImageOutput } from '@/lib/types';
+import { generateCaptions } from '@/ai/flows/auto-captions-flow';
+import type { AnalyzeImageOutput, AutoCaptionOutput } from '@/lib/types';
 
 async function processImageWithAI(
   photoDataUri: string,
@@ -75,6 +76,23 @@ export async function createYoutubeThumbnailAction(
         categorySelected,
         moodSelected,
         alignmentSelected
+    });
+    return result;
+}
+
+export async function autoCaptionsAction(
+    photoDataUri: string,
+    platform: string,
+    tone: string,
+    goal: string,
+    userId: string
+): Promise<AutoCaptionOutput> {
+    const result = await generateCaptions({
+        photoDataUri,
+        platform,
+        tone,
+        goal,
+        language: 'en',
     });
     return result;
 }

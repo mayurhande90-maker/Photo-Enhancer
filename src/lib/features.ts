@@ -6,6 +6,7 @@ import {
   colorizePhotoAction,
   pictureWithCelebrityAction,
   createYoutubeThumbnailAction,
+  autoCaptionsAction,
 } from '@/app/actions';
 import type { Feature } from '@/lib/types';
 import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star } from 'lucide-react';
@@ -110,7 +111,7 @@ export const features: Feature[] = [
     path: '/dashboard/auto-captions',
     icon: Hash,
     creditCost: 1,
-    action: placeholderAction,
+    action: (photoDataUri, userId, platform, tone, goal) => autoCaptionsAction(photoDataUri, platform!, tone!, goal!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
   },
