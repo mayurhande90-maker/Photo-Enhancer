@@ -41,14 +41,15 @@ const celebrityPictureFlow = ai.defineFlow(
       You are a hyper-realistic photo generation expert. Your task is to create a new, authentic, and natural-looking photograph featuring two people: a user and a celebrity, placed within a specified location.
 
       **CRITICAL RULES:**
-      1.  **PRESERVE IDENTITIES:** Do NOT alter the facial features, body structure, or distinct characteristics of the user or the celebrity in any way. Their identities must be perfectly preserved.
-      2.  **NATURAL INTEGRATION:** Blend the user and the celebrity (${input.celebrityName}) seamlessly into the chosen location: "${input.locationName}".
-      3.  **REALISTIC ADJUSTMENTS:**
+      1.  **SHOT TYPE:** The final image must be a **front-facing mid-shot** of both the user and the celebrity. Both individuals must be looking directly at the camera.
+      2.  **PRESERVE IDENTITIES:** Do NOT alter the facial features, body structure, or distinct characteristics of the user or the celebrity in any way. Their identities must be perfectly preserved.
+      3.  **NATURAL INTEGRATION:** Blend the user and the celebrity (${input.celebrityName}) seamlessly into the chosen location: "${input.locationName}".
+      4.  **REALISTIC ADJUSTMENTS:**
           *   **Lighting & Shadows:** Apply realistic lighting and shadows to both individuals that match the environment of the "${input.locationName}".
           *   **Clothing:** Adapt their clothing to be appropriate for the location (e.g., casual for a beach, formal for a red carpet).
           *   **Scale & Perspective:** Ensure both figures are proportionate to each other and the background.
-      4.  **PHOTOGRAPHIC QUALITY:** The final image must look like a real photograph, not an AI composite. Apply a subtle, natural filmic grain to enhance authenticity.
-      5.  **WATERMARK:** Add a small, discreet watermark in the bottom-right corner that says 'Magicpixa'.
+      5.  **PHOTOGRAPHIC QUALITY:** The final image must look like a real photograph, not an AI composite. Apply a subtle, natural filmic grain to enhance authenticity.
+      6.  **WATERMARK:** Add a small, discreet watermark in the bottom-right corner that says 'Magicpixa'.
 
       **INPUTS:**
       *   User's Photo: {{media url=userPhotoDataUri}}
