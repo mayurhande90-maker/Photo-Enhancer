@@ -64,9 +64,9 @@ export default function YouTubeThumbnailPage() {
     const [error, setError] = useState<string | null>(null);
 
     const [videoType, setVideoType] = useState('My Awesome Video');
-    const [channelCategory, setChannelCategory] = useState('');
-    const [thumbnailMood, setThumbnailMood] = useState('');
-    const [subjectAlignment, setSubjectAlignment] = useState('');
+    const [channelCategory, setChannelCategory] = useState(channelCategories[0]);
+    const [thumbnailMood, setThumbnailMood] = useState(thumbnailMoods[0]);
+    const [subjectAlignment, setSubjectAlignment] = useState(subjectAlignments[0]);
 
     const [processingText, setProcessingText] = useState('');
 
@@ -163,10 +163,10 @@ export default function YouTubeThumbnailPage() {
         setError(null);
         setIsProcessing(false);
         setProgress(0);
-        setVideoType('');
-        setChannelCategory('');
-        setThumbnailMood('');
-        setSubjectAlignment('');
+        setVideoType('My Awesome Video');
+        setChannelCategory(channelCategories[0]);
+        setThumbnailMood(thumbnailMoods[0]);
+        setSubjectAlignment(subjectAlignments[0]);
     };
 
     const isReadyToGenerate = useMemo(() => {
