@@ -46,7 +46,7 @@ const TipsSection = () => (
 
 const roomTypes = ["Living Room", "Bedroom", "Kitchen", "Bathroom", "Dining Room", "Balcony", "Office"];
 const interiorStyles = [
-  "Japanese", "Italian", "American", "Modern", "Futuristic", "Mid-Century Modern", "Coastal"
+  "Japanese", "Italian", "American", "Traditional Indian", "Modern", "Futuristic", "Mid-Century Modern", "Coastal"
 ];
 const colorPalettes = ["Neutral", "Warm", "Cool"];
 const lightingMoods = ["Bright Daylight", "Warm Evening", "Dramatic Spotlight"];
