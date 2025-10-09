@@ -9,6 +9,7 @@ import {
   autoCaptionsAction,
   aiFutureSelfAction,
   magicInteriorAction,
+  recreateChildhoodAction,
 } from '@/app/actions';
 import type { Feature } from '@/lib/types';
 import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star, MapPin, Sofa } from 'lucide-react';
@@ -214,7 +215,7 @@ export const features: Feature[] = [
     isComingSoon: true,
     outputType: 'text',
   },
-  {
+    {
     name: 'Magic Bills',
     description: 'Upload bills → get a monthly spending summary.',
     path: '/dashboard/magic-bills',
@@ -226,6 +227,7 @@ export const features: Feature[] = [
     isComingSoon: true,
     outputType: 'text',
   },
+
 
   // Personal Magic
   {
@@ -245,7 +247,7 @@ export const features: Feature[] = [
     path: '/dashboard/magic-interior',
     icon: Sofa,
     creditCost: 3,
-    action: (photoDataUri, userId, roomType, styleSelected, options) => magicInteriorAction(photoDataUri, roomType!, styleSelected!, options!, userId),
+    action: (photoDataUri, userId, roomType, styleSelected, options) => magicInteriorAction(photoDataUri, userId, roomType!, styleSelected!, options!),
     showBeforeAfterSlider: false,
     category: featureCategories.PERSONAL_MAGIC,
     outputType: 'image',
@@ -262,6 +264,18 @@ export const features: Feature[] = [
     isComingSoon: true,
     outputType: 'text',
   },
+  {
+    name: 'Recreate Childhood Place',
+    description: 'Travel back to your memories.',
+    path: '/dashboard/recreate-childhood',
+    icon: MapPin,
+    creditCost: 3,
+    action: (photoDataUri, userId, memoryText, inputType, placeType, style, intensity) => recreateChildhoodAction(photoDataUri, userId, memoryText!, inputType!, placeType!, style!, intensity!),
+    showBeforeAfterSlider: true,
+    category: featureCategories.PERSONAL_MAGIC,
+    outputType: 'image',
+  },
+
 
   // Premium & Coming Soon
   {
