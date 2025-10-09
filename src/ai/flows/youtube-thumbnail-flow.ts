@@ -40,7 +40,7 @@ const youtubeThumbnailFlow = ai.defineFlow(
   },
   async (input) => {
     const prompt = `
-      Create a cinematic, scroll-stopping YouTube thumbnail at 1280x720 resolution.
+      Create a cinematic, scroll-stopping YouTube thumbnail at a strict resolution of 1280x720 pixels (16:9 aspect ratio).
 
       Inputs:
       Category: ${input.categorySelected}
@@ -91,7 +91,7 @@ const youtubeThumbnailFlow = ai.defineFlow(
       Ensure entire composition feels integrated and photo-realistic, not pasted.
 
       Output Requirements:
-      - Resolution: 1280x720 px (16:9)
+      - Resolution: MUST BE EXACTLY 1280x720 px (16:9). This is critical.
       - Style: photo-realistic, cinematic
       - Format: JPG (under 1.5MB)
 
@@ -107,8 +107,6 @@ const youtubeThumbnailFlow = ai.defineFlow(
       model: 'googleai/gemini-2.5-flash-image-preview',
       config: {
         responseModalities: ['TEXT', 'IMAGE'],
-        width: 1280,
-        height: 720,
       },
     });
 
