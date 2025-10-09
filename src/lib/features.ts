@@ -5,6 +5,7 @@ import {
   studioEnhanceAction,
   colorizePhotoAction,
   pictureWithCelebrityAction,
+  createYoutubeThumbnailAction,
 } from '@/app/actions';
 import type { Feature } from '@/lib/types';
 import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star } from 'lucide-react';
@@ -99,7 +100,7 @@ export const features: Feature[] = [
     path: '/dashboard/youtube-thumbnail',
     icon: Type,
     creditCost: 2,
-    action: placeholderAction,
+    action: (photoDataUri, userId, title) => createYoutubeThumbnailAction(photoDataUri, title!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
   },

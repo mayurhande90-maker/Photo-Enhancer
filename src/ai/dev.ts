@@ -8,3 +8,4 @@ import '@/ai/flows/enhance-from-prompt.ts';
 import '@/ai/flows/analyze-image.ts';
 import '@/ai/flows/celebrity-picture.ts';
 import '@/ai/flows/colorize-photo.ts';
+import '@/ai/flows/youtube-thumbnail-flow.ts';

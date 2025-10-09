@@ -8,7 +8,7 @@ export type Feature = {
   path: string;
   icon: LucideIcon;
   creditCost: number;
-  action: (photoDataUri: string, userId: string, celebrity?: string, location?: string) => Promise<{ enhancedPhotoDataUri: string }>;
+  action: (photoDataUri: string, userId: string, ...args: any[]) => Promise<{ enhancedPhotoDataUri: string }>;
   showBeforeAfterSlider: boolean;
   category: string;
   isPremium?: boolean;

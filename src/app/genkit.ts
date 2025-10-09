@@ -7,4 +7,5 @@ import '@/ai/flows/enhance-from-prompt';
 import '@/ai/flows/product-shot-ad-copy';
 import '@/ai/flows/analyze-image';
 import '@/ai/flows/colorize-photo';
+import '@/ai/flows/youtube-thumbnail-flow';
     

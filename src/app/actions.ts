@@ -5,6 +5,7 @@ import { enhanceFromPrompt } from '@/ai/flows/enhance-from-prompt';
 import { analyzeImage } from '@/ai/flows/analyze-image';
 import { pictureWithCelebrity } from '@/ai/flows/celebrity-picture';
 import { colorizePhoto } from '@/ai/flows/colorize-photo';
+import { createYouTubeThumbnail } from '@/ai/flows/youtube-thumbnail-flow';
 import type { AnalyzeImageOutput } from '@/lib/types';
 
 async function processImageWithAI(
@@ -58,4 +59,12 @@ export async function pictureWithCelebrityAction(photoDataUri: string, celebrity
     locationName: location 
   });
   return result;
+}
+
+export async function createYoutubeThumbnailAction(photoDataUri: string, title: string, userId: string) {
+    const result = await createYouTubeThumbnail({
+        photoDataUri: photoDataUri,
+        title: title
+    });
+    return result;
 }
