@@ -11,6 +11,7 @@ export type Feature = {
   action: (photoDataUri: string, userId: string, ...args: any[]) => Promise<any>;
   showBeforeAfterSlider: boolean;
   category: string;
+  outputType: 'image' | 'text';
   isPremium?: boolean;
   isComingSoon?: boolean;
 };

@@ -137,24 +137,28 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
 
       const result = await feature.action(dataUri, user.uid);
       
-      const resultImageUri = result.enhancedPhotoDataUri || result.agedPhotoDataUri || result.redesignedPhotoDataUri || result.modernizedPhotoDataUri;
+      if (feature.outputType === 'image') {
+        const resultImageUri = result.enhancedPhotoDataUri || result.agedPhotoDataUri || result.redesignedPhotoDataUri || result.modernizedPhotoDataUri;
 
-      if (resultImageUri) {
-         setProcessedImageUrl(resultImageUri);
-         try {
-            await saveAIOutput(
-                feature.name,
-                resultImageUri,
-                'image/jpeg',
-                user.uid
-            );
-             // Toast is shown inside saveAIOutput
-        } catch (saveError: any) {
-             console.error("Failed to save image to Firestore:", saveError);
-             // Toast is shown inside saveAIOutput
+        if (resultImageUri) {
+            setProcessedImageUrl(resultImageUri);
+            try {
+                await saveAIOutput(
+                    feature.name,
+                    resultImageUri,
+                    'image/jpeg',
+                    user.uid
+                );
+            } catch (saveError: any) {
+                console.error("Failed to save image to Firestore:", saveError);
+            }
+        } else {
+            throw new Error('AI generation failed to return an image.');
         }
       } else {
-         throw new Error('AI generation failed to return an image.');
+        // Handle text or other output types here if needed in the future
+        console.log("Received non-image output:", result);
+        toast({ title: 'Success!', description: 'The AI completed the task.' });
       }
       
       await consumeCredits(feature.creditCost);

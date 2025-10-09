@@ -34,6 +34,7 @@ export const features: Feature[] = [
     action: enhancePhotoAction,
     showBeforeAfterSlider: true,
     category: featureCategories.IMAGE_STUDIO,
+    outputType: 'image',
   },
   {
     name: 'Background Removal',
@@ -44,6 +45,7 @@ export const features: Feature[] = [
     action: removeBackgroundAction,
     showBeforeAfterSlider: false,
     category: featureCategories.IMAGE_STUDIO,
+    outputType: 'image',
   },
   {
     name: 'Photo Studio',
@@ -54,6 +56,7 @@ export const features: Feature[] = [
     action: studioEnhanceAction,
     showBeforeAfterSlider: false,
     category: featureCategories.IMAGE_STUDIO,
+    outputType: 'image',
   },
   {
     name: 'Photo Colourize',
@@ -64,6 +67,7 @@ export const features: Feature[] = [
     action: colorizePhotoAction,
     showBeforeAfterSlider: true,
     category: featureCategories.IMAGE_STUDIO,
+    outputType: 'image',
   },
    {
     name: 'Picture with Celebrity',
@@ -74,6 +78,7 @@ export const features: Feature[] = [
     action: (photoDataUri, userId, celebrity, location) => pictureWithCelebrityAction(photoDataUri, celebrity!, location!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.IMAGE_STUDIO,
+    outputType: 'image',
   },
   
   // Content & Brand
@@ -86,6 +91,7 @@ export const features: Feature[] = [
     action: (photoDataUri, userId, videoType, category, mood, alignment) => createYoutubeThumbnailAction(photoDataUri, videoType!, category!, mood!, alignment!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
+    outputType: 'image',
   },
   {
     name: 'Auto Captions + Hashtags',
@@ -96,6 +102,7 @@ export const features: Feature[] = [
     action: (photoDataUri, userId, platform, tone, goal) => autoCaptionsAction(photoDataUri, userId, platform!, tone!, goal!),
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
+    outputType: 'text',
   },
   {
     name: 'Ad Creative Generator',
@@ -107,6 +114,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
     isComingSoon: true,
+    outputType: 'image',
   },
   {
     name: 'Brand Guidelines Generator',
@@ -118,6 +126,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
     isComingSoon: true,
+    outputType: 'text',
   },
   {
     name: 'Mockup Generator',
@@ -129,6 +138,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
     isComingSoon: true,
+    outputType: 'image',
   },
   {
     name: 'Festive Post Generator',
@@ -140,6 +150,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
     isComingSoon: true,
+    outputType: 'image',
   },
   {
     name: 'Post Scheduler',
@@ -151,6 +162,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
     isComingSoon: true,
+    outputType: 'text',
   },
 
   // Smart Office
@@ -164,6 +176,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.SMART_OFFICE,
     isComingSoon: true,
+    outputType: 'image',
   },
   {
     name: 'PDF Tools',
@@ -175,6 +188,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.SMART_OFFICE,
     isComingSoon: true,
+    outputType: 'text',
   },
   {
     name: 'Notes Generator',
@@ -186,6 +200,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.SMART_OFFICE,
     isComingSoon: true,
+    outputType: 'text',
   },
    {
     name: 'House Budget Simplifier',
@@ -197,6 +212,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.SMART_OFFICE,
     isComingSoon: true,
+    outputType: 'text',
   },
   {
     name: 'Magic Bills',
@@ -208,6 +224,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.SMART_OFFICE,
     isComingSoon: true,
+    outputType: 'text',
   },
 
   // Personal Magic
@@ -220,6 +237,7 @@ export const features: Feature[] = [
     action: (photoDataUri, userId, ageGap) => aiFutureSelfAction(photoDataUri, ageGap!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.PERSONAL_MAGIC,
+    outputType: 'image',
   },
   {
     name: 'Magic Interior',
@@ -227,9 +245,10 @@ export const features: Feature[] = [
     path: '/dashboard/magic-interior',
     icon: Sofa,
     creditCost: 3,
-    action: (photoDataUri, userId, roomType, styleSelected, options) => magicInteriorAction(photoDataUri, userId, roomType!, styleSelected!, options!),
+    action: (photoDataUri, userId, roomType, styleSelected, options) => magicInteriorAction(photoDataUri, roomType!, styleSelected!, options!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.PERSONAL_MAGIC,
+    outputType: 'image',
   },
   {
     name: 'AI Time Capsule',
@@ -241,6 +260,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.PERSONAL_MAGIC,
     isComingSoon: true,
+    outputType: 'text',
   },
 
   // Premium & Coming Soon
@@ -254,6 +274,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.PREMIUM,
     isComingSoon: true,
+    outputType: 'text',
   },
   {
     name: 'AI Video Enhancer',
@@ -265,6 +286,7 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.PREMIUM,
     isComingSoon: true,
+    outputType: 'image',
   },
   {
     name: 'Advanced Ad Generator',
@@ -276,5 +298,6 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.PREMIUM,
     isPremium: true,
+    outputType: 'image',
   },
 ];
