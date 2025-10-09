@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/icons';
 import { features, featureCategories } from '@/lib/features';
-import { Home, Settings, Image, Megaphone, Briefcase, Sparkles, Star as StarIcon } from 'lucide-react';
+import { Home, Settings, Image as CreationsIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon, Image as ImageStudioIcon } from 'lucide-react';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/accordion"
 
 const categoryIcons = {
-  [featureCategories.IMAGE_STUDIO]: Image,
+  [featureCategories.IMAGE_STUDIO]: ImageStudioIcon,
   [featureCategories.CONTENT_BRAND]: Megaphone,
   [featureCategories.SMART_OFFICE]: Briefcase,
   [featureCategories.PERSONAL_MAGIC]: Sparkles,
@@ -65,7 +65,7 @@ export function DashboardSidebar() {
                         : 'text-muted-foreground hover:text-foreground'
                     )}
                 >
-                    <Image className="h-5 w-5" />
+                    <CreationsIcon className="h-5 w-5" />
                     <span>My Creations</span>
                 </Link>
                  <Accordion type="multiple" defaultValue={categories} className="w-full">
@@ -82,7 +82,7 @@ export function DashboardSidebar() {
                                 <AccordionContent className="pl-4">
                                     {categoryFeatures.map((feature) => (
                                         <Link
-                                        href={feature.path}
+                                        href={feature.isComingSoon || feature.isPremium ? '#' : feature.path}
                                         key={feature.name}
                                         className={cn(
                                             'flex items-center gap-3 rounded-lg px-3 py-2 transition-all text-sm',
