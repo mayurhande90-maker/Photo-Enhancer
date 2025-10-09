@@ -76,11 +76,13 @@ export default function PictureWithCelebrityPage() {
     const [selectedCelebrity, setSelectedCelebrity] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
     const [consentChecked, setConsentChecked] = useState(false);
+    const [processingText, setProcessingText] = useState('');
 
     useEffect(() => {
         let interval: NodeJS.Timeout;
         if (isProcessing) {
           setProgress(0);
+          setProcessingText(`Please wait while we create your photo with ${selectedCelebrity}... this may take a few seconds.`);
           interval = setInterval(() => {
             setProgress(prev => {
               if (prev >= 95) {
@@ -90,6 +92,8 @@ export default function PictureWithCelebrityPage() {
               return prev + 5;
             });
           }, 600);
+        } else {
+            setProcessingText('');
         }
         
         if (processedImageUrl) {
@@ -98,7 +102,7 @@ export default function PictureWithCelebrityPage() {
         }
 
         return () => clearInterval(interval);
-    }, [isProcessing, processedImageUrl]);
+    }, [isProcessing, processedImageUrl, selectedCelebrity]);
 
     const handleFileSelect = (file: File) => {
         handleReset();
@@ -210,30 +214,27 @@ export default function PictureWithCelebrityPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                     {/* Left Column */}
                     <div>
-                        {!originalDataUri ? (
-                            <>
+                        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
+                            {!originalDataUri ? (
                                 <FileUploader onFileSelect={handleFileSelect} />
-                                <TipsSection />
-                            </>
-                        ) : (
-                            <div className="relative aspect-video w-full overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
+                            ) : (
                                 <Image 
                                     src={processedImageUrl || originalDataUri} 
                                     alt={processedImageUrl ? "Generated image" : "Original upload"} 
                                     fill 
                                     className={cn("object-contain transition-all duration-500", isProcessing && "opacity-50 blur-sm")} 
                                 />
+                            )}
 
-                                {isProcessing && (
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white backdrop-blur-sm">
-                                        <Wand2 className="h-12 w-12 animate-pulse" />
-                                        <p className="mt-4 font-semibold text-lg">Generating your masterpiece...</p>
-                                        <Progress value={progress} className="w-4/5 max-w-sm mx-auto mt-2" />
-                                        <p className="text-sm mt-1">{progress}%</p>
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                            {isProcessing && (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white backdrop-blur-sm p-4">
+                                    <Wand2 className="h-12 w-12 animate-pulse" />
+                                    <p className="mt-4 font-semibold text-lg text-center">{processingText}</p>
+                                    <Progress value={progress} className="w-4/5 max-w-sm mx-auto mt-2" />
+                                    <p className="text-sm mt-1">{progress}%</p>
+                                </div>
+                            )}
+                        </div>
                         
                         {isResultReady && (
                              <Card className="w-full mt-4 rounded-3xl">
@@ -292,6 +293,9 @@ export default function PictureWithCelebrityPage() {
                                         </Select>
                                     </div>
                                 </div>
+                                
+                                <TipsSection />
+
                                 <div className="flex items-start space-x-3 pt-2">
                                     <Checkbox id="consent" checked={consentChecked} onCheckedChange={(checked) => setConsentChecked(checked as boolean)} className="mt-1" disabled={isProcessing || isResultReady || !originalDataUri}/>
                                     <Label htmlFor="consent" className="text-xs font-normal text-muted-foreground">
@@ -311,5 +315,3 @@ export default function PictureWithCelebrityPage() {
         </div>
     );
 }
-
-    
