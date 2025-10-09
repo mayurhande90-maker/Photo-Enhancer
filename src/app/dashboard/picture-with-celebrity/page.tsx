@@ -17,7 +17,7 @@ import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Wand2, Download, RefreshCw, Star, Users, Lightbulb, CheckCircle2, Sparkles } from 'lucide-react';
+import { Wand2, Download, RefreshCw, Star, Users, Lightbulb, CheckCircle2, Sparkles, Loader2 } from 'lucide-react';
 import { features } from '@/lib/features';
 import { analyzeImageAction } from '@/app/actions';
 
@@ -71,6 +71,14 @@ const AfterUploadState = ({ file, analysis }: { file: File; analysis: string; })
                 </p>
              </div>
         )}
+    </div>
+);
+
+const ProcessingState = ({ progress }: { progress: number; }) => (
+    <div className="text-center p-8 rounded-3xl border-2 border-dashed border-primary/50 h-full bg-primary/10 animate-pulse flex flex-col justify-center">
+        <h3 className="font-semibold text-lg text-primary">✨ Magicpixa is working on your image…</h3>
+        <p className="text-primary/80 text-sm mt-1">Blending realities, adjusting lighting, and adding clarity.</p>
+        <Progress value={progress} className="w-full max-w-sm mx-auto mt-4" />
     </div>
 );
 
@@ -222,9 +230,9 @@ export default function PictureWithCelebrityPage() {
                         </div>
                         <div className="relative aspect-square w-full overflow-hidden rounded-3xl border bg-muted flex items-center justify-center">
                            {isProcessing ? (
-                                <div className="text-center p-4">
-                                    <h3 className="font-semibold text-lg text-primary">✨ Generating your photo...</h3>
-                                    <Progress value={progress} className="w-full max-w-sm mx-auto mt-4" />
+                                <div className="text-center p-4 text-muted-foreground">
+                                    <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
+                                    <p className="mt-2 font-semibold">Generating your photo...</p>
                                 </div>
                            ) : processedImageUrl ? (
                                 <>
@@ -267,8 +275,9 @@ export default function PictureWithCelebrityPage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                        <div className="space-y-6">
+                        <div className="space-y-6 min-h-[200px] flex flex-col justify-center">
                             {isAwaitingUpload && <BeforeUploadState />}
+                            {isProcessing && <ProcessingState progress={progress} />}
                             {!isAwaitingUpload && !isProcessing && originalFile && <AfterUploadState file={originalFile} analysis={imageAnalysis} />}
                         </div>
 
@@ -321,3 +330,4 @@ export default function PictureWithCelebrityPage() {
             </section>
         </div>
     );
+}
