@@ -55,7 +55,7 @@ const celebrityPictureFlow = ai.defineFlow(
       *   Celebrity: ${input.celebrityName}
       *   Location: ${input.locationName}
 
-      Generate a single, hyper-realistic 1024x1024 image based on these instructions.
+      Generate a single, hyper-realistic 512x512 image based on these instructions.
     `;
 
     const { media } = await ai.generate({
