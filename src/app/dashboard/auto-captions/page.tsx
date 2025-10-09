@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useUser, useFirestore } from '@/firebase';
 import { useCredit } from '@/hooks/use-credit';
 import { useToast } from '@/hooks/use-toast';
-import { autoCaptionsAction } from '@/app/actions';
+import { autoCaptionsAction, analyzeImageAction } from '@/app/actions';
 import { saveAIOutput } from '@/firebase/auth/client-update-profile';
 import { FileUploader } from '@/components/file-uploader';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ import { features } from '@/lib/features';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import type { AutoCaptionOutput } from '@/lib/types';
+import type { AutoCaptionOutput, AnalyzeImageOutput } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const platforms = ["Instagram Post", "Instagram Reel", "Facebook Post", "X/Twitter", "LinkedIn Post", "YouTube Community"];
@@ -156,6 +156,8 @@ export default function AutoCaptionsPage() {
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState<string | null>(null);
     const [results, setResults] = useState<AutoCaptionOutput | null>(null);
+    const [imageAnalysis, setImageAnalysis] = useState<string | null>(null);
+
 
     const [platform, setPlatform] = useState(platforms[0]);
     const [tone, setTone] = useState(tones[0]);
@@ -191,6 +193,15 @@ export default function AutoCaptionsPage() {
         }
     }, [results]);
 
+    useEffect(() => {
+        if (originalDataUri && !results) {
+            setImageAnalysis("Analyzing image...");
+            analyzeImageAction(originalDataUri)
+                .then(result => setImageAnalysis(result.analysis))
+                .catch(() => setImageAnalysis("Perfect upload! Let’s see what Magicpixa can do."));
+        }
+    }, [originalDataUri, results]);
+
 
     const handleFileSelect = (file: File) => {
         handleReset();
@@ -220,6 +231,7 @@ export default function AutoCaptionsPage() {
             
             if (result) {
                 setResults(result);
+                // Not saving text output to creations for now
                 // await saveAIOutput(feature.name, result, 'text/plain', user.uid);
                 await consumeCredits(feature.creditCost);
             } else {
@@ -241,11 +253,12 @@ export default function AutoCaptionsPage() {
         setError(null);
         setIsProcessing(false);
         setProgress(0);
+        setImageAnalysis(null);
     };
 
     const isReadyToGenerate = useMemo(() => {
-        return !!originalFile && !!user && !isProcessing && !isCreditLoading;
-    }, [originalFile, user, isProcessing, isCreditLoading]);
+        return !!originalFile && !!user && !isProcessing && !isCreditLoading && !!imageAnalysis && imageAnalysis !== "Analyzing image...";
+    }, [originalFile, user, isProcessing, isCreditLoading, imageAnalysis]);
     
     const isResultReady = !!results && !isProcessing;
 
@@ -319,6 +332,14 @@ export default function AutoCaptionsPage() {
                                 </div>
                             )}
                         </div>
+                        {imageAnalysis && !isResultReady && (
+                            <div className="p-4 rounded-2xl bg-primary/10 text-primary-foreground max-w-md mx-auto w-full">
+                                <p className="text-sm font-medium text-primary flex items-center gap-2">
+                                    <Sparkles className="h-4 w-4 text-yellow-400" />
+                                    {imageAnalysis}
+                                </p>
+                            </div>
+                        )}
                     </div>
                    
                     <div>
@@ -383,3 +404,5 @@ export default function AutoCaptionsPage() {
         </div>
     );
 }
+
+    
