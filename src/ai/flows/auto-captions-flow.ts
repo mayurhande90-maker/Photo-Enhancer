@@ -18,42 +18,23 @@ export async function generateCaptions(input: AutoCaptionInput): Promise<AutoCap
 }
 
 
-const imageAnalysisPrompt = ai.definePrompt(
-  {
-    name: 'autoCaptionImageAnalysis',
-    input: { schema: z.object({ photoDataUri: z.string() }) },
-    output: { schema: AutoCaptionImageAnalysisSchema },
-    prompt: `You are a Visual Data Extractor. Your task is to analyze the provided image and return a structured JSON analysis. Be precise and objective. Do not infer or add creative details.
-    
-    1.  **Objects**: Identify and list all primary and secondary objects visible in the image. Be specific (e.g., "glass jar with white lid," "dried gooseberries," "green leaves").
-    2.  **Scene**: Describe the setting (e.g., "kitchen counter," "white studio background," "outdoor market").
-    3.  **People**: State if people are present. Do NOT identify or describe them.
-    4.  **Colors**: List the dominant colors in hex or descriptive format.
-    5.  **Text**: Read and transcribe any visible text on labels or packaging exactly as it appears.
-
-    Image: {{media url=photoDataUri}}
-    `,
-    model: 'googleai/gemini-2.5-flash',
-  }
-);
-
-
 const captionGenerationPrompt = `
 System instruction:
-"You are a professional social media copywriter and content strategist. You will receive a JSON-style image analysis and must output production-ready social captions and hashtag groups in JSON. Always follow safety rules: never identify or name people in the image, never invent personal data or claim. Keep text ad-friendly and policy-compliant. Ensure spacing, line breaks and punctuation are formatted for direct posting."
+"You are a professional social media copywriter and content strategist. Your first task is to meticulously analyze the provided image. After analysis, you will output a structured JSON object containing production-ready social captions and optimized hashtag groups. Always follow safety rules: never identify or name people in the image, never invent personal data or claims. Keep text ad-friendly and policy-compliant. Ensure spacing, line breaks and punctuation are formatted for direct posting."
 
-User input JSON:
+Image to Analyze: {{media url=photoDataUri}}
+
+User Preferences:
 {
   "platform": "{{platform}}",
   "tone": "{{tone}}",
   "goal": "{{goal}}",
-  "language": "{{language}}",
-  "image_analysis": {{{json imageAnalysis}}}
+  "language": "{{language}}"
 }
 
 Generation instructions:
 "Task:
-1) Based on the provided image analysis, produce:
+1) Based directly on the visual information in the image provided, produce:
    - Three caption variations (short, mid, long). Each caption must be coherent, emotionally resonant, platform-appropriate, and inline with the chosen tone and goal.
    - A suggested CTA for each caption (e.g., 'Link in bio', 'Watch full video', 'Comment your thoughts', 'Tap to shop').
 2) Generate hashtag groups:
@@ -110,14 +91,7 @@ const autoCaptionsFlow = ai.defineFlow(
     retries: 2,
   },
   async (input) => {
-    // Step 1: Analyze the image
-    const { output: imageAnalysis } = await imageAnalysisPrompt({ photoDataUri: input.photoDataUri });
-
-    if (!imageAnalysis) {
-        throw new Error('Image analysis failed.');
-    }
-    
-    // Step 2: Generate captions based on the analysis
+    // Combined single-step flow: analyze image and generate captions together
     const { output } = await ai.generate({
       prompt: captionGenerationPrompt,
       model: 'googleai/gemini-2.5-flash',
@@ -126,11 +100,11 @@ const autoCaptionsFlow = ai.defineFlow(
           schema: AutoCaptionOutputSchema,
       },
       context: {
+        photoDataUri: input.photoDataUri,
         platform: input.platform,
         tone: input.tone,
         goal: input.goal,
         language: input.language,
-        imageAnalysis: imageAnalysis,
       }
     });
 
