@@ -38,25 +38,29 @@ const celebrityPictureFlow = ai.defineFlow(
   },
   async (input) => {
     const prompt = `
-      You are a hyper-realistic photo generation expert. Your task is to create a new, authentic, and natural-looking photograph featuring two people: a user and a celebrity, placed within a specified location.
+      You are a world-class expert in photorealistic image synthesis. Your task is to create a new, authentic, and natural-looking **candid photograph** featuring two people: a user (provided as an image) and a celebrity, placed seamlessly within a specified location.
 
-      **CRITICAL RULES:**
-      1.  **SHOT TYPE:** The final image must be a **front-facing mid-shot** of both the user and the celebrity. Both individuals must be looking directly at the camera.
-      2.  **PRESERVE IDENTITIES:** Do NOT alter the facial features, body structure, or distinct characteristics of the user or the celebrity in any way. Their identities must be perfectly preserved.
-      3.  **NATURAL INTEGRATION:** Blend the user and the celebrity (${input.celebrityName}) seamlessly into the chosen location: "${input.locationName}".
-      4.  **REALISTIC ADJUSTMENTS:**
-          *   **Lighting & Shadows:** Apply realistic lighting and shadows to both individuals that match the environment of the "${input.locationName}".
-          *   **Clothing:** Adapt their clothing to be appropriate for the location (e.g., casual for a beach, formal for a red carpet).
-          *   **Scale & Perspective:** Ensure both figures are proportionate to each other and the background.
-      5.  **PHOTOGRAPHIC QUALITY:** The final image must look like a real photograph, not an AI composite. Apply a subtle, natural filmic grain to enhance authenticity.
-      6.  **WATERMARK:** Add a small, discreet watermark in the bottom-right corner that says 'Magicpixa'.
+      **CRITICAL DIRECTIVES - Adherence is mandatory:**
+      1.  **SHOT TYPE:** The final image **MUST** be a **candid mid-shot**. Both the user and the celebrity should appear natural, as if caught in a real-life moment. They should both be looking generally towards the camera, but not in a perfectly posed way.
+      2.  **IDENTITY PRESERVATION (HIGHEST PRIORITY):**
+          *   **User:** Do NOT alter the facial features, body structure, or distinct characteristics of the user from the provided photo. Their identity must be perfectly preserved.
+          *   **Celebrity:** The celebrity, **${input.celebrityName}**, **MUST** look exactly like their real-world self. Do not alter their facial features or body structure in any way. The likeness must be unmistakable.
+      3.  **SEAMLESS & NATURAL INTEGRATION:**
+          *   Blend the user and the celebrity (${input.celebrityName}) seamlessly into the chosen location: "${input.locationName}".
+          *   The interaction should look natural and unposed.
+      4.  **PHOTOGRAPHIC REALISM:**
+          *   **Lighting & Shadows:** Apply realistic, directional lighting and soft shadows to both individuals that perfectly match the environment of "${input.locationName}".
+          *   **Clothing:** Adapt their clothing to be appropriate and natural for the location (e.g., casual for a beach, formal for a red carpet).
+          *   **Scale & Perspective:** Ensure both figures are proportionate to each other and the background, maintaining correct perspective.
+          *   **Texture:** The final image must look like a real photograph, not a digital painting or AI composite. Apply a subtle, natural filmic grain to enhance authenticity.
+      5.  **WATERMARK:** Add a small, discreet watermark in the bottom-right corner that says 'Magicpixa'.
 
       **INPUTS:**
       *   User's Photo: {{media url=userPhotoDataUri}}
       *   Celebrity: ${input.celebrityName}
       *   Location: ${input.locationName}
 
-      Generate a single, hyper-realistic 512x512 image based on these instructions.
+      Generate a single, hyper-realistic 512x512 image based on these strict instructions.
     `;
 
     const { media } = await ai.generate({
