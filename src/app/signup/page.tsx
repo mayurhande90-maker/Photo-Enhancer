@@ -78,13 +78,27 @@ export default function SignupPage() {
 
         } catch (error: any) {
             console.error("Signup failed:", error);
-            toast({
-                title: 'Signup Failed',
-                description: error.code === 'auth/email-already-in-use' 
-                    ? 'This email is already associated with an account.'
-                    : error.message || 'An unknown error occurred.',
-                variant: 'destructive',
-            });
+            if (error.code === 'auth/email-already-in-use') {
+                toast({
+                    title: 'Email Already Registered',
+                    description: (
+                        <span>
+                            This email is already in use. Please{' '}
+                            <Link href="/login" className="underline font-bold">
+                                log in
+                            </Link>
+                            .
+                        </span>
+                    ),
+                    variant: 'destructive',
+                });
+            } else {
+                toast({
+                    title: 'Signup Failed',
+                    description: error.message || 'An unknown error occurred.',
+                    variant: 'destructive',
+                });
+            }
         } finally {
             setIsLoading(false);
         }
