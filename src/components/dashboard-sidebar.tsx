@@ -28,10 +28,14 @@ const categoryIcons = {
 export function DashboardSidebar() {
   const pathname = usePathname();
   const categories = Object.values(featureCategories);
-  const categorizedFeatures = categories.map(category => ({
-      name: category,
-      features: features.filter(f => f.category === category)
-  }));
+  
+  const categorizedFeatures = categories.reduce((acc, category) => {
+    const categoryFeatures = features.filter(f => f.category === category);
+    if (categoryFeatures.length > 0) {
+      acc.push({ name: category, features: categoryFeatures });
+    }
+    return acc;
+  }, [] as { name: string; features: typeof features }[]);
 
 
   return (
@@ -70,9 +74,7 @@ export function DashboardSidebar() {
                 </Link>
                  <Accordion type="multiple" defaultValue={categories} className="w-full">
                     {categorizedFeatures.map(({ name, features: categoryFeatures }) => {
-                        const CategoryIcon = categoryIcons[name];
-                        if (categoryFeatures.length === 0) return null;
-                        
+                        const CategoryIcon = categoryIcons[name as keyof typeof categoryIcons];
                         return (
                             <AccordionItem value={name} key={name} className="border-b-0">
                                 <AccordionTrigger className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground hover:text-foreground hover:no-underline">
