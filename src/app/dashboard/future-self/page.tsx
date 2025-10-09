@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -20,7 +19,6 @@ import { features } from '@/lib/features';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { BeforeAfterSlider } from '@/components/before-after-slider';
 
 
 function fileToDataUri(file: File): Promise<string> {
@@ -218,15 +216,11 @@ export default function AIFutureSelfPage() {
                             {!originalDataUri && !isResultReady && (
                                 <FileUploader onFileSelect={handleFileSelect} />
                             )}
-
-                            {isResultReady && originalDataUri && (
-                                <BeforeAfterSlider before={originalDataUri} after={processedImageUrl!} />
-                            )}
-
-                            {!isResultReady && originalDataUri && (
+                            
+                            {(originalDataUri || isResultReady) && (
                                 <Image 
-                                    src={originalDataUri} 
-                                    alt={"Original upload"} 
+                                    src={processedImageUrl || originalDataUri!} 
+                                    alt={processedImageUrl ? "Generated future self" : "Original upload"} 
                                     fill 
                                     className={cn("object-contain transition-all duration-500", isProcessing && "opacity-50 blur-sm")} 
                                 />

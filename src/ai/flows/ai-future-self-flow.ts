@@ -39,27 +39,24 @@ const aiFutureSelfFlow = ai.defineFlow(
   },
   async (input) => {
     const prompt = `
-      You are a high-precision, identity-preserving image editor specializing in photo-realistic age progression.
-      Your task is to take a front-facing photo and generate an aged version, preserving the person's core identity.
+      You are a high-precision, identity-preserving image editor. Your ONLY task is to apply realistic aging effects to the provided photograph.
 
-      **CRITICAL RULES:**
-      1.  **PRESERVE IDENTITY:** You MUST maintain the user's facial bone structure, proportions (jawline, cheekbones, eye spacing), and unique features like moles or scars. Do NOT change their ethnicity, face shape, or core identity. This is the highest priority.
-      2.  **REALISTIC AGING:** Apply age-related changes that are natural and appropriate for the selected age gap of ${input.ageGap} years.
-          -   **For 10-20 years:** Introduce subtle forehead lines, slight crow's feet, and minimal softening of the jawline.
-          -   **For 30-40 years:** Add more pronounced wrinkles, visible skin texture changes, age spots, and natural sagging (jowls, neck) consistent with gravity.
-      3.  **HAIR:** Realistically thin the hair and add greying, especially at the temples and roots, appropriate for the age gap.
-      4.  **CONSISTENCY:** Match the original photo's lighting, shadows, perspective, and background. The aged face must blend seamlessly.
-      5.  **NO DISTORTION:** Do not warp, stretch, or create a caricature. The result must be a believable, high-quality photograph.
-      6.  **WATERMARK:** Add a small, discreet watermark in the bottom-right corner that says 'Magicpixa'.
+      **CRITICAL DIRECTIVES (NON-NEGOTIABLE):**
+      1.  **IDENTITY LOCK (HIGHEST PRIORITY):** You MUST NOT change the person's core identity. The face in the output image must be the SAME person as in the input image. Preserve their facial bone structure, proportions (jawline, cheekbones, eye spacing), ethnicity, and unique features like moles or scars.
+      2.  **EDIT, DO NOT REPLACE:** This is an image editing task, NOT a generation task. Use the provided photo as the base and apply aging layers on top of it. Do not invent a new face.
+      3.  **REALISTIC AGING:** Apply natural and subtle age-related changes appropriate for the selected age gap of ${input.ageGap} years.
+          -   Introduce forehead lines, crow's feet, skin texture changes, and natural gravitational sagging (jowls, neck) as appropriate for the age.
+          -   Realistically thin the hair and add greying, especially at the temples and roots.
+      4.  **CONSISTENCY:** Match the original photo's lighting, shadows, perspective, and background. The result must be seamless.
+      5.  **WATERMARK:** Add a small, discreet watermark in the bottom-right corner that says 'Magicpixa'.
 
-      **NEGATIVE PROMPT (What NOT to do):**
-      - NO face-swapping.
-      - NO changing fundamental bone structure or ethnicity.
-      - NO adding or removing unrelated objects.
+      **NEGATIVE PROMPT (WHAT NOT TO DO):**
+      - **NO FACE SWAPPING.**
+      - **NO changing the person's fundamental bone structure or facial identity.**
+      - NO creating a different person.
       - NO exaggerated, cartoonish, or caricature-like features.
-      - NO nudity or sexualization.
 
-      Based on these instructions, age the person in the provided image by ${input.ageGap} years.
+      Based on these strict instructions, edit the provided image to age the person by ${input.ageGap} years while maintaining their exact identity.
     `;
 
     const { media } = await ai.generate({
