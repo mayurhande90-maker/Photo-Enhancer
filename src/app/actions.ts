@@ -57,15 +57,10 @@ export async function removeBackgroundAction(app: FirebaseApp, firestore: Firest
   return result;
 }
 
-async function _studioEnhance(photoUrl: string) {
+export async function studioEnhanceAction(app: FirebaseApp, firestore: Firestore, photoUrl: string, userId:string) {
   const prompt =
     'This is a product photo. Enhance it for an e-commerce website. Detect the product type, and create a professional and appealing background. Improve lighting and color to make the product stand out. Do not change the text and design on the product packaging.';
   const result = await processImageWithAI(photoUrl, prompt);
-  return result;
-}
-
-export async function studioEnhanceAction(app: FirebaseApp, firestore: Firestore, photoUrl: string, userId:string) {
-  const result = await _studioEnhance(photoUrl);
   await saveAIOutput(app, firestore, 'Photo Studio', result.enhancedPhotoDataUri, 'image/jpeg', userId);
   return result;
 }
@@ -87,6 +82,8 @@ export async function pictureWithCelebrityAction(app: FirebaseApp, firestore: Fi
 }
 
 export async function createYoutubeThumbnailAction(
+    app: FirebaseApp,
+    firestore: Firestore,
     photoDataUri: string, 
     videoType: string, 
     categorySelected: string,
@@ -101,7 +98,7 @@ export async function createYoutubeThumbnailAction(
         moodSelected,
         alignmentSelected
     });
-    // This action is not saving to creations yet, so we don't call saveAIOutput
+    await saveAIOutput(app, firestore, 'YouTube Thumbnail Creator', result.enhancedPhotoDataUri, 'image/jpeg', userId);
     return result;
 }
 
