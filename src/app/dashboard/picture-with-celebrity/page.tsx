@@ -132,7 +132,7 @@ export default function PictureWithCelebrityPage() {
         setProcessedImageUrl(null);
 
         try {
-            const result = await pictureWithCelebrityAction(originalDataUri, selectedCelebrity, selectedLocation, user.uid);
+            const result = await pictureWithCelebrityAction(app, firestore, originalDataUri, selectedCelebrity, selectedLocation, user.uid);
             
             if (result.enhancedPhotoDataUri) {
                 setProcessedImageUrl(result.enhancedPhotoDataUri);
@@ -186,7 +186,7 @@ export default function PictureWithCelebrityPage() {
                     <Users className="h-4 w-4" />
                     <AlertTitle>Not Enough Credits</AlertTitle>
                     <AlertDescription>
-                        You need {feature.creditCost} credits for this action. <Link href="/#pricing" className="underline font-bold">Upgrade your plan</Link> for more.
+                        You need ${feature.creditCost} credits for this action. <Link href="/#pricing" className="underline font-bold">Upgrade your plan</Link> for more.
                     </AlertDescription>
                 </Alert>
             );
