@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { features } from '@/lib/features';
 import { FileUploader } from '@/components/file-uploader';
@@ -19,6 +19,8 @@ import { saveAIOutput } from '@/firebase/auth/client-update-profile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { analyzeImageAction, colorCorrectAction, restorePhotoAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 function fileToDataUri(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -30,10 +32,11 @@ function fileToDataUri(file: File): Promise<string> {
 }
 
 const ProcessingState = ({ progress, processingText }: { progress: number; processingText: string }) => (
-    <div className="text-center p-8 rounded-3xl border-2 border-dashed border-primary/50 h-full bg-primary/10 animate-pulse flex flex-col justify-center">
-        <h3 className="font-semibold text-lg text-primary">{processingText}</h3>
-        <p className="text-primary/80 text-sm mt-1">Applying AI magic, please wait...</p>
-        <Progress value={progress} className="w-full max-w-sm mx-auto mt-4" />
+    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white backdrop-blur-sm p-4">
+        <Wand2 className="h-12 w-12 animate-pulse" />
+        <p className="mt-4 font-semibold text-lg text-center">{processingText}</p>
+        <Progress value={progress} className="w-4/5 max-w-sm mx-auto mt-2" />
+        <p className="text-sm mt-1">{progress}%</p>
     </div>
 );
 
@@ -53,6 +56,7 @@ export default function EnhancePage() {
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [processingText, setProcessingText] = useState('Magicpixa is working...');
+  const [enhancementMode, setEnhancementMode] = useState<'color' | 'restore'>('color');
 
 
   useEffect(() => {
@@ -74,7 +78,7 @@ export default function EnhancePage() {
     fileToDataUri(file).then(setOriginalDataUri);
   };
 
-  const handleProcessImage = async (mode: 'color' | 'restore') => {
+  const handleProcessImage = async () => {
     if (!originalFile || !user || !originalDataUri || !firestore || !app) return;
     
     if (!isCreditLoading && credits < feature.creditCost) {
@@ -89,7 +93,7 @@ export default function EnhancePage() {
     setIsProcessing(true);
     setError(null);
     setProgress(0);
-    setProcessingText(mode === 'color' ? 'Applying color correction...' : 'Restoring photo quality...');
+    setProcessingText(enhancementMode === 'color' ? 'Applying color correction...' : 'Restoring photo quality...');
 
     const loadingInterval = setInterval(() => {
         setProgress(prev => {
@@ -102,7 +106,7 @@ export default function EnhancePage() {
     }, 500);
 
     try {
-      const action = mode === 'color' ? colorCorrectAction : restorePhotoAction;
+      const action = enhancementMode === 'color' ? colorCorrectAction : restorePhotoAction;
       const result = await action(originalDataUri, user.uid);
       
       if (result.enhancedPhotoDataUri) {
@@ -110,7 +114,7 @@ export default function EnhancePage() {
           await saveAIOutput(
               app,
               firestore,
-              mode === 'color' ? 'Color Correction' : 'Photo Restoration',
+              enhancementMode === 'color' ? 'Color Correction' : 'Photo Restoration',
               result.enhancedPhotoDataUri,
               'image/jpeg',
               user.uid
@@ -143,6 +147,7 @@ export default function EnhancePage() {
     setIsProcessing(false);
     setProgress(0);
     setImageAnalysis("");
+    setEnhancementMode("color");
   };
   
   const renderQuotaAlert = () => {
@@ -209,8 +214,9 @@ export default function EnhancePage() {
             src={originalDataUri}
             alt="Original upload"
             fill
-            className="object-contain"
+            className={cn("object-contain", isProcessing && "opacity-50 blur-sm")}
           />
+          {isProcessing && <ProcessingState progress={progress} processingText={processingText} />}
       </div>
     );
   }
@@ -275,7 +281,6 @@ export default function EnhancePage() {
                                 <p className="text-muted-foreground text-sm mt-1">Supported formats: JPG, PNG, WEBP (max 20MB).</p>
                             </div>
                         )}
-                        {isProcessing && <ProcessingState progress={progress} processingText={processingText} />}
                         {isReadyToProcess && (
                             <div className="p-6 rounded-3xl bg-card/50 h-full flex flex-col justify-center animate-fade-in-up">
                                 <div className="flex items-center gap-4">
@@ -300,35 +305,37 @@ export default function EnhancePage() {
                     </div>
 
                     <Card className="rounded-3xl h-full sticky top-24">
-                        <CardContent className="p-6 space-y-4 flex flex-col justify-between h-full">
+                         <CardHeader>
+                            <CardTitle>Choose Enhancement</CardTitle>
+                            <CardDescription>Select an enhancement mode to apply to your photo.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4 flex flex-col justify-between h-full">
                             <div>
-                                <h2 className="text-xl font-semibold mb-4">Choose Enhancement</h2>
-                                {error && !isProcessing && (
-                                    <Alert variant="destructive" className="rounded-2xl">
-                                        <AlertTitle>Error</AlertTitle>
-                                        <AlertDescription>{error}</AlertDescription>
-                                    </Alert>
-                                )}
                                 {renderQuotaAlert()}
                             </div>
-                            <div className="flex flex-col gap-3">
+                            <RadioGroup value={enhancementMode} onValueChange={(value) => setEnhancementMode(value as 'color' | 'restore')} className="grid grid-cols-2 gap-4" disabled={!isReadyToProcess}>
+                                <Label htmlFor="color-correct" className={cn("flex flex-col items-center justify-center rounded-2xl border-2 p-4 cursor-pointer hover:bg-accent hover:text-accent-foreground", enhancementMode === 'color' && "border-primary")}>
+                                    <RadioGroupItem value="color" id="color-correct" className="sr-only" />
+                                    <Palette className="mb-3 h-7 w-7" />
+                                    <span className="font-bold text-base">Color Correct</span>
+                                    <span className="text-xs text-muted-foreground text-center mt-1">Adjust tones and lighting for a balanced look.</span>
+                                </Label>
+                                <Label htmlFor="restore" className={cn("flex flex-col items-center justify-center rounded-2xl border-2 p-4 cursor-pointer hover:bg-accent hover:text-accent-foreground", enhancementMode === 'restore' && "border-primary")}>
+                                    <RadioGroupItem value="restore" id="restore" className="sr-only" />
+                                    <Edit className="mb-3 h-7 w-7" />
+                                    <span className="font-bold text-base">Restore Photo</span>
+                                     <span className="text-xs text-muted-foreground text-center mt-1">Enhance sharpness and clarity in blurry photos.</span>
+                                </Label>
+                            </RadioGroup>
+                            <div className="flex flex-col gap-3 pt-4">
                                  <Button 
                                     size="lg" 
-                                    className="rounded-2xl h-12" 
-                                    onClick={() => handleProcessImage('color')} 
+                                    className="rounded-2xl h-12 w-full" 
+                                    onClick={handleProcessImage} 
                                     disabled={!user || !originalFile || isProcessing || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}
                                 >
-                                    <Palette className="mr-2 h-5 w-5" />
-                                    Color Correct
-                                </Button>
-                                 <Button 
-                                    size="lg" 
-                                    className="rounded-2xl h-12" 
-                                    onClick={() => handleProcessImage('restore')} 
-                                    disabled={!user || !originalFile || isProcessing || isCreditLoading || credits < feature.creditCost || imageAnalysis === "Analyzing image..."}
-                                >
-                                    <Edit className="mr-2 h-5 w-5" />
-                                    Restore Photo
+                                    <Wand2 className="mr-2 h-5 w-5" />
+                                    Generate for {feature.creditCost} Credit
                                 </Button>
                                 <div className="text-center text-sm text-muted-foreground pt-2">
                                     {isUserLoading || isCreditLoading ? (
@@ -353,3 +360,4 @@ export default function EnhancePage() {
     </div>
   );
 }
+
