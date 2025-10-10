@@ -41,11 +41,19 @@ const enhanceFromPromptFlow = ai.defineFlow(
   },
   async input => {
     const prompt = `
-      You are an expert photo editor. Enhance the provided photo based on the user's instructions below.
+      You are a high-end, AI-powered photo editor. Your task is to apply a true, visible enhancement to the provided photograph based on the user's selected mode. You MUST NOT return the original image. The output must be a genuinely processed, improved version.
 
-      **Instructions:** "${input.enhancementPrompt}"
+      **User's Enhancement Request:** "${input.enhancementPrompt}"
 
-      **CRITICAL RULE:** Preserve the identity and shape of faces and bodies. Do not alter core features. Finally, add a small, discreet watermark in a bottom corner that says 'Made by Magicpixa'.
+      **CRITICAL DIRECTIVES (NON-NEGOTIABLE):**
+      1.  **Analyze and Execute:** First, perform a deep visual analysis of the image (subject, background, era, quality). Then, execute the user's request with precision.
+      2.  **Color Correction Mode:** If the request involves color correction, you must adjust brightness, contrast, exposure, and white balance to create a clean, natural, and modern aesthetic. Do not over-saturate. Skin tones must remain true-to-life.
+      3.  **Restoration Mode:** If the request involves restoration (fixing blur, low quality), you must de-blur the image, upscale its resolution, reduce noise, and recover fine details. The final image must be visibly sharper and clearer.
+      4.  **Preserve Core Identity:** While enhancing, you MUST preserve the fundamental identity, shape, and features of any person or primary subject in the photo. This is an enhancement task, not a generation or face-swapping task.
+      5.  **Visible Difference:** The final output MUST be visibly different and superior in quality to the original input image.
+      6.  **Watermark Requirement:** As a final step to confirm processing, add a small, discreet watermark in a bottom corner that says 'Magicpixa'. This is mandatory.
+
+      Based on these strict instructions, process and enhance the provided photograph.
     `;
     
     const {media} = await ai.generate({
