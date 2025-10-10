@@ -5,9 +5,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/icons';
 import { features, featureCategories } from '@/lib/features';
-import { Home, Settings, Image as CreationsIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon, Image as ImageStudioIcon } from 'lucide-react';
+import { Home, Settings, Image as CreationsIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon, Image as ImageStudioIcon, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useState } from 'react';
+
 
 const mainNav = [
   { name: 'Dashboard', path: '/dashboard', icon: Home },
@@ -22,73 +26,101 @@ const categoryIcons = {
   [featureCategories.PREMIUM]: StarIcon,
 };
 
-const categorizedFeatures = Object.values(featureCategories).map(category => ({
-  name: category,
-  icon: categoryIcons[category],
-  features: features.filter(f => f.category === category)
+const categorizedFeatures = Object.entries(featureCategories).map(([key, name]) => ({
+  key,
+  name,
+  icon: categoryIcons[name],
+  features: features.filter(f => f.category === name)
 }));
+
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const [openCategories, setOpenCategories] = useState<string[]>(
+    categorizedFeatures.map(c => c.key)
+  );
+
+  const toggleCategory = (categoryKey: string) => {
+    setOpenCategories(prev => 
+      prev.includes(categoryKey) 
+        ? prev.filter(k => k !== categoryKey)
+        : [...prev, categoryKey]
+    );
+  };
   
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-card sm:flex">
-      <nav className="flex flex-col items-center gap-4 px-2 sm:py-4">
-        <Link href="/" className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base">
-          <Logo className="h-5 w-5 transition-all group-hover:scale-110" />
-          <span className="sr-only">Magicpixa</span>
+    <aside className="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r bg-card text-card-foreground sm:flex">
+      <div className="flex h-16 items-center border-b px-6">
+        <Link href="/" className="flex items-center gap-2 font-semibold">
+          <Logo className="h-7 w-7 bg-gradient-to-r from-brand-primary to-brand-secondary text-transparent bg-clip-text" />
+          <span className="text-lg">Magicpixa</span>
         </Link>
-        <TooltipProvider>
+      </div>
+      <ScrollArea className="flex-1">
+        <nav className="grid items-start gap-1 p-4 text-sm font-medium">
           {mainNav.map((item) => (
-            <Tooltip key={item.name}>
-              <TooltipTrigger asChild>
-                <Link href={item.path} className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8",
-                  pathname === item.path ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"
-                )}>
-                  <item.icon className="h-5 w-5" />
-                  <span className="sr-only">{item.name}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">{item.name}</TooltipContent>
-            </Tooltip>
+            <Link key={item.name} href={item.path} className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all",
+              pathname === item.path 
+                ? "bg-accent text-accent-foreground" 
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            )}>
+              <item.icon className="h-4 w-4" />
+              {item.name}
+            </Link>
           ))}
           
-          <div className="w-full h-px bg-border my-2" />
+          <div className="my-2 h-px bg-border" />
 
-          {categorizedFeatures.flatMap(category => 
-             category.features.map((feature) => (
-                <Tooltip key={feature.name}>
-                    <TooltipTrigger asChild>
-                         <Link href={feature.path} className={cn(
-                          "flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8",
-                           pathname === feature.path ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground",
-                           feature.isComingSoon && "pointer-events-none opacity-50"
-                        )}>
-                          <feature.icon className="h-5 w-5" />
-                          <span className="sr-only">{feature.name}</span>
-                        </Link>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">{feature.name}</TooltipContent>
-                </Tooltip>
-             ))
-          )}
+          {categorizedFeatures.map((category) => (
+            <Collapsible 
+              key={category.key} 
+              className="grid gap-1"
+              open={openCategories.includes(category.key)}
+              onOpenChange={() => toggleCategory(category.key)}
+            >
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" className="flex items-center justify-between w-full px-3">
+                  <span className="flex items-center gap-3">
+                    <category.icon className="h-4 w-4" />
+                    {category.name}
+                  </span>
+                  <ChevronDown className={cn("h-4 w-4 transition-transform", openCategories.includes(category.key) && "rotate-180")} />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="grid gap-1 pl-8 py-1 border-l-2 ml-5">
+                  {category.features.map((feature) => (
+                    <Link key={feature.name} href={feature.isComingSoon ? '#' : feature.path} className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-all text-sm",
+                       pathname === feature.path 
+                        ? "bg-accent text-accent-foreground" 
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                       feature.isComingSoon && "opacity-50 cursor-not-allowed"
+                    )}>
+                      <feature.icon className="h-4 w-4" />
+                      {feature.name}
+                      {feature.isComingSoon && <span className="text-xs bg-secondary px-2 py-0.5 rounded-md">Soon</span>}
+                    </Link>
+                  ))}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          ))}
 
-        </TooltipProvider>
-      </nav>
-      <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-4">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link href="/dashboard/settings" className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8">
-                <Settings className="h-5 w-5" />
-                <span className="sr-only">Settings</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Settings</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </nav>
+        </nav>
+      </ScrollArea>
+       <div className="mt-auto p-4 border-t">
+          <Link href="/dashboard/settings" className={cn(
+            "flex items-center gap-3 rounded-lg px-3 py-2 transition-all",
+            pathname === "/dashboard/settings" 
+              ? "bg-accent text-accent-foreground" 
+              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          )}>
+            <Settings className="h-4 w-4" />
+            Settings
+          </Link>
+      </div>
     </aside>
   );
 }

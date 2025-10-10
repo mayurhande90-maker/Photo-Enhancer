@@ -11,7 +11,7 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/20 font-body">
       <DashboardSidebar />
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-64">
         <Suspense>
           <DashboardHeader />
         </Suspense>
