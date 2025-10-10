@@ -81,7 +81,7 @@ export function DashboardSidebar() {
             >
               <CollapsibleTrigger asChild>
                 <div className="flex items-center justify-between w-full px-3 py-2 text-sm font-semibold rounded-lg bg-accent/50 text-accent-foreground hover:bg-accent cursor-pointer">
-                  <span className="flex items-center gap-3">
+                  <span className="flex items-center gap-3 font-bold">
                     <category.icon className="w-4 h-4" />
                     <span className="whitespace-nowrap">{category.name}</span>
                   </span>
