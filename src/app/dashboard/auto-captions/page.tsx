@@ -211,7 +211,8 @@ export default function AutoCaptionsPage() {
     };
 
     const handleProcess = async () => {
-        if (!originalFile || !user || !originalDataUri || !firestore || !app) {
+        if (!originalFile || !originalDataUri || !firestore || !app) {
+
           toast({ title: 'Missing Information', description: `Please upload an image.`, variant: 'destructive' });
           return;
         }
