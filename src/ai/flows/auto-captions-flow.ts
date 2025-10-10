@@ -84,7 +84,7 @@ const autoCaptionsFlow = ai.defineFlow(
     name: 'autoCaptionsFlow',
     inputSchema: AutoCaptionInputSchema,
     outputSchema: AutoCaptionOutputSchema,
-    retries: 2,
+    
   },
   async (input) => {
     const { text } = await ai.generate({
