@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -148,6 +147,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
             setProcessedImageUrl(resultImageUri);
             try {
                 await saveAIOutput(
+                    firestore,
                     feature.name,
                     resultImageUri,
                     'image/jpeg',
@@ -379,5 +379,3 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     </div>
   );
 }
-
-    

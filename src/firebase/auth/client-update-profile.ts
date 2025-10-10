@@ -1,4 +1,3 @@
-
 'use client';
 
 import type { User, Auth } from "firebase/auth";
@@ -6,7 +5,6 @@ import { updateProfile } from "firebase/auth";
 import { doc, updateDoc, type Firestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
-import { initializeFirebase } from '@/firebase';
 
 async function dataUriToBlob(dataUri: string): Promise<Blob> {
     const response = await fetch(dataUri);
@@ -34,11 +32,15 @@ function showToast(msg: string) {
 }
 
 export async function saveAIOutput(
+    firestore: Firestore,
     featureName: string, 
     fileBlobOrBase64: Blob | string, 
     fileType: string,
     userId: string
 ): Promise<string> {
+    if (!firestore) {
+        throw new Error("Firestore instance is not available.");
+    }
     if (!userId) {
         throw new Error("User is not authenticated. Please log in to save.");
     }
@@ -62,7 +64,6 @@ export async function saveAIOutput(
     }
 
     try {
-        const { firestore } = initializeFirebase();
         // 1. Upload to Firebase Storage
         const storage = getStorage();
         const fileId = uuidv4();
@@ -105,7 +106,7 @@ export async function updateUserProfile(
   auth: Auth,
   firestore: Firestore,
   user: User,
-  updates: ProfileUpdates
+  updates: any
 ): Promise<void> {
   if (!user || !auth.currentUser) {
     throw new Error("No user logged in to update profile.");
@@ -116,6 +117,7 @@ export async function updateUserProfile(
   // Step 1: Handle photo upload if a new blob is provided
   if (updates.photoBlob) {
       newPhotoURL = await saveAIOutput(
+        firestore,
         "profile-photo",
         updates.photoBlob,
         updates.photoBlob.type,

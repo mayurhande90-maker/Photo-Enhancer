@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -227,12 +226,12 @@ export default function AutoCaptionsPage() {
         setResults(null);
 
         try {
-            const result = await autoCaptionsAction(originalDataUri, platform, tone, goal, user.uid);
+            const result = await autoCaptionsAction(originalDataUri, user.uid, platform, tone, goal);
             
             if (result) {
                 setResults(result);
                 // Not saving text output to creations for now
-                // await saveAIOutput(feature.name, result, 'text/plain', user.uid);
+                // await saveAIOutput(firestore, feature.name, result, 'text/plain', user.uid);
                 await consumeCredits(feature.creditCost);
             } else {
                 throw new Error('AI generation failed to return captions.');
@@ -391,7 +390,7 @@ export default function AutoCaptionsPage() {
                             </Card>
                         ) : (
                             <div className="space-y-4">
-                                <ResultDisplay results={results} />
+                                <ResultDisplay results={results!} />
                                 <Button variant="outline" className="h-12 w-full rounded-2xl" onClick={handleReset}>
                                     <RefreshCw className="mr-2 h-5 w-5" />
                                     Generate Another
@@ -404,5 +403,3 @@ export default function AutoCaptionsPage() {
         </div>
     );
 }
-
-    

@@ -132,7 +132,7 @@ export default function AIFutureSelfPage() {
             
             if (result.agedPhotoDataUri) {
                 setProcessedImageUrl(result.agedPhotoDataUri);
-                await saveAIOutput(feature.name, result.agedPhotoDataUri, 'image/jpeg', user.uid);
+                await saveAIOutput(firestore, feature.name, result.agedPhotoDataUri, 'image/jpeg', user.uid);
                 await consumeCredits(feature.creditCost);
             } else {
                 throw new Error('AI generation failed to return an image.');
