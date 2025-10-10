@@ -32,7 +32,7 @@ const magicInteriorFlow = ai.defineFlow(
     name: 'magicInteriorFlow',
     inputSchema: MagicInteriorInputSchema,
     outputSchema: MagicInteriorOutputSchema,
-    retries: 2,
+    
   },
   async (input) => {
     const stylePrompt = styleDescriptions[input.styleSelected] || styleDescriptions['Modern'];
