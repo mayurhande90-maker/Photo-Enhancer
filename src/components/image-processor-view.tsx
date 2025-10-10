@@ -16,7 +16,6 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
 import { useUser, useFirestore, useFirebaseApp } from '@/firebase';
-import { saveAIOutput } from '@/firebase/auth/client-update-profile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { analyzeImageAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
@@ -147,18 +146,6 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
 
         if (resultImageUri) {
             setProcessedImageUrl(resultImageUri);
-            try {
-                await saveAIOutput(
-                    app,
-                    firestore,
-                    feature.name,
-                    resultImageUri,
-                    'image/jpeg',
-                    user.uid
-                );
-            } catch (saveError: any) {
-                console.error("Failed to save image to Firestore:", saveError);
-            }
         } else {
             throw new Error('AI generation failed to return an image.');
         }
@@ -324,7 +311,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                                     <RefreshCw className="mr-2 h-5 w-5" />
                                     Generate Another
                                 </Button>
-                                <Button size="lg" asChild className="h-12 w-full rounded-2xl">
+                                <Button size="lg" asChild className="h-12 w-full rounded-2xl" disabled={!processedImageUrl}>
                                     <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
                                         <Download className="mr-2 h-5 w-5" />
                                         Download Image
@@ -363,7 +350,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
                                     {isUserLoading || isCreditLoading ? (
                                         <Skeleton className="h-4 w-32 mx-auto" />
                                     ) : user ? (
-                                        <p>You have {credits} credits left.</p>
+                                        <p>You have {credits === Infinity ? 'Unlimited' : credits} credits left.</p>
                                     ) : (
                                         <p>
                                             <Link href="/login" className="underline font-semibold hover:text-primary">
