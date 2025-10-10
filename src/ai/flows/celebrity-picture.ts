@@ -35,7 +35,7 @@ const celebrityPictureFlow = ai.defineFlow(
     name: 'celebrityPictureFlow',
     inputSchema: CelebrityPictureInputSchema,
     outputSchema: CelebrityPictureOutputSchema,
-    retries: 2,
+    
   },
   async (input) => {
     const prompt = `
