@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { BeforeAfterSlider } from './before-after-slider';
 import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Clock, User, Loader2, Download, RefreshCw, Wand2, Lightbulb, FileImage, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Terminal, Clock, User, Loader2, Download, RefreshCw, Wand2, Lightbulb, FileImage, Sparkles, CheckCircle2, RotateCw } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
@@ -120,6 +120,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
 
     setIsProcessing(true);
     setError(null);
+    setProcessedImageUrl(null);
     setProgress(0);
 
     const loadingInterval = setInterval(() => {
@@ -183,6 +184,10 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
     setImageAnalysis("");
   };
   
+  const handleRegenerate = () => {
+    handleProcessImage();
+  }
+
   const renderQuotaAlert = () => {
     if (isUserLoading || isCreditLoading) return null;
     
@@ -300,21 +305,25 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
             
             {isResultReady ? (
                 <div className="flex justify-center">
-                    <Card className="w-full max-w-md rounded-3xl">
+                    <Card className="w-full max-w-lg rounded-3xl">
                         <CardHeader className="text-center">
                             <CardTitle>Result Ready</CardTitle>
                             <CardDescription>Your image has been processed. Download it or create another one.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <Button variant="outline" className="h-12 w-full rounded-2xl" onClick={handleReset}>
                                     <RefreshCw className="mr-2 h-5 w-5" />
-                                    Generate Another
+                                    New Image
+                                </Button>
+                                <Button variant="secondary" className="h-12 w-full rounded-2xl" onClick={handleRegenerate} disabled={isProcessing}>
+                                    <RotateCw className="mr-2 h-5 w-5" />
+                                    Regenerate
                                 </Button>
                                 <Button size="lg" asChild className="h-12 w-full rounded-2xl" disabled={!processedImageUrl}>
                                     <a href={processedImageUrl!} download={`magicpixa-${feature.name.toLowerCase().replace(/\s+/g, '-')}.png`}>
                                         <Download className="mr-2 h-5 w-5" />
-                                        Download Image
+                                        Download
                                     </a>
                                  </Button>
                             </div>
