@@ -12,3 +12,4 @@ import '@/ai/flows/youtube-thumbnail-flow';
 import '@/ai/flows/auto-captions-flow';
 import '@/ai/flows/ai-future-self-flow';
 import '@/ai/flows/magic-interior-flow';
+import '@/ai/flows/celebrity-picture';
