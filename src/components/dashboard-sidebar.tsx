@@ -57,7 +57,7 @@ export function DashboardSidebar() {
         </Link>
       </div>
       <ScrollArea className="flex-1">
-        <nav className="grid items-start gap-1 p-4 text-sm font-medium">
+        <nav className="grid items-start gap-1 p-2 text-sm font-medium">
           {mainNav.map((item) => (
             <Link key={item.name} href={item.path} className={cn(
               "flex items-center gap-3 rounded-lg px-3 py-2 transition-all",
@@ -80,16 +80,16 @@ export function DashboardSidebar() {
               onOpenChange={() => toggleCategory(category.key)}
             >
               <CollapsibleTrigger asChild>
-                <Button variant="ghost" className="flex items-center justify-between w-full px-3">
+                <div className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between w-full">
                   <span className="flex items-center gap-3">
                     <category.icon className="h-4 w-4" />
-                    {category.name}
+                    <span className="whitespace-nowrap">{category.name}</span>
                   </span>
                   <ChevronDown className={cn("h-4 w-4 transition-transform", openCategories.includes(category.key) && "rotate-180")} />
-                </Button>
+                </div>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <div className="grid gap-1 pl-8 py-1 border-l-2 ml-5">
+                <div className="grid gap-1 py-1">
                   {category.features.map((feature) => (
                     <Link key={feature.name} href={feature.isComingSoon ? '#' : feature.path} className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 transition-all text-sm",
@@ -99,8 +99,8 @@ export function DashboardSidebar() {
                        feature.isComingSoon && "opacity-50 cursor-not-allowed"
                     )}>
                       <feature.icon className="h-4 w-4" />
-                      {feature.name}
-                      {feature.isComingSoon && <span className="text-xs bg-secondary px-2 py-0.5 rounded-md">Soon</span>}
+                      <span className="whitespace-nowrap">{feature.name}</span>
+                      {feature.isComingSoon && <span className="ml-auto text-xs bg-secondary px-2 py-0.5 rounded-md">Soon</span>}
                     </Link>
                   ))}
                 </div>
@@ -110,7 +110,7 @@ export function DashboardSidebar() {
 
         </nav>
       </ScrollArea>
-       <div className="mt-auto p-4 border-t">
+       <div className="mt-auto p-2 border-t">
           <Link href="/dashboard/settings" className={cn(
             "flex items-center gap-3 rounded-lg px-3 py-2 transition-all",
             pathname === "/dashboard/settings" 
