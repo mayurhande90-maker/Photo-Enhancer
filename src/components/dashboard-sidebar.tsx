@@ -5,16 +5,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/icons';
 import { features, featureCategories } from '@/lib/features';
-import { Home, Settings, Image as CreationsIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon, Image as ImageStudioIcon, Palette, Users, Clock } from 'lucide-react';
-import { Button } from './ui/button';
-import { ScrollArea } from './ui/scroll-area';
+import { Home, Settings, Image as CreationsIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon, Image as ImageStudioIcon, Palette, Users, Clock, PanelRight, PanelLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
+import { useSidebar, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarFooter, SidebarTrigger } from './ui/sidebar';
 
 const categoryIcons = {
   [featureCategories.IMAGE_STUDIO]: ImageStudioIcon,
@@ -27,6 +20,7 @@ const categoryIcons = {
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const { state } = useSidebar();
   const categories = Object.values(featureCategories);
   
   const activeFeatures = features.filter(f => !f.isComingSoon);
@@ -42,101 +36,89 @@ export function DashboardSidebar() {
 
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r bg-sidebar text-sidebar-foreground transition-transform duration-300 sm:flex">
-      <div className="flex h-16 shrink-0 items-center gap-3 border-b px-4">
-          <Link href="/" className="flex items-center gap-2 font-semibold">
-              <Logo className="h-7 w-7 bg-gradient-to-r from-brand-primary to-brand-secondary text-transparent bg-clip-text" />
-              <span className="text-lg">Magicpixa</span>
-          </Link>
-      </div>
-        <ScrollArea className="flex-1">
-            <nav className="flex flex-col gap-1 p-2">
-                <Link
-                    href="/dashboard"
-                    className={cn(
-                        'flex items-center gap-3 rounded-lg px-3 py-2 transition-all',
-                        pathname === '/dashboard'
-                        ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                        : 'text-muted-foreground hover:text-foreground'
-                    )}
-                >
-                    <Home className="h-5 w-5" />
-                    <span>Dashboard</span>
-                </Link>
-                <Link
-                    href="/dashboard/creations"
-                    className={cn(
-                        'flex items-center gap-3 rounded-lg px-3 py-2 transition-all',
-                        pathname === '/dashboard/creations'
-                        ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                        : 'text-muted-foreground hover:text-foreground'
-                    )}
-                >
-                    <CreationsIcon className="h-5 w-5" />
-                    <span>My Creations</span>
-                </Link>
-                 <Accordion type="multiple" defaultValue={[...categories, "coming-soon"]} className="w-full">
-                    {categorizedFeatures.map(({ name, features: categoryFeatures }) => {
-                        const CategoryIcon = categoryIcons[name as keyof typeof categoryIcons];
-                        return (
-                            <AccordionItem value={name} key={name} className="border-b-0">
-                                <AccordionTrigger className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground hover:text-foreground hover:no-underline">
-                                    <CategoryIcon className="h-5 w-5" />
-                                    <span>{name}</span>
-                                </AccordionTrigger>
-                                <AccordionContent className="pl-4">
-                                    {categoryFeatures.map((feature) => (
-                                        <Link
-                                        href={feature.isComingSoon || feature.isPremium ? '#' : feature.path}
-                                        key={feature.name}
-                                        className={cn(
-                                            'flex items-center gap-3 rounded-lg px-3 py-2 transition-all text-sm',
-                                            pathname === feature.path
-                                            ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                                            : 'text-muted-foreground hover:text-foreground',
-                                            (feature.isComingSoon || feature.isPremium) && 'opacity-50 pointer-events-none'
-                                        )}
-                                        >
-                                        <feature.icon className="h-4 w-4" />
-                                        <span>{feature.name}</span>
-                                        </Link>
-                                    ))}
-                                </AccordionContent>
-                            </AccordionItem>
-                        )
-                    })}
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="border-b h-16 p-3 flex justify-between items-center">
+        <Link href="/" className={cn("flex items-center gap-2 font-semibold transition-opacity duration-300", state === 'collapsed' ? "opacity-0 w-0" : "opacity-100")}>
+            <Logo className="h-7 w-7 bg-gradient-to-r from-brand-primary to-brand-secondary text-transparent bg-clip-text" />
+            <span className="text-lg">Magicpixa</span>
+        </Link>
+        <SidebarTrigger asChild>
+            <button className="h-9 w-9 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground">
+                {state === 'expanded' ? <PanelLeft className="h-5 w-5"/> : <PanelRight className="h-5 w-5"/>}
+            </button>
+        </SidebarTrigger>
+      </SidebarHeader>
+        <SidebarContent className="p-2 flex-1 overflow-y-auto">
+            <SidebarMenu>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname === '/dashboard'} tooltip="Dashboard">
+                        <Link href="/dashboard"><Home /><span>Dashboard</span></Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname === '/dashboard/creations'} tooltip="My Creations">
+                        <Link href="/dashboard/creations"><CreationsIcon /><span>My Creations</span></Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
+            
+            <div className={cn("my-4 transition-opacity duration-300", state === 'collapsed' ? 'opacity-0 h-0' : 'opacity-100')}>
+                <p className="px-3 text-xs font-semibold text-muted-foreground/80 tracking-wider">TOOLS</p>
+            </div>
 
-                    {comingSoonFeatures.length > 0 && (
-                       <AccordionItem value="coming-soon" className="border-b-0">
-                            <AccordionTrigger className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground hover:text-foreground hover:no-underline">
-                                <Clock className="h-5 w-5" />
-                                <span>Coming Soon</span>
-                            </AccordionTrigger>
-                            <AccordionContent className="pl-4">
-                                {comingSoonFeatures.map((feature) => (
-                                    <div
-                                    key={feature.name}
-                                    className='flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground opacity-50 pointer-events-none'
-                                    >
-                                    <feature.icon className="h-4 w-4" />
-                                    <span>{feature.name}</span>
-                                    </div>
-                                ))}
-                            </AccordionContent>
-                        </AccordionItem>
-                    )}
-                </Accordion>
-            </nav>
-        </ScrollArea>
-        <div className="mt-auto flex flex-col items-start gap-2 p-4 border-t">
-            <Link
-                href="/dashboard/settings"
-                className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:text-foreground"
-            >
-                <Settings className="h-5 w-5" />
-                <span>Settings</span>
-            </Link>
-        </div>
-    </aside>
+             {categorizedFeatures.map(({ name, features: categoryFeatures }) => {
+                const CategoryIcon = categoryIcons[name as keyof typeof categoryIcons];
+                return (
+                    <SidebarMenu key={name}>
+                        {categoryFeatures.map((feature) => (
+                            <SidebarMenuItem key={feature.name}>
+                                <SidebarMenuButton 
+                                    asChild
+                                    isActive={pathname === feature.path} 
+                                    tooltip={feature.name}
+                                    disabled={feature.isComingSoon || feature.isPremium}
+                                >
+                                    <Link href={feature.path}>
+                                        <feature.icon />
+                                        <span>{feature.name}</span>
+                                        {(feature.isComingSoon || feature.isPremium) && <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />}
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        ))}
+                    </SidebarMenu>
+                )
+             })}
+             {comingSoonFeatures.length > 0 && (
+                <>
+                <div className={cn("my-4 transition-opacity duration-300", state === 'collapsed' ? 'opacity-0 h-0' : 'opacity-100')}>
+                     <p className="px-3 text-xs font-semibold text-muted-foreground/80 tracking-wider">COMING SOON</p>
+                </div>
+                <SidebarMenu>
+                    {comingSoonFeatures.map((feature) => (
+                        <SidebarMenuItem key={feature.name}>
+                            <SidebarMenuButton tooltip={feature.name} disabled>
+                                <feature.icon />
+                                <span>{feature.name}</span>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    ))}
+                </SidebarMenu>
+                </>
+             )}
+        </SidebarContent>
+        <SidebarFooter className="p-2 border-t">
+            <SidebarMenu>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname === '/dashboard/settings'} tooltip="Settings">
+                        <Link href="/dashboard/settings">
+                            <Settings/>
+                            <span>Settings</span>
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
+        </SidebarFooter>
+    </Sidebar>
   );
 }

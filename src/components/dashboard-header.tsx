@@ -25,6 +25,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { useSidebar } from './ui/sidebar';
 
 function HeaderUserSection() {
     const { user, loading: isUserLoading } = useUser();
@@ -69,7 +70,7 @@ function HeaderUserSection() {
                    {isCreditLoading ? (
                         <Skeleton className="h-4 w-6" />
                     ) : (
-                        <span>{credits}</span>
+                        <span>{credits === Infinity ? 'VIP' : credits}</span>
                     )}
                    Credits
                 </Button>
@@ -134,20 +135,18 @@ function HeaderUserSection() {
 
 export function DashboardHeader() {
   const pathname = usePathname();
+  const { setOpenMobile } = useSidebar();
   const currentFeature = features.find((f) => f.path === pathname);
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-lg sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
         <Sheet>
             <SheetTrigger asChild>
-                <Button size="icon" variant="outline" className="sm:hidden rounded-full">
+                <Button size="icon" variant="outline" className="sm:hidden rounded-full" onClick={() => setOpenMobile(true)}>
                     <PanelLeft className="h-5 w-5" />
                     <span className="sr-only">Toggle Menu</span>
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="sm:max-w-xs p-0 bg-sidebar border-r-0">
-                <DashboardSidebar />
-            </SheetContent>
         </Sheet>
 
         <Breadcrumb className="hidden md:flex">

@@ -99,7 +99,7 @@ export function useCredit() {
   }, [user, firestore, localCredits, setAnonymousQuota]);
 
   return { 
-      credits, 
+      credits: credits === Infinity ? Infinity : (credits ?? 0), 
       isLoading: isUserLoading || isLoading, 
       consumeCredits 
   };
