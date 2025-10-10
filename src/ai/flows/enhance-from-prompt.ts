@@ -38,7 +38,7 @@ const enhanceFromPromptFlow = ai.defineFlow(
     name: 'enhanceFromPromptFlow',
     inputSchema: EnhanceFromPromptInputSchema,
     outputSchema: EnhanceFromPromptOutputSchema,
-    retries: 2,
+    
   },
   async input => {
     const {media} = await ai.generate({
