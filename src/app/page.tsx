@@ -280,7 +280,6 @@ export default function Home() {
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
             <Link href="#features" className="transition-colors hover:text-foreground/80 text-foreground/70">Features</Link>
             <Link href="#pricing" className="transition-colors hover:text-foreground/80 text-foreground/70">Pricing</Link>
-             <Link href="#testimonials" className="transition-colors hover:text-foreground/80 text-foreground/70">Reviews</Link>
             <Link href="/about" className="transition-colors hover:text-foreground/80 text-foreground/70">About</Link>
           </nav>
           <div className="flex flex-1 items-center justify-end space-x-2 md:space-x-4">
@@ -522,3 +521,4 @@ export default function Home() {
     
 
     
+
