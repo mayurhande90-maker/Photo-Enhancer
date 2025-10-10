@@ -199,11 +199,29 @@ export default function EnhancePage() {
     
     if (processedImageUrl) {
       return (
-        <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
-            <BeforeAfterSlider
-                before={originalDataUri}
-                after={processedImageUrl}
-            />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            <div className="flex flex-col gap-2">
+                <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+                    <Image
+                        src={originalDataUri}
+                        alt="Original"
+                        fill
+                        className="object-contain"
+                    />
+                </div>
+                <p className="text-center text-sm font-semibold text-muted-foreground">Original</p>
+            </div>
+             <div className="flex flex-col gap-2">
+                <div className="relative aspect-video w-full overflow-hidden rounded-3xl border">
+                    <Image
+                        src={processedImageUrl}
+                        alt="Generated"
+                        fill
+                        className="object-contain"
+                    />
+                </div>
+                <p className="text-center text-sm font-semibold text-muted-foreground">Generated</p>
+            </div>
         </div>
       );
     }
