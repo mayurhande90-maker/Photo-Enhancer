@@ -6,12 +6,7 @@ import { updateProfile } from "firebase/auth";
 import { doc, updateDoc, type Firestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
-
-interface ProfileUpdates {
-  displayName?: string;
-  bio?: string;
-  photoBlob?: Blob;
-}
+import { initializeFirebase } from '@/firebase';
 
 async function dataUriToBlob(dataUri: string): Promise<Blob> {
     const response = await fetch(dataUri);
@@ -67,6 +62,7 @@ export async function saveAIOutput(
     }
 
     try {
+        const { firestore } = initializeFirebase();
         // 1. Upload to Firebase Storage
         const storage = getStorage();
         const fileId = uuidv4();
@@ -81,7 +77,6 @@ export async function saveAIOutput(
         const downloadURL = await getDownloadURL(uploadResult.ref);
 
         // 2. Save metadata to Firestore
-        const firestore = getFirestore();
         const creationsCollection = collection(firestore, `users/${userId}/generatedImages`);
         
         await addDoc(creationsCollection, {
