@@ -3,7 +3,8 @@ import type {NextConfig} from 'next';
 import genkitPlugin from '@genkit-ai/next';
 
 const nextConfig: NextConfig = {
-  ...genkitPlugin(),
+// ...genkitPlugin(),
+
   /* config options here */
   typescript: {
     ignoreBuildErrors: false,
