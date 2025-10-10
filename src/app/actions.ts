@@ -1,4 +1,3 @@
-
 'use server';
 
 import { enhanceFromPrompt } from '@/ai/flows/enhance-from-prompt';
@@ -34,14 +33,14 @@ export async function analyzeImageAction(photoDataUri: string): Promise<AnalyzeI
 
 export async function colorCorrectAction(app: FirebaseApp, firestore: Firestore, photoDataUri: string, userId: string) {
   const prompt =
-    'MODE: Color Correction. You are a high-end, AI-powered photo editor. Your task is to apply a true, visible enhancement to this photograph. You MUST NOT return the original image. First, perform a deep visual analysis of the image. Then, execute a professional color correction. Adjust brightness, contrast, exposure, and white balance to create a clean, natural, and modern aesthetic. Do not over-saturate. Skin tones must remain true-to-life. Preserve the fundamental identity and features of any person or subject. The final output MUST be visibly different and superior in quality. Add a small, discreet "Magicpixa" watermark in a bottom corner to confirm processing.';
+    'Perform a professional color correction on this photo. Enhance brightness, contrast, and saturation to make it look vibrant and aesthetically pleasing, but ensure the result remains natural and not over-edited. The final output must be a visibly improved version of the original.';
   const result = await processImageWithAI(photoDataUri, prompt);
   return result;
 }
 
 export async function restorePhotoAction(app: FirebaseApp, firestore: Firestore, photoDataUri: string, userId: string) {
   const prompt =
-    'MODE: Restoration. You are a high-end, AI-powered photo editor. Your task is to apply a true, visible enhancement to this photograph. You MUST NOT return the original image. First, perform a deep visual analysis. If the image is blurry, low-quality, or poorly clicked, you must de-blur the image, upscale its resolution, reduce noise, and recover fine details. The final image must be visibly sharper and clearer. Preserve the fundamental identity and features of any person or subject. Add a small, discreet "Magicpixa" watermark in a bottom corner to confirm processing.';
+    'Restore this photo. If it is blurry or low quality, enhance its sharpness, focus, and resolution. Fix any noise or lighting issues. The final output should be a significantly clearer and higher-quality version of the original.';
   const result = await processImageWithAI(photoDataUri, prompt);
   return result;
 }

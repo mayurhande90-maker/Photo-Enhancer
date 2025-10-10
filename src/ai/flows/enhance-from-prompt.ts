@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -16,7 +15,8 @@ const EnhanceFromPromptInputSchema = z.object({
   photoDataUri: z
     .string()
     .describe(
-      'A photo to enhance, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'  ),
+      'A photo to enhance, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'
+    ),
   enhancementPrompt: z.string().describe('A prompt describing the desired enhancements.'),
 });
 export type EnhanceFromPromptInput = z.infer<typeof EnhanceFromPromptInputSchema>;
@@ -40,26 +40,10 @@ const enhanceFromPromptFlow = ai.defineFlow(
     retries: 2,
   },
   async input => {
-    const prompt = `
-      You are a high-end, AI-powered photo editor. Your task is to apply a true, visible enhancement to the provided photograph based on the user's selected mode. You MUST NOT return the original image. The output must be a genuinely processed, improved version.
-
-      **User's Enhancement Request:** "${input.enhancementPrompt}"
-
-      **CRITICAL DIRECTIVES (NON-NEGOTIABLE):**
-      1.  **Analyze and Execute:** First, perform a deep visual analysis of the image (subject, background, era, quality). Then, execute the user's request with precision.
-      2.  **Color Correction Mode:** If the request involves color correction, you must adjust brightness, contrast, exposure, and white balance to create a clean, natural, and modern aesthetic. Do not over-saturate. Skin tones must remain true-to-life.
-      3.  **Restoration Mode:** If the request involves restoration (fixing blur, low quality), you must de-blur the image, upscale its resolution, reduce noise, and recover fine details. The final image must be visibly sharper and clearer.
-      4.  **Preserve Core Identity:** While enhancing, you MUST preserve the fundamental identity, shape, and features of any person or primary subject in the photo. This is an enhancement task, not a generation or face-swapping task.
-      5.  **Visible Difference:** The final output MUST be visibly different and superior in quality to the original input image.
-      6.  **Watermark Requirement:** As a final step to confirm processing, add a small, discreet watermark in a bottom corner that says 'Magicpixa'. This is mandatory.
-
-      Based on these strict instructions, process and enhance the provided photograph.
-    `;
-    
     const {media} = await ai.generate({
       prompt: [
         {media: {url: input.photoDataUri}},
-        {text: prompt},
+        {text: input.enhancementPrompt},
       ],
       model: 'googleai/gemini-2.5-flash-image-preview',
       config: {
