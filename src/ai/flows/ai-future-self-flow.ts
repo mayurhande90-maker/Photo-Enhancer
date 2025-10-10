@@ -36,7 +36,7 @@ const aiFutureSelfFlow = ai.defineFlow(
     name: 'aiFutureSelfFlow',
     inputSchema: AIFutureSelfInputSchema,
     outputSchema: AIFutureSelfOutputSchema,
-    retries: 2,
+    
   },
   async (input) => {
     const prompt = `
