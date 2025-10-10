@@ -33,7 +33,7 @@ const colorizePhotoFlow = ai.defineFlow(
     name: 'colorizePhotoFlow',
     inputSchema: ColorizePhotoInputSchema,
     outputSchema: ColorizePhotoOutputSchema,
-    retries: 2,
+    
   },
   async input => {
     const prompt = `You are an expert photo restoration specialist. Restore and colourize the provided vintage photograph. 
