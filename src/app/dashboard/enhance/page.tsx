@@ -98,7 +98,7 @@ export default function EnhancePage() {
   };
 
   const handleProcessImage = async () => {
-    if (!originalFile || !user || !originalDataUri || !firestore || !app) return;
+    if (!originalFile || !user || !firestore || !app) return;
     
     if (!isCreditLoading && credits < feature.creditCost) {
         toast({
@@ -114,8 +114,10 @@ export default function EnhancePage() {
     setShowOriginal(false);
 
     try {
+        // First, upload the original image to get a URL
         const uploadedUrl = await saveAIOutput(app, firestore, "original-upload", originalFile, originalFile.type, user.uid);
         
+        // Then, call the action with the URL
         const action = selectedMode === 'color' ? colorCorrectAction : restorePhotoAction;
         const result = await action(app, firestore, uploadedUrl, user.uid);
       
