@@ -57,10 +57,15 @@ export async function removeBackgroundAction(app: FirebaseApp, firestore: Firest
   return result;
 }
 
-export async function studioEnhanceAction(app: FirebaseApp, firestore: Firestore, photoDataUri: string, userId:string) {
+async function _studioEnhance(photoDataUri: string) {
   const prompt =
     'This is a product photo. Enhance it for an e-commerce website. Detect the product type, and create a professional and appealing background. Improve lighting and color to make the product stand out. Do not change the text and design on the product packaging.';
   const result = await processImageWithAI(photoDataUri, prompt);
+  return result;
+}
+
+export async function studioEnhanceAction(app: FirebaseApp, firestore: Firestore, photoDataUri: string, userId:string) {
+  const result = await _studioEnhance(photoDataUri);
   await saveAIOutput(app, firestore, 'Photo Studio', result.enhancedPhotoDataUri, 'image/jpeg', userId);
   return result;
 }
