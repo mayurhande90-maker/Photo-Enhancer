@@ -129,11 +129,12 @@ export default function AIFutureSelfPage() {
         setProcessedImageUrl(null);
 
         try {
-            const result = await aiFutureSelfAction(originalDataUri, selectedAgeGap, user.uid);
+            const result = await aiFutureSelfAction(app, firestore, originalDataUri, selectedAgeGap, user.uid);
             
             if (result.agedPhotoDataUri) {
                 setProcessedImageUrl(result.agedPhotoDataUri);
-                await saveAIOutput(app, firestore, feature.name, result.agedPhotoDataUri, 'image/jpeg', user.uid);
+                // The action now handles saving, so this call is redundant if the action does it.
+                // await saveAIOutput(app, firestore, feature.name, result.agedPhotoDataUri, 'image/jpeg', user.uid);
                 await consumeCredits(feature.creditCost);
             } else {
                 throw new Error('AI generation failed to return an image.');
