@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useUser, useFirestore } from '@/firebase';
+import { useUser, useFirestore, useFirebaseApp } from '@/firebase';
 import { useCredit } from '@/hooks/use-credit';
 import { useToast } from '@/hooks/use-toast';
 import { magicInteriorAction, analyzeImageAction } from '@/app/actions';
@@ -56,6 +56,7 @@ export default function MagicInteriorPage() {
     const { user, loading: isUserLoading } = useUser();
     const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
     const firestore = useFirestore();
+    const app = useFirebaseApp();
 
     const [originalFile, setOriginalFile] = useState<File | null>(null);
     const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
@@ -120,7 +121,7 @@ export default function MagicInteriorPage() {
     };
 
     const handleProcessImage = async () => {
-        if (!originalFile || !user || !originalDataUri || !firestore || !consentChecked) {
+        if (!originalFile || !user || !originalDataUri || !firestore || !app || !consentChecked) {
             toast({ title: 'Missing Information', description: 'Please upload a photo and give consent.', variant: 'destructive' });
             return;
         }
@@ -145,7 +146,7 @@ export default function MagicInteriorPage() {
             
             if (result.redesignedPhotoDataUri) {
                 setProcessedImageUrl(result.redesignedPhotoDataUri);
-                await saveAIOutput(firestore, feature.name, result.redesignedPhotoDataUri, 'image/jpeg', user.uid);
+                await saveAIOutput(app, firestore, feature.name, result.redesignedPhotoDataUri, 'image/jpeg', user.uid);
                 await consumeCredits(feature.creditCost);
             } else {
                 throw new Error('AI generation failed to return an image.');

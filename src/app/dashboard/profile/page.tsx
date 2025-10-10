@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Cropper from "react-cropper";
-import { useUser, useFirestore, useAuth } from "@/firebase";
+import { useUser, useFirestore, useAuth, useFirebaseApp } from "@/firebase";
 import { updateUserProfile } from "@/firebase/auth/client-update-profile";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -32,6 +32,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
   const { user } = useUser();
+  const app = useFirebaseApp();
   const auth = useAuth();
   const firestore = useFirestore();
   const { toast } = useToast();
@@ -62,11 +63,11 @@ function ProfileForm({ setOpen }: { setOpen: (open: boolean) => void }) {
   }, [user, form]);
 
   const onSubmit = async (data: ProfileFormValues) => {
-    if (!user || !auth || !firestore ) return;
+    if (!user || !auth || !firestore || !app) return;
 
     setIsSaving(true);
     try {
-      await updateUserProfile(auth, firestore, user, {
+      await updateUserProfile(app, auth, firestore, user, {
         ...data,
         photoBlob: croppedBlob || undefined,
       });

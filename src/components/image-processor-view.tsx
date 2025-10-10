@@ -14,7 +14,7 @@ import { Terminal, Clock, User, Loader2, Download, RefreshCw, Wand2, Lightbulb, 
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useCredit } from '@/hooks/use-credit';
-import { useUser, useFirestore } from '@/firebase';
+import { useUser, useFirestore, useFirebaseApp } from '@/firebase';
 import { saveAIOutput } from '@/firebase/auth/client-update-profile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { analyzeImageAction } from '@/app/actions';
@@ -77,6 +77,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
   const { user, loading: isUserLoading } = useUser();
   const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
   const firestore = useFirestore();
+  const app = useFirebaseApp();
 
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
@@ -106,7 +107,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
   };
 
   const handleProcessImage = async () => {
-    if (!originalFile || !user || !originalDataUri || !firestore) return;
+    if (!originalFile || !user || !originalDataUri || !firestore || !app) return;
     
     if (!isCreditLoading && credits < feature.creditCost) {
         toast({
@@ -147,6 +148,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
             setProcessedImageUrl(resultImageUri);
             try {
                 await saveAIOutput(
+                    app,
                     firestore,
                     feature.name,
                     resultImageUri,

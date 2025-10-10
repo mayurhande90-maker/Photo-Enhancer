@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useUser, useFirestore } from '@/firebase';
+import { useUser, useFirestore, useFirebaseApp } from '@/firebase';
 import { useCredit } from '@/hooks/use-credit';
 import { useToast } from '@/hooks/use-toast';
 import { pictureWithCelebrityAction } from '@/app/actions';
@@ -64,6 +64,7 @@ export default function PictureWithCelebrityPage() {
     const { user, loading: isUserLoading } = useUser();
     const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
     const firestore = useFirestore();
+    const app = useFirebaseApp();
 
     const [originalFile, setOriginalFile] = useState<File | null>(null);
     const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
@@ -115,7 +116,7 @@ export default function PictureWithCelebrityPage() {
     };
 
     const handleProcessImage = async () => {
-        if (!originalFile || !user || !originalDataUri || !firestore || !selectedCelebrity || !selectedLocation || !consentChecked) return;
+        if (!originalFile || !user || !originalDataUri || !firestore || !app || !selectedCelebrity || !selectedLocation || !consentChecked) return;
 
         if (!isCreditLoading && credits < feature.creditCost) {
             toast({
@@ -135,7 +136,7 @@ export default function PictureWithCelebrityPage() {
             
             if (result.enhancedPhotoDataUri) {
                 setProcessedImageUrl(result.enhancedPhotoDataUri);
-                await saveAIOutput(firestore, feature.name, result.enhancedPhotoDataUri, 'image/jpeg', user.uid);
+                await saveAIOutput(app, firestore, feature.name, result.enhancedPhotoDataUri, 'image/jpeg', user.uid);
                 await consumeCredits(feature.creditCost);
             } else {
                 throw new Error('AI generation failed to return an image.');
