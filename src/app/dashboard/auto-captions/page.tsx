@@ -148,6 +148,7 @@ export default function AutoCaptionsPage() {
     const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
     const firestore = useFirestore();
     const app = useFirebaseApp();
+  const { user } = useUser();
 
     const [originalFile, setOriginalFile] = useState<File | null>(null);
     const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
