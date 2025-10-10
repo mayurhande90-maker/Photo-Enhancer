@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -115,24 +114,17 @@ export default function EnhancePage() {
     setShowOriginal(false);
 
     try {
-      const dataUri = originalDataUri;
-      const action = selectedMode === 'color' ? colorCorrectAction : restorePhotoAction;
-      const result = await action(app, firestore, dataUri, user.uid);
+        const uploadedUrl = await saveAIOutput(app, firestore, "original-upload", originalFile, originalFile.type, user.uid);
+        
+        const action = selectedMode === 'color' ? colorCorrectAction : restorePhotoAction;
+        const result = await action(app, firestore, uploadedUrl, user.uid);
       
-      if (result.enhancedPhotoDataUri) {
-          setProcessedImageUrl(result.enhancedPhotoDataUri);
-          await saveAIOutput(
-              app,
-              firestore,
-              `Photo Enhancement (${selectedMode === 'color' ? 'Color' : 'Restore'})`,
-              result.enhancedPhotoDataUri,
-              'image/jpeg',
-              user.uid
-          );
-          await consumeCredits(feature.creditCost);
-      } else {
-          throw new Error('AI generation failed to return an image.');
-      }
+        if (result.enhancedPhotoDataUri) {
+            setProcessedImageUrl(result.enhancedPhotoDataUri);
+            await consumeCredits(feature.creditCost);
+        } else {
+            throw new Error('AI generation failed to return an image.');
+        }
     } catch (err) {
       console.error(err);
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';

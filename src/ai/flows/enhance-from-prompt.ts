@@ -16,7 +16,7 @@ const EnhanceFromPromptInputSchema = z.object({
   photoDataUri: z
     .string()
     .describe(
-      'A photo to enhance, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'
+      'A URL to a photo to enhance.'
     ),
   enhancementPrompt: z.string().describe('A prompt describing the desired enhancements.'),
 });
