@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -139,7 +140,7 @@ export function ImageProcessorView({ featureName }: { featureName: string }) {
           throw new Error('This feature is coming soon!');
       }
 
-      const result = await feature.action(dataUri, user.uid);
+      const result = await feature.action(app, firestore, dataUri, user.uid);
       
       if (feature.outputType === 'image') {
         const resultImageUri = result.enhancedPhotoDataUri || result.agedPhotoDataUri || result.redesignedPhotoDataUri || result.modernizedPhotoDataUri;

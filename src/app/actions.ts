@@ -10,6 +10,8 @@ import { generateCaptions } from '@/ai/flows/auto-captions-flow';
 import { generateFutureSelf } from '@/ai/flows/ai-future-self-flow';
 import { createMagicInterior } from '@/ai/flows/magic-interior-flow';
 import type { AnalyzeImageOutput, AutoCaptionOutput } from '@/lib/types';
+import type { FirebaseApp } from 'firebase/app';
+import type { Firestore } from 'firebase/firestore';
 
 async function processImageWithAI(
   photoDataUri: string,
@@ -29,12 +31,20 @@ export async function analyzeImageAction(photoDataUri: string): Promise<AnalyzeI
     }
 }
 
-export async function enhancePhotoAction(photoDataUri: string, userId: string) {
+export async function colorCorrectAction(photoDataUri: string, userId: string) {
   const prompt =
-    'Enhance this photo by improving lighting, color, clarity, and resolution. Make it look natural and realistic. Do not change faces and body shapes.';
+    'Perform a professional color correction on this photo. Adjust colors, brightness, contrast, and exposure to create a visually balanced and aesthetically modern look. Refine tones but maintain a natural appearance without over-saturation. Preserve the identity of any subjects and the core composition.';
   const result = await processImageWithAI(photoDataUri, prompt);
   return result;
 }
+
+export async function restorePhotoAction(photoDataUri: string, userId: string) {
+  const prompt =
+    'Restore this photograph. If the image is blurry, low-quality, or poorly clicked, enhance its sharpness, fix focus, and improve resolution using AI upscaling. Clean any digital noise, correct the lighting, and improve overall detail and clarity. Preserve the original subjects and composition.';
+  const result = await processImageWithAI(photoDataUri, prompt);
+  return result;
+}
+
 
 export async function removeBackgroundAction(photoDataUri: string, userId:string) {
   const prompt =
@@ -99,12 +109,20 @@ export async function autoCaptionsAction(
     return result;
 }
 
-export async function aiFutureSelfAction(photoDataUri: string, ageGap: number, userId: string) {
+export async function aiFutureSelfAction(
+    app: FirebaseApp, 
+    firestore: Firestore, 
+    photoDataUri: string, 
+    ageGap: number, 
+    userId: string
+) {
     const result = await generateFutureSelf({ photoDataUri, ageGap });
     return result;
 }
 
 export async function magicInteriorAction(
+    app: FirebaseApp,
+    firestore: Firestore,
     photoDataUri: string,
     userId: string,
     roomType: string,

@@ -1,6 +1,8 @@
 
 import type { LucideIcon } from 'lucide-react';
 import { z } from 'zod';
+import type { FirebaseApp } from 'firebase/app';
+import type { Firestore } from 'firebase/firestore';
 
 export type Feature = {
   name: string;
@@ -8,7 +10,7 @@ export type Feature = {
   path: string;
   icon: LucideIcon;
   creditCost: number;
-  action: (photoDataUri: string, userId: string, ...args: any[]) => Promise<any>;
+  action: (app: FirebaseApp, firestore: Firestore, photoDataUri: string, userId: string, ...args: any[]) => Promise<any>;
   showBeforeAfterSlider: boolean;
   category: string;
   outputType: 'image' | 'text';
