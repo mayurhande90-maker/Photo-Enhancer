@@ -37,16 +37,16 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="border-b h-16 p-3 flex justify-between items-center">
+      <SidebarHeader className="border-b h-16 p-3 flex items-center">
         <Link href="/" className={cn("flex items-center gap-2 font-semibold transition-opacity duration-300", state === 'collapsed' ? "opacity-0 w-0" : "opacity-100")}>
             <Logo className="h-7 w-7 bg-gradient-to-r from-brand-primary to-brand-secondary text-transparent bg-clip-text" />
             <span className="text-lg">Magicpixa</span>
         </Link>
-        <SidebarTrigger asChild>
-            <button className="h-9 w-9 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground">
+        <div className={cn("flex items-center", state === 'expanded' ? 'ml-auto' : 'mx-auto')}>
+            <SidebarTrigger className="h-9 w-9 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground">
                 {state === 'expanded' ? <PanelLeft className="h-5 w-5"/> : <PanelRight className="h-5 w-5"/>}
-            </button>
-        </SidebarTrigger>
+            </SidebarTrigger>
+        </div>
       </SidebarHeader>
         <SidebarContent className="p-2 flex-1 overflow-y-auto">
             <SidebarMenu>
