@@ -12,6 +12,7 @@ import { createMagicInterior } from '@/ai/flows/magic-interior-flow';
 import type { AnalyzeImageOutput, AutoCaptionOutput } from '@/lib/types';
 import type { FirebaseApp } from 'firebase/app';
 import type { Firestore } from 'firebase/firestore';
+import { saveAIOutput } from './firebase/auth/client-update-profile';
 
 async function processImageWithAI(
   photoDataUri: string,
@@ -98,10 +99,10 @@ export async function autoCaptionsAction(
     app: FirebaseApp,
     firestore: Firestore,
     photoDataUri: string,
-    userId: string,
     platform: string,
     tone: string,
-    goal: string
+    goal: string,
+    userId: string
 ): Promise<AutoCaptionOutput> {
     const result = await generateCaptions({
         photoDataUri,
@@ -128,12 +129,12 @@ export async function magicInteriorAction(
     app: FirebaseApp,
     firestore: Firestore,
     photoDataUri: string,
-    userId: string,
     roomType: string,
     styleSelected: string,
     options: {
         colorPalette: string;
-    }
+    },
+    userId: string
 ) {
     const result = await createMagicInterior({
         photoDataUri,

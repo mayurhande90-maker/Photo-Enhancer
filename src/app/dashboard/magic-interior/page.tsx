@@ -137,11 +137,13 @@ export default function MagicInteriorPage() {
 
         try {
             const result = await magicInteriorAction(
+                app,
+                firestore,
                 originalDataUri,
-                user.uid,
                 roomType,
                 styleSelected,
-                { colorPalette }
+                { colorPalette },
+                user.uid
             );
             
             if (result.redesignedPhotoDataUri) {

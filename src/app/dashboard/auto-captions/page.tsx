@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useUser, useFirestore } from '@/firebase';
+import { useUser, useFirestore, useFirebaseApp } from '@/firebase';
 import { useCredit } from '@/hooks/use-credit';
 import { useToast } from '@/hooks/use-toast';
 import { autoCaptionsAction, analyzeImageAction } from '@/app/actions';
@@ -148,6 +148,7 @@ export default function AutoCaptionsPage() {
     const { user, loading: isUserLoading } = useUser();
     const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
     const firestore = useFirestore();
+    const app = useFirebaseApp();
 
     const [originalFile, setOriginalFile] = useState<File | null>(null);
     const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
@@ -211,7 +212,7 @@ export default function AutoCaptionsPage() {
     };
 
     const handleProcess = async () => {
-        if (!originalFile || !user || !originalDataUri || !firestore) {
+        if (!originalFile || !user || !originalDataUri || !firestore || !app) {
           toast({ title: 'Missing Information', description: `Please upload an image.`, variant: 'destructive' });
           return;
         }
@@ -226,7 +227,7 @@ export default function AutoCaptionsPage() {
         setResults(null);
 
         try {
-            const result = await autoCaptionsAction(originalDataUri, user.uid, platform, tone, goal);
+            const result = await autoCaptionsAction(app, firestore, originalDataUri, platform, tone, goal, user.uid);
             
             if (result) {
                 setResults(result);

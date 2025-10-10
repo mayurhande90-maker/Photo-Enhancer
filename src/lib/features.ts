@@ -14,7 +14,7 @@ import {
 import type { Feature } from '@/lib/types';
 import { Wand2, Scissors, Camera, Palette, Image, Type, Hash, Scan, File, StickyNote, PenTool, Braces, LayoutTemplate, Calendar, Users, Briefcase, Sparkles, Home, User, Bot, Wallet, Video, Star, MapPin, Sofa } from 'lucide-react';
 
-const placeholderAction = async (photoDataUri?: string, userId?: string, ...args: any[]): Promise<any> => {
+const placeholderAction = async (...args: any[]): Promise<any> => {
   console.log('Placeholder action called for a feature in development.');
   // To prevent crashes, we must ensure this function can accept any arguments.
   return { enhancedPhotoDataUri: '', creditCost: 1 };
@@ -81,7 +81,7 @@ export const features: Feature[] = [
     path: '/dashboard/picture-with-celebrity',
     icon: Users,
     creditCost: 2,
-    action: (app, firestore, photoDataUri, userId, celebrity, location) => pictureWithCelebrityAction(photoDataUri, celebrity!, location!, userId),
+    action: (app, firestore, photoDataUri, celebrity, location, userId) => pictureWithCelebrityAction(app, firestore, photoDataUri, celebrity!, location!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.IMAGE_STUDIO,
     outputType: 'image',
@@ -94,7 +94,7 @@ export const features: Feature[] = [
     path: '/dashboard/youtube-thumbnail',
     icon: Type,
     creditCost: 2,
-    action: (app, firestore, photoDataUri, userId, videoType, category, mood, alignment) => createYoutubeThumbnailAction(photoDataUri, videoType!, category!, mood!, alignment!, userId),
+    action: (app, firestore, photoDataUri, videoType, category, mood, alignment, userId) => createYoutubeThumbnailAction(app, firestore, photoDataUri, videoType!, category!, mood!, alignment!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
     outputType: 'image',
@@ -105,7 +105,7 @@ export const features: Feature[] = [
     path: '/dashboard/auto-captions',
     icon: Hash,
     creditCost: 1,
-    action: (app, firestore, photoDataUri, userId, platform, tone, goal) => autoCaptionsAction(photoDataUri, userId, platform!, tone!, goal!),
+    action: (app, firestore, photoDataUri, platform, tone, goal, userId) => autoCaptionsAction(app, firestore, photoDataUri, platform!, tone!, goal!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
     outputType: 'text',
@@ -192,7 +192,7 @@ export const features: Feature[] = [
     path: '/dashboard/future-self',
     icon: User,
     creditCost: 2,
-    action: (app, firestore, photoDataUri, userId, ageGap) => aiFutureSelfAction(app, firestore, photoDataUri, ageGap!, userId),
+    action: (app, firestore, photoDataUri, ageGap, userId) => aiFutureSelfAction(app, firestore, photoDataUri, ageGap!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.PERSONAL_MAGIC,
     outputType: 'image',
@@ -203,7 +203,7 @@ export const features: Feature[] = [
     path: '/dashboard/magic-interior',
     icon: Sofa,
     creditCost: 3,
-    action: (app, firestore, photoDataUri, userId, roomType, styleSelected, options) => magicInteriorAction(app, firestore, photoDataUri, userId, roomType!, styleSelected!, options!),
+    action: (app, firestore, photoDataUri, roomType, styleSelected, options, userId) => magicInteriorAction(app, firestore, photoDataUri, roomType!, styleSelected!, options!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.PERSONAL_MAGIC,
     outputType: 'image',
