@@ -62,7 +62,7 @@ export function DashboardSidebar() {
             <Link key={item.name} href={item.path} className={cn(
               "flex items-center gap-3 rounded-lg px-3 py-2 transition-all",
               pathname === item.path 
-                ? "bg-primary text-primary-foreground" 
+                ? "bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-lg shadow-brand-primary/40" 
                 : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             )}>
               <item.icon className="h-4 w-4" />
@@ -94,7 +94,7 @@ export function DashboardSidebar() {
                     <Link key={feature.name} href={feature.isComingSoon ? '#' : feature.path} className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 transition-all text-sm",
                        pathname === feature.path 
-                        ? "bg-primary text-primary-foreground" 
+                        ? "bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-lg shadow-brand-primary/40"
                         : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                        feature.isComingSoon && "opacity-50 cursor-not-allowed"
                     )}>
@@ -114,7 +114,7 @@ export function DashboardSidebar() {
           <Link href="/dashboard/settings" className={cn(
             "flex items-center gap-3 rounded-lg px-3 py-2 transition-all",
             pathname === "/dashboard/settings" 
-              ? "bg-primary text-primary-foreground" 
+              ? "bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-lg shadow-brand-primary/40"
               : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
           )}>
             <Settings className="h-4 w-4" />
