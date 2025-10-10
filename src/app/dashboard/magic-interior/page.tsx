@@ -148,7 +148,8 @@ export default function MagicInteriorPage() {
             
             if (result.redesignedPhotoDataUri) {
                 setProcessedImageUrl(result.redesignedPhotoDataUri);
-                await saveAIOutput(app, firestore, feature.name, result.redesignedPhotoDataUri, 'image/jpeg', user.uid);
+                // The action already saves the output
+                // await saveAIOutput(app, firestore, feature.name, result.redesignedPhotoDataUri, 'image/jpeg', user.uid);
                 await consumeCredits(feature.creditCost);
             } else {
                 throw new Error('AI generation failed to return an image.');

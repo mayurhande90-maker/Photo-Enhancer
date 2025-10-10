@@ -136,7 +136,8 @@ export default function PictureWithCelebrityPage() {
             
             if (result.enhancedPhotoDataUri) {
                 setProcessedImageUrl(result.enhancedPhotoDataUri);
-                await saveAIOutput(app, firestore, feature.name, result.enhancedPhotoDataUri, 'image/jpeg', user.uid);
+                // The action now saves the output
+                // await saveAIOutput(app, firestore, feature.name, result.enhancedPhotoDataUri, 'image/jpeg', user.uid);
                 await consumeCredits(feature.creditCost);
             } else {
                 throw new Error('AI generation failed to return an image.');
@@ -145,6 +146,7 @@ export default function PictureWithCelebrityPage() {
             const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
             setError(errorMessage);
             toast({ title: 'Processing Error', description: errorMessage, variant: 'destructive' });
+        } finally {
             setIsProcessing(false);
         }
     };

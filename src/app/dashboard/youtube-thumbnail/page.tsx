@@ -133,6 +133,8 @@ export default function YouTubeThumbnailPage() {
 
         try {
             const result = await createYoutubeThumbnailAction(
+                app,
+                firestore,
                 originalDataUri, 
                 videoType, 
                 channelCategory,
@@ -143,7 +145,6 @@ export default function YouTubeThumbnailPage() {
             
             if (result.enhancedPhotoDataUri) {
                 setProcessedImageUrl(result.enhancedPhotoDataUri);
-                await saveAIOutput(app, firestore, feature.name, result.enhancedPhotoDataUri, 'image/jpeg', user.uid);
                 await consumeCredits(feature.creditCost);
             } else {
                 throw new Error('AI generation failed to return an image.');
