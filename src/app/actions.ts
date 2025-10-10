@@ -31,41 +31,41 @@ export async function analyzeImageAction(photoDataUri: string): Promise<AnalyzeI
     }
 }
 
-export async function colorCorrectAction(photoDataUri: string, userId: string) {
+export async function colorCorrectAction(app: FirebaseApp, firestore: Firestore, photoDataUri: string, userId: string) {
   const prompt =
-    'Perform a professional color correction on this photo. Adjust colors, brightness, contrast, and exposure to create a visually balanced and aesthetically modern look. Refine tones but maintain a natural appearance without over-saturation. Preserve the identity of any subjects and the core composition.';
+    'MODE: Color Correction. You are a high-end, AI-powered photo editor. Your task is to apply a true, visible enhancement to this photograph. You MUST NOT return the original image. First, perform a deep visual analysis of the image. Then, execute a professional color correction. Adjust brightness, contrast, exposure, and white balance to create a clean, natural, and modern aesthetic. Do not over-saturate. Skin tones must remain true-to-life. Preserve the fundamental identity and features of any person or subject. The final output MUST be visibly different and superior in quality. Add a small, discreet "Magicpixa" watermark in a bottom corner to confirm processing.';
   const result = await processImageWithAI(photoDataUri, prompt);
   return result;
 }
 
-export async function restorePhotoAction(photoDataUri: string, userId: string) {
+export async function restorePhotoAction(app: FirebaseApp, firestore: Firestore, photoDataUri: string, userId: string) {
   const prompt =
-    'Restore this photograph. If the image is blurry, low-quality, or poorly clicked, enhance its sharpness, fix focus, and improve resolution using AI upscaling. Clean any digital noise, correct the lighting, and improve overall detail and clarity. Preserve the original subjects and composition.';
+    'MODE: Restoration. You are a high-end, AI-powered photo editor. Your task is to apply a true, visible enhancement to this photograph. You MUST NOT return the original image. First, perform a deep visual analysis. If the image is blurry, low-quality, or poorly clicked, you must de-blur the image, upscale its resolution, reduce noise, and recover fine details. The final image must be visibly sharper and clearer. Preserve the fundamental identity and features of any person or subject. Add a small, discreet "Magicpixa" watermark in a bottom corner to confirm processing.';
   const result = await processImageWithAI(photoDataUri, prompt);
   return result;
 }
 
 
-export async function removeBackgroundAction(photoDataUri: string, userId:string) {
+export async function removeBackgroundAction(app: FirebaseApp, firestore: Firestore, photoDataUri: string, userId:string) {
   const prompt =
     "Thoroughly and precisely analyze the image to identify the main subject. Your output MUST be a high-resolution, transparent PNG. Generate a new image of the exact same subject but with the background completely removed and made transparent. Ensure every part of the background is removed, leaving no artifacts, remnants, or shadows. The edges around the subject must be perfectly clean, sharp, and meticulously precise.";
   const result = await processImageWithAI(photoDataUri, prompt);
   return result;
 }
 
-export async function studioEnhanceAction(photoDataUri: string, userId:string) {
+export async function studioEnhanceAction(app: FirebaseApp, firestore: Firestore, photoDataUri: string, userId:string) {
   const prompt =
     'This is a product photo. Enhance it for an e-commerce website. Detect the product type, and create a professional and appealing background. Improve lighting and color to make the product stand out. Do not change the text and design on the product packaging.';
   const result = await processImageWithAI(photoDataUri, prompt);
   return result;
 }
 
-export async function colorizePhotoAction(photoDataUri: string, userId: string) {
+export async function colorizePhotoAction(app: FirebaseApp, firestore: Firestore, photoDataUri: string, userId: string) {
   const result = await colorizePhoto({ photoDataUri });
   return result;
 }
 
-export async function pictureWithCelebrityAction(photoDataUri: string, celebrity: string, location: string, userId: string) {
+export async function pictureWithCelebrityAction(app: FirebaseApp, firestore: Firestore, photoDataUri: string, celebrity: string, location: string, userId: string) {
   const result = await pictureWithCelebrity({ 
     userPhotoDataUri: photoDataUri, 
     celebrityName: celebrity,
@@ -75,6 +75,8 @@ export async function pictureWithCelebrityAction(photoDataUri: string, celebrity
 }
 
 export async function createYoutubeThumbnailAction(
+    app: FirebaseApp,
+    firestore: Firestore,
     photoDataUri: string, 
     videoType: string, 
     categorySelected: string,
@@ -93,6 +95,8 @@ export async function createYoutubeThumbnailAction(
 }
 
 export async function autoCaptionsAction(
+    app: FirebaseApp,
+    firestore: Firestore,
     photoDataUri: string,
     userId: string,
     platform: string,
