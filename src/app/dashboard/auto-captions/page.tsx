@@ -145,7 +145,7 @@ const ResultDisplay = ({ results }: { results: string }) => {
 export default function AutoCaptionsPage() {
     const feature = features.find(f => f.name === 'Auto Captions + Hashtags')!;
     const { toast } = useToast();
-    const { user, loading: isUserLoading } = useUser();
+    const { user, isLoading: isUserLoading } = useUser();
     const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
     const firestore = useFirestore();
     const app = useFirebaseApp();
