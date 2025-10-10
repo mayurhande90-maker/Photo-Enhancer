@@ -5,9 +5,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/icons';
 import { features, featureCategories } from '@/lib/features';
-import { Home, Settings, Image as CreationsIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon, Image as ImageStudioIcon, Palette, Users, Clock, PanelRight, PanelLeft, ChevronRight } from 'lucide-react';
+import { Home, Settings, Image as CreationsIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon, Image as ImageStudioIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useSidebar, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarFooter, SidebarTrigger } from './ui/sidebar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+const mainNav = [
+  { name: 'Dashboard', path: '/dashboard', icon: Home },
+  { name: 'My Creations', path: '/dashboard/creations', icon: CreationsIcon },
+];
 
 const categoryIcons = {
   [featureCategories.IMAGE_STUDIO]: ImageStudioIcon,
@@ -17,108 +22,73 @@ const categoryIcons = {
   [featureCategories.PREMIUM]: StarIcon,
 };
 
+const categorizedFeatures = Object.values(featureCategories).map(category => ({
+  name: category,
+  icon: categoryIcons[category],
+  features: features.filter(f => f.category === category)
+}));
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const { state } = useSidebar();
-  const categories = Object.values(featureCategories);
   
-  const activeFeatures = features.filter(f => !f.isComingSoon);
-  const comingSoonFeatures = features.filter(f => f.isComingSoon);
-
-  const categorizedFeatures = categories.reduce((acc, category) => {
-    const categoryFeatures = activeFeatures.filter(f => f.category === category);
-    if (categoryFeatures.length > 0) {
-      acc.push({ name: category, features: categoryFeatures });
-    }
-    return acc;
-  }, [] as { name: string; features: typeof features }[]);
-
-
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="border-b h-16 p-3 flex items-center">
-        <Link href="/" className={cn("flex items-center gap-2 font-semibold transition-opacity duration-300", state === 'collapsed' ? "opacity-0 w-0" : "opacity-100")}>
-            <Logo className="h-7 w-7 bg-gradient-to-r from-brand-primary to-brand-secondary text-transparent bg-clip-text" />
-            <span className="text-lg">Magicpixa</span>
+    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-card sm:flex">
+      <nav className="flex flex-col items-center gap-4 px-2 sm:py-4">
+        <Link href="/" className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base">
+          <Logo className="h-5 w-5 transition-all group-hover:scale-110" />
+          <span className="sr-only">Magicpixa</span>
         </Link>
-        <div className={cn("flex items-center", state === 'expanded' ? 'ml-auto' : 'mx-auto')}>
-            <SidebarTrigger className="h-9 w-9 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground">
-                {state === 'expanded' ? <PanelLeft className="h-5 w-5"/> : <PanelRight className="h-5 w-5"/>}
-            </SidebarTrigger>
-        </div>
-      </SidebarHeader>
-        <SidebarContent className="p-2 flex-1 overflow-y-auto">
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={pathname === '/dashboard'} tooltip="Dashboard">
-                        <Link href="/dashboard"><Home /><span>Dashboard</span></Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={pathname === '/dashboard/creations'} tooltip="My Creations">
-                        <Link href="/dashboard/creations"><CreationsIcon /><span>My Creations</span></Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-            
-            <div className={cn("my-4 transition-opacity duration-300", state === 'collapsed' ? 'opacity-0 h-0' : 'opacity-100')}>
-                <p className="px-3 text-xs font-semibold text-muted-foreground/80 tracking-wider">TOOLS</p>
-            </div>
+        <TooltipProvider>
+          {mainNav.map((item) => (
+            <Tooltip key={item.name}>
+              <TooltipTrigger asChild>
+                <Link href={item.path} className={cn(
+                  "flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8",
+                  pathname === item.path ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"
+                )}>
+                  <item.icon className="h-5 w-5" />
+                  <span className="sr-only">{item.name}</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">{item.name}</TooltipContent>
+            </Tooltip>
+          ))}
+          
+          <div className="w-full h-px bg-border my-2" />
 
-             {categorizedFeatures.map(({ name, features: categoryFeatures }) => {
-                const CategoryIcon = categoryIcons[name as keyof typeof categoryIcons];
-                return (
-                    <SidebarMenu key={name}>
-                        {categoryFeatures.map((feature) => (
-                            <SidebarMenuItem key={feature.name}>
-                                <SidebarMenuButton 
-                                    asChild
-                                    isActive={pathname === feature.path} 
-                                    tooltip={feature.name}
-                                    disabled={feature.isComingSoon || feature.isPremium}
-                                >
-                                    <Link href={feature.path}>
-                                        <feature.icon />
-                                        <span>{feature.name}</span>
-                                        {(feature.isComingSoon || feature.isPremium) && <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />}
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        ))}
-                    </SidebarMenu>
-                )
-             })}
-             {comingSoonFeatures.length > 0 && (
-                <>
-                <div className={cn("my-4 transition-opacity duration-300", state === 'collapsed' ? 'opacity-0 h-0' : 'opacity-100')}>
-                     <p className="px-3 text-xs font-semibold text-muted-foreground/80 tracking-wider">COMING SOON</p>
-                </div>
-                <SidebarMenu>
-                    {comingSoonFeatures.map((feature) => (
-                        <SidebarMenuItem key={feature.name}>
-                            <SidebarMenuButton tooltip={feature.name} disabled>
-                                <feature.icon />
-                                <span>{feature.name}</span>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-                    ))}
-                </SidebarMenu>
-                </>
-             )}
-        </SidebarContent>
-        <SidebarFooter className="p-2 border-t">
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={pathname === '/dashboard/settings'} tooltip="Settings">
-                        <Link href="/dashboard/settings">
-                            <Settings/>
-                            <span>Settings</span>
+          {categorizedFeatures.flatMap(category => 
+             category.features.map((feature) => (
+                <Tooltip key={feature.name}>
+                    <TooltipTrigger asChild>
+                         <Link href={feature.path} className={cn(
+                          "flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8",
+                           pathname === feature.path ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground",
+                           feature.isComingSoon && "pointer-events-none opacity-50"
+                        )}>
+                          <feature.icon className="h-5 w-5" />
+                          <span className="sr-only">{feature.name}</span>
                         </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-        </SidebarFooter>
-    </Sidebar>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">{feature.name}</TooltipContent>
+                </Tooltip>
+             ))
+          )}
+
+        </TooltipProvider>
+      </nav>
+      <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-4">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link href="/dashboard/settings" className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8">
+                <Settings className="h-5 w-5" />
+                <span className="sr-only">Settings</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">Settings</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </nav>
+    </aside>
   );
 }
