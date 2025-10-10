@@ -66,9 +66,9 @@ export async function colorizePhotoAction(app: FirebaseApp, firestore: Firestore
   return result;
 }
 
-export async function pictureWithCelebrityAction(app: FirebaseApp, firestore: Firestore, photoDataUri: string, celebrity: string, location: string, userId: string) {
+export async function pictureWithCelebrityAction(app: FirebaseApp, firestore: Firestore, userPhotoDataUri: string, celebrity: string, location: string, userId: string) {
   const result = await pictureWithCelebrity({ 
-    userPhotoDataUri: photoDataUri, 
+    userPhotoDataUri: userPhotoDataUri, 
     celebrityName: celebrity,
     locationName: location 
   });
