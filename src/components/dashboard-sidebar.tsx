@@ -80,9 +80,9 @@ export function DashboardSidebar() {
               onOpenChange={() => toggleCategory(category.key)}
             >
               <CollapsibleTrigger asChild>
-                <div className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between w-full">
+                <div className="flex items-center justify-between w-full px-3 py-2 text-sm font-semibold rounded-lg bg-accent/50 text-accent-foreground hover:bg-accent cursor-pointer">
                   <span className="flex items-center gap-3">
-                    <category.icon className="h-4 w-4" />
+                    <category.icon className="w-4 h-4" />
                     <span className="whitespace-nowrap">{category.name}</span>
                   </span>
                   <ChevronDown className={cn("h-4 w-4 transition-transform", openCategories.includes(category.key) && "rotate-180")} />
