@@ -13,7 +13,7 @@ export default function DashboardLayout({
     <SidebarProvider>
       <div className="flex min-h-screen w-full flex-col bg-muted/20 font-body">
         <DashboardSidebar />
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-[--sidebar-width-icon] bg-background transition-all duration-300 group-data-[state=expanded]:sm:pl-[--sidebar-width]">
+        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 bg-background transition-all duration-300 group-data-[state=expanded]:sm:pl-[var(--sidebar-width)]">
           <Suspense>
             <DashboardHeader />
           </Suspense>
