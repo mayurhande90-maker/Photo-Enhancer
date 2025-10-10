@@ -10,7 +10,7 @@ export type Feature = {
   path: string;
   icon: LucideIcon;
   creditCost: number;
-  action: (app: FirebaseApp, firestore: Firestore, ...args: any[]) => Promise<any>;
+  action: (...args: any[]) => Promise<any>;
   showBeforeAfterSlider: boolean;
   category: string;
   outputType: 'image' | 'text';

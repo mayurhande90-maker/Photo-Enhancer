@@ -82,8 +82,6 @@ export async function pictureWithCelebrityAction(app: FirebaseApp, firestore: Fi
 }
 
 export async function createYoutubeThumbnailAction(
-    app: FirebaseApp,
-    firestore: Firestore,
     photoDataUri: string, 
     videoType: string, 
     categorySelected: string,
@@ -98,7 +96,7 @@ export async function createYoutubeThumbnailAction(
         moodSelected,
         alignmentSelected
     });
-    await saveAIOutput(app, firestore, 'YouTube Thumbnail Creator', result.enhancedPhotoDataUri, 'image/jpeg', userId);
+    // This action is not saving to creations yet, so we don't call saveAIOutput
     return result;
 }
 

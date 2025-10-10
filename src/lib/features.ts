@@ -94,7 +94,7 @@ export const features: Feature[] = [
     path: '/dashboard/youtube-thumbnail',
     icon: Type,
     creditCost: 2,
-    action: (app, firestore, photoDataUri, videoType, category, mood, alignment, userId) => createYoutubeThumbnailAction(app, firestore, photoDataUri, videoType!, category!, mood!, alignment!, userId),
+    action: (photoDataUri, videoType, category, mood, alignment, userId) => createYoutubeThumbnailAction(photoDataUri, videoType!, category!, mood!, alignment!, userId),
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
     outputType: 'image',
