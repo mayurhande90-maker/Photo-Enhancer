@@ -27,7 +27,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 function HeaderUserSection() {
-    const { user, loading: isUserLoading } = useUser();
+    const { user, isUserLoading } = useUser();
     const { credits, isLoading: isCreditLoading } = useCredit();
     const auth = useAuth();
     const { toast } = useToast();

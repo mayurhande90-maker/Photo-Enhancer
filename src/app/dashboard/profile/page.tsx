@@ -236,9 +236,9 @@ function EditProfileDialog() {
 
 
 export default function ProfilePage() {
-  const { user, loading } = useUser();
+  const { user, isUserLoading } = useUser();
 
-  if (loading) {
+  if (isUserLoading) {
     return (
        <div className="space-y-8">
         <Card className="rounded-3xl p-8">

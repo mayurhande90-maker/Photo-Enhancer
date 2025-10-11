@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function SettingsPage() {
-  const { user, loading } = useUser();
+  const { user, isUserLoading } = useUser();
 
   const handleUpdateProfile = () => {
     // Redirect to profile page for editing
@@ -19,7 +19,7 @@ export default function SettingsPage() {
   };
 
 
-  if (loading) {
+  if (isUserLoading) {
     return (
        <div className="space-y-6">
           <Skeleton className="h-12 w-1/3" />

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -64,7 +63,7 @@ function CreationCard({ image }: { image: GeneratedImage }) {
 }
 
 export default function CreationsPage() {
-    const { user, loading: userLoading } = useUser();
+    const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
     const [showScrollToTop, setShowScrollToTop] = useState(false);
 
@@ -79,7 +78,7 @@ export default function CreationsPage() {
 
     const { data: images, isLoading: imagesLoading } = useCollection<GeneratedImage>(creationsQuery);
 
-    if (userLoading || imagesLoading) {
+    if (isUserLoading || imagesLoading) {
         return (
             <div className="flex justify-center items-center h-64">
                 <Loader2 className="h-10 w-10 animate-spin text-primary" />

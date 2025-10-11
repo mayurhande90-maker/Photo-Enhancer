@@ -16,7 +16,7 @@ import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 function HeaderUserSection() {
-    const { user, loading: isUserLoading } = useUser();
+    const { user, isUserLoading } = useUser();
     const auth = useAuth();
     const { toast } = useToast();
     const router = useRouter();
