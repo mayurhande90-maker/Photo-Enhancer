@@ -40,20 +40,12 @@ const youtubeThumbnailFlow = ai.defineFlow(
     
   },
   async (input) => {
-    let prompt = ``;
-
-    if (typeof prompt !== "string") {
-      prompt = JSON.stringify(prompt);
-    }
-    if (prompt.length > 500) {
-      prompt = prompt.slice(0, 500);
-    }
-    const safePrompt = prompt.replace(/[^\w\s.,!?-]/g, "");
+    const prompt = `Create a compelling YouTube thumbnail for a "${input.videoType}" video. The channel category is ${input.categorySelected}. The visual mood should be ${input.moodSelected}. The main subject from the provided image should be ${input.alignmentSelected}. Add catchy, readable text and graphics appropriate for the theme.`;
 
     const { media } = await ai.generate({
       prompt: [
         { media: { url: input.photoDataUri } },
-        { text: safePrompt },
+        { text: prompt },
       ],
       model: 'googleai/gemini-2.5-flash-image-preview',
       config: {

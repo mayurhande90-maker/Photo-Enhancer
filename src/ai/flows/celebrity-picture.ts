@@ -38,20 +38,13 @@ const celebrityPictureFlow = ai.defineFlow(
     
   },
   async (input) => {
-    let prompt = ``;
-
-    if (typeof prompt !== "string") {
-      prompt = JSON.stringify(prompt);
-    }
-    if (prompt.length > 500) {
-      prompt = prompt.slice(0, 500);
-    }
-    const safePrompt = prompt.replace(/[^\w\s.,!?-]/g, "");
+    
+    const prompt = `Generate a hyper-realistic photo of the person in the user-provided image standing next to ${input.celebrityName}. The background should be a ${input.locationName} setting. The lighting, shadows, and style should match to make it look like a real photograph.`;
 
     const { media } = await ai.generate({
       prompt: [
         { media: { url: input.userPhotoDataUri } },
-        { text: safePrompt },
+        { text: prompt },
       ],
       model: 'googleai/gemini-2.5-flash-image-preview',
       config: {

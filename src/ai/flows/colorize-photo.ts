@@ -36,20 +36,12 @@ const colorizePhotoFlow = ai.defineFlow(
     
   },
   async input => {
-    let prompt = ``;
-
-    if (typeof prompt !== "string") {
-      prompt = JSON.stringify(prompt);
-    }
-    if (prompt.length > 500) {
-      prompt = prompt.slice(0, 500);
-    }
-    const safePrompt = prompt.replace(/[^\w\s.,!?-]/g, "");
+    const prompt = 'Colorize this black and white photo with realistic and historically appropriate colors. Restore any minor damage or fading to enhance the overall quality and clarity.';
 
     const {media} = await ai.generate({
       prompt: [
         {media: {url: input.photoDataUri}},
-        {text: safePrompt},
+        {text: prompt},
       ],
       model: 'googleai/gemini-2.5-flash-image-preview',
       config: {

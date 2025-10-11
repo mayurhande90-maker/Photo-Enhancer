@@ -22,20 +22,12 @@ const magicInteriorFlow = ai.defineFlow(
     
   },
   async (input) => {
-    let prompt = ``;
-
-    if (typeof prompt !== "string") {
-      prompt = JSON.stringify(prompt);
-    }
-    if (prompt.length > 500) {
-      prompt = prompt.slice(0, 500);
-    }
-    const safePrompt = prompt.replace(/[^\w\s.,!?-]/g, "");
+    const prompt = `Redesign this ${input.roomType} in a ${input.styleSelected} style. Use a ${input.options.colorPalette} color palette. The output should be a photorealistic image of the redesigned room, keeping the original architectural elements like windows and doors.`;
 
     const { media } = await ai.generate({
       prompt: [
         { media: { url: input.photoDataUri } },
-        { text: safePrompt },
+        { text: prompt },
       ],
       model: 'googleai/gemini-2.5-flash-image-preview',
       config: {

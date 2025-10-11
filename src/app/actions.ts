@@ -26,14 +26,14 @@ export async function analyzeImageAction(photoDataUri: string): Promise<AnalyzeI
 }
 
 export async function colorCorrectAction(app: FirebaseApp, firestore: Firestore, photoUrl: string, userId: string) {
-  const prompt = '';
+  const prompt = 'Professionally color correct this image. Adjust brightness, contrast, and saturation to make it look vibrant and natural.';
   const result = await enhanceFromPrompt({ photoDataUri: photoUrl, enhancementPrompt: prompt });
   await saveAIOutput(app, firestore, 'Photo Enhancement (Color)', result.enhancedPhotoDataUri, 'image/jpeg', userId);
   return result;
 }
 
 export async function restorePhotoAction(app: FirebaseApp, firestore: Firestore, photoUrl: string, userId: string) {
-  const prompt = '';
+  const prompt = 'Restore this photo. Increase sharpness, remove blur, and enhance details to make it look clear and high-resolution.';
   const result = await enhanceFromPrompt({ photoDataUri: photoUrl, enhancementPrompt: prompt });
   await saveAIOutput(app, firestore, 'Photo Enhancement (Restore)', result.enhancedPhotoDataUri, 'image/jpeg', userId);
   return result;
@@ -41,14 +41,14 @@ export async function restorePhotoAction(app: FirebaseApp, firestore: Firestore,
 
 
 export async function removeBackgroundAction(app: FirebaseApp, firestore: Firestore, photoUrl: string, userId:string) {
-  const prompt = "";
+  const prompt = "Remove the background from this image, leaving only the main subject with clean edges. The output should be a PNG with a transparent background.";
   const result = await enhanceFromPrompt({ photoDataUri: photoUrl, enhancementPrompt: prompt });
   await saveAIOutput(app, firestore, 'Background Removal', result.enhancedPhotoDataUri, 'image/png', userId);
   return result;
 }
 
 export async function studioEnhanceAction(app: FirebaseApp, firestore: Firestore, photoUrl: string, userId:string) {
-  const prompt = '';
+  const prompt = 'Turn this product photo into a cinematic, professional advertisement. Add a clean studio background, dramatic lighting, and shadows to make it look like a high-quality product shot.';
   const result = await enhanceFromPrompt({ photoDataUri: photoUrl, enhancementPrompt: prompt });
   await saveAIOutput(app, firestore, 'Photo Studio', result.enhancedPhotoDataUri, 'image/jpeg', userId);
   return result;
