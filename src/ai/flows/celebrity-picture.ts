@@ -38,24 +38,7 @@ const celebrityPictureFlow = ai.defineFlow(
     
   },
   async (input) => {
-    
-    const prompt = `Generate a hyper-realistic photo of the person in the user-provided image standing next to ${input.celebrityName}. The background should be a ${input.locationName} setting. The lighting, shadows, and style should match to make it look like a real photograph.`;
-
-    const { media } = await ai.generate({
-      prompt: [
-        { media: { url: input.userPhotoDataUri } },
-        { text: prompt },
-      ],
-      model: 'googleai/gemini-2.5-flash-image-preview',
-      config: {
-        responseModalities: ['TEXT', 'IMAGE'],
-      },
-    });
-
-    if (!media?.url) {
-      throw new Error('Image generation failed to produce a result.');
-    }
-
-    return { enhancedPhotoDataUri: media.url };
+    // Returning empty data to disable image generation.
+    return { enhancedPhotoDataUri: '' };
   }
 );

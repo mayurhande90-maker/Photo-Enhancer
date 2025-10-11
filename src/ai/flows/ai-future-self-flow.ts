@@ -39,24 +39,7 @@ const aiFutureSelfFlow = ai.defineFlow(
     
   },
   async (input) => {
-    
-    const prompt = `Age the person in this photo by ${input.ageGap} years, maintaining their core features and a photorealistic look.`;
-
-    const { media } = await ai.generate({
-      prompt: [
-        { media: { url: input.photoDataUri } },
-        { text: prompt },
-      ],
-      model: 'googleai/gemini-2.5-flash-image-preview',
-      config: {
-        responseModalities: ['TEXT', 'IMAGE'],
-      },
-    });
-
-    if (!media?.url) {
-      throw new Error('Image generation failed to produce a result.');
-    }
-
-    return { agedPhotoDataUri: media.url };
+    // Returning empty data to disable image generation.
+    return { agedPhotoDataUri: '' };
   }
 );

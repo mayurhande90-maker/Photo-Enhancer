@@ -36,23 +36,7 @@ const colorizePhotoFlow = ai.defineFlow(
     
   },
   async input => {
-    const prompt = 'Colorize this black and white photo with realistic and historically appropriate colors. Restore any minor damage or fading to enhance the overall quality and clarity.';
-
-    const {media} = await ai.generate({
-      prompt: [
-        {media: {url: input.photoDataUri}},
-        {text: prompt},
-      ],
-      model: 'googleai/gemini-2.5-flash-image-preview',
-      config: {
-        responseModalities: ['TEXT', 'IMAGE'],
-      },
-    });
-
-    if (!media?.url) {
-        throw new Error('Image generation failed to produce a result.');
-    }
-
-    return {enhancedPhotoDataUri: media.url};
+    // Returning empty data to disable image generation.
+    return {enhancedPhotoDataUri: ''};
   }
 );

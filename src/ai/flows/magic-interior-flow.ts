@@ -22,23 +22,7 @@ const magicInteriorFlow = ai.defineFlow(
     
   },
   async (input) => {
-    const prompt = `Redesign this ${input.roomType} in a ${input.styleSelected} style. Use a ${input.options.colorPalette} color palette. The output should be a photorealistic image of the redesigned room, keeping the original architectural elements like windows and doors.`;
-
-    const { media } = await ai.generate({
-      prompt: [
-        { media: { url: input.photoDataUri } },
-        { text: prompt },
-      ],
-      model: 'googleai/gemini-2.5-flash-image-preview',
-      config: {
-        responseModalities: ['TEXT', 'IMAGE'],
-      },
-    });
-
-    if (!media?.url) {
-      throw new Error('Image generation failed to produce a result.');
-    }
-
-    return { redesignedPhotoDataUri: media.url };
+    // Returning empty data to disable image generation.
+    return { redesignedPhotoDataUri: '' };
   }
 );
