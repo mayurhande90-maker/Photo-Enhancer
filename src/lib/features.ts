@@ -7,7 +7,6 @@ import {
   colorizePhotoAction,
   pictureWithCelebrityAction,
   createYoutubeThumbnailAction,
-  autoCaptionsAction,
   aiFutureSelfAction,
   magicInteriorAction,
 } from '@/app/actions';
@@ -98,17 +97,6 @@ export const features: Feature[] = [
     showBeforeAfterSlider: false,
     category: featureCategories.CONTENT_BRAND,
     outputType: 'image',
-  },
-  {
-    name: 'Auto Captions + Hashtags',
-    description: 'Perfect caption generator.',
-    path: '/dashboard/auto-captions',
-    icon: Hash,
-    creditCost: 1,
-    action: autoCaptionsAction,
-    showBeforeAfterSlider: false,
-    category: featureCategories.CONTENT_BRAND,
-    outputType: 'text',
   },
   {
     name: 'Mockup Generator',

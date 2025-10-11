@@ -6,10 +6,9 @@ import { analyzeImage } from '@/ai/flows/analyze-image';
 import { pictureWithCelebrity } from '@/ai/flows/celebrity-picture';
 import { colorizePhoto } from '@/ai/flows/colorize-photo';
 import { createYouTubeThumbnail } from '@/ai/flows/youtube-thumbnail-flow';
-import { generateCaptions } from '@/ai/flows/auto-captions-flow';
 import { generateFutureSelf } from '@/ai/flows/ai-future-self-flow';
 import { createMagicInterior } from '@/ai/flows/magic-interior-flow';
-import type { AnalyzeImageOutput, AutoCaptionOutput } from '@/lib/types';
+import type { AnalyzeImageOutput } from '@/lib/types';
 import type { FirebaseApp } from 'firebase/app';
 import type { Firestore } from 'firebase/firestore';
 import { saveAIOutput } from '@/firebase/auth/client-update-profile';
@@ -88,26 +87,6 @@ export async function createYoutubeThumbnailAction(
         alignmentSelected
     });
     await saveAIOutput(app, firestore, 'YouTube Thumbnail Creator', result.enhancedPhotoDataUri, 'image/jpeg', userId);
-    return result;
-}
-
-export async function autoCaptionsAction(
-    app: FirebaseApp,
-    firestore: Firestore,
-    photoDataUri: string,
-    platform: string,
-    tone: string,
-    goal: string,
-    userId: string
-): Promise<AutoCaptionOutput> {
-    const result = await generateCaptions({
-        photoDataUri,
-        platform,
-        tone,
-        goal,
-        language: 'en',
-    });
-    // Not saving text output to creations gallery for now
     return result;
 }
 

@@ -58,20 +58,6 @@ export const AnalyzeImageOutputSchema = z.object({
 });
 export type AnalyzeImageOutput = z.infer<typeof AnalyzeImageOutputSchema>;
 
-// Types for Auto Captions feature
-export const AutoCaptionInputSchema = z.object({
-  photoDataUri: z.string().describe("The user-uploaded image as a data URI."),
-  platform: z.string(),
-  tone: z.string(),
-  goal: z.string(),
-  language: z.string().default('en'),
-});
-export type AutoCaptionInput = z.infer<typeof AutoCaptionInputSchema>;
-
-
-export const AutoCaptionOutputSchema = z.string().describe("The formatted string containing captions, hashtags, and notes.");
-export type AutoCaptionOutput = z.infer<typeof AutoCaptionOutputSchema>;
-
 
 // Types for AI Future Self
 export const AIFutureSelfInputSchema = z.object({
