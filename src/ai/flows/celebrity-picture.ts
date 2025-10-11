@@ -38,12 +38,20 @@ const celebrityPictureFlow = ai.defineFlow(
     
   },
   async (input) => {
-    const prompt = ``;
+    let prompt = ``;
+
+    if (typeof prompt !== "string") {
+      prompt = JSON.stringify(prompt);
+    }
+    if (prompt.length > 500) {
+      prompt = prompt.slice(0, 500);
+    }
+    const safePrompt = prompt.replace(/[^\w\s.,!?-]/g, "");
 
     const { media } = await ai.generate({
       prompt: [
         { media: { url: input.userPhotoDataUri } },
-        { text: prompt },
+        { text: safePrompt },
       ],
       model: 'googleai/gemini-2.5-flash-image-preview',
       config: {

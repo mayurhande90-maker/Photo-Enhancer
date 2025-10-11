@@ -41,10 +41,19 @@ const enhanceFromPromptFlow = ai.defineFlow(
     
   },
   async input => {
+    let prompt = input.enhancementPrompt;
+    if (typeof prompt !== "string") {
+      prompt = JSON.stringify(prompt);
+    }
+    if (prompt.length > 500) {
+      prompt = prompt.slice(0, 500);
+    }
+    const safePrompt = prompt.replace(/[^\w\s.,!?-]/g, "");
+
     const {media} = await ai.generate({
       prompt: [
         {media: {url: input.photoDataUri}},
-        {text: input.enhancementPrompt},
+        {text: safePrompt},
       ],
       model: 'googleai/gemini-2.5-flash-image-preview',
       config: {
