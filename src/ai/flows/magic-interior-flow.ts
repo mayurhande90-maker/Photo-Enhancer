@@ -3,6 +3,7 @@
 
 /**
  * @fileOverview Redesigns the interior of a user's room based on a selected style.
+ * THIS FEATURE IS DISABLED.
  */
 
 import { ai } from '@/ai/genkit';
@@ -19,10 +20,9 @@ const magicInteriorFlow = ai.defineFlow(
     name: 'magicInteriorFlow',
     inputSchema: MagicInteriorInputSchema,
     outputSchema: MagicInteriorOutputSchema,
-    
   },
   async (input) => {
-    // Returning empty data to disable image generation.
+    // Feature disabled: returning empty data.
     return { redesignedPhotoDataUri: '' };
   }
 );

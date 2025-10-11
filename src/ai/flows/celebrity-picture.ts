@@ -3,6 +3,7 @@
 
 /**
  * @fileOverview Generates a hyper-realistic photo of a user with a celebrity.
+ * THIS FEATURE IS DISABLED.
  */
 
 import { ai } from '@/ai/genkit';
@@ -35,10 +36,9 @@ const celebrityPictureFlow = ai.defineFlow(
     name: 'celebrityPictureFlow',
     inputSchema: CelebrityPictureInputSchema,
     outputSchema: CelebrityPictureOutputSchema,
-    
   },
   async (input) => {
-    // Returning empty data to disable image generation.
+    // Feature disabled: returning empty data.
     return { enhancedPhotoDataUri: '' };
   }
 );

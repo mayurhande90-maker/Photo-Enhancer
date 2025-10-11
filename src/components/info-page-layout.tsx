@@ -5,94 +5,15 @@ import Link from 'next/link';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { User, LogOut } from 'lucide-react';
-import { Skeleton } from './ui/skeleton';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
-import { useUser, useAuth } from '@/firebase';
-import { signOut } from 'firebase/auth';
-import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 function HeaderUserSection() {
-    const { user, isUserLoading } = useUser();
-    const auth = useAuth();
-    const { toast } = useToast();
-    const router = useRouter();
-
-    const handleLogout = async () => {
-        if (!auth) return;
-        try {
-            await signOut(auth);
-            toast({
-                title: 'Logged Out',
-                description: "You have been successfully logged out.",
-            });
-            router.push('/');
-        } catch (error) {
-            console.error('Logout failed:', error);
-            toast({
-                title: 'Logout Failed',
-                description: 'An unexpected error occurred during logout.',
-                variant: 'destructive',
-            });
-        }
-    };
-    
-    if (isUserLoading) {
-      return (
-        <div className="flex items-center gap-4">
-          <Skeleton className="h-9 w-20" />
-          <Skeleton className="h-9 w-9 rounded-full" />
-        </div>
-      );
-    }
-
-    if (user) {
-        return (
-            <div className="flex items-center gap-4">
-                 <Button asChild className="hidden sm:flex rounded-2xl">
-                    <Link href="/dashboard">Go to Dashboard</Link>
-                </Button>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                         <Button
-                            variant="outline"
-                            size="icon"
-                            className="overflow-hidden rounded-full"
-                        >
-                           <Avatar className="h-9 w-9">
-                                <AvatarImage src={user.photoURL || ''} alt={user.displayName || ''} />
-                                <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>{user.displayName || 'My Account'}</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => router.push('/dashboard/creations')}>
-                            My Creations
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>My Profile</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleLogout}>
-                            <LogOut className="mr-2 h-4 w-4" />
-                            <span>Logout</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-        );
-    }
-
     return (
         <div className="hidden items-center space-x-2 md:flex">
-            <Button variant="ghost" asChild>
-                <Link href="/login">Login</Link>
+            <Button variant="ghost" asChild disabled>
+                <span className="cursor-not-allowed">Login</span>
             </Button>
-            <Button asChild>
-                <Link href="/signup">Sign Up</Link>
+            <Button asChild disabled>
+                <span className="cursor-not-allowed">Sign Up</span>
             </Button>
         </div>
     );

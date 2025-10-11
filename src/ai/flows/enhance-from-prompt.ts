@@ -3,10 +3,7 @@
 
 /**
  * @fileOverview Enhances a photo based on a user-provided prompt.
- *
- * - enhanceFromPrompt - A function that enhances a photo based on a user-provided prompt.
- * - EnhanceFromPromptInput - The input type for the enhanceFromPrompt function.
- * - EnhanceFromPromptOutput - The return type for the enhanceFromPrompt function.
+ * THIS FEATURE IS DISABLED.
  */
 
 import {ai} from '@/ai/genkit';
@@ -38,10 +35,9 @@ const enhanceFromPromptFlow = ai.defineFlow(
     name: 'enhanceFromPromptFlow',
     inputSchema: EnhanceFromPromptInputSchema,
     outputSchema: EnhanceFromPromptOutputSchema,
-    
   },
   async input => {
-    // Returning empty data to disable image generation.
+    // Feature disabled: returning empty data.
     return {enhancedPhotoDataUri: ''};
   }
 );

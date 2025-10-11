@@ -3,6 +3,7 @@
 
 /**
  * @fileOverview Generates a YouTube thumbnail.
+ * THIS FEATURE IS DISABLED.
  */
 
 import { ai } from '@/ai/genkit';
@@ -37,10 +38,9 @@ const youtubeThumbnailFlow = ai.defineFlow(
     name: 'youtubeThumbnailFlow',
     inputSchema: YouTubeThumbnailInputSchema,
     outputSchema: YouTubeThumbnailOutputSchema,
-    
   },
   async (input) => {
-    // Returning empty data to disable image generation.
+    // Feature disabled: returning empty data.
     return { enhancedPhotoDataUri: '' };
   }
 );

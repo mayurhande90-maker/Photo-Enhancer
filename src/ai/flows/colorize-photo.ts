@@ -3,6 +3,7 @@
 
 /**
  * @fileOverview Colorizes and restores vintage photos.
+ * THIS FEATURE IS DISABLED.
  */
 
 import {ai} from '@/ai/genkit';
@@ -33,10 +34,9 @@ const colorizePhotoFlow = ai.defineFlow(
     name: 'colorizePhotoFlow',
     inputSchema: ColorizePhotoInputSchema,
     outputSchema: ColorizePhotoOutputSchema,
-    
   },
   async input => {
-    // Returning empty data to disable image generation.
+    // Feature disabled: returning empty data.
     return {enhancedPhotoDataUri: ''};
   }
 );

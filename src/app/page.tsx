@@ -3,30 +3,21 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Logo } from '@/components/icons';
-import { User, LogOut, Star, ChevronUp, Check, Settings, Moon, Sun, Monitor, Image as ImageIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon } from 'lucide-react';
+import { Check, Settings, Image as ImageIcon, Megaphone, Briefcase, Sparkles, Star as StarIcon } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { useUser, useAuth } from '@/firebase';
-import { useRouter } from 'next/navigation';
 import React, { useState, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { Skeleton } from '@/components/ui/skeleton';
-import { signOut } from 'firebase/auth';
-import { useToast } from '@/hooks/use-toast';
 import { features, featureCategories } from '@/lib/features';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
 
 const pricingTiers = [
   {
     name: 'Free — Discover',
     price: '₹0',
-    priceSuffix: '/ month',
     features: [
       '10 credits/month',
       'Access to basic tools',
@@ -34,14 +25,12 @@ const pricingTiers = [
       'Standard processing speed',
     ],
     cta: 'Start for Free',
-    ctaPath: '/signup',
+    ctaPath: '#',
     popular: false,
   },
   {
     name: 'Pro — Create More',
     price: '₹299',
-    yearlyPrice: '₹2,999',
-    priceSuffix: '/ month',
     features: [
       '100 credits/month',
       'No watermark',
@@ -49,14 +38,12 @@ const pricingTiers = [
       'Priority processing',
     ],
     cta: 'Get Pro',
-    ctaPath: 'https://rzp.io/l/magicpixa-pro',
+    ctaPath: '#',
     popular: true,
   },
   {
     name: 'Premium+ — Power User',
     price: '₹499',
-    yearlyPrice: '₹4,999',
-    priceSuffix: '/ month',
     features: [
       '350 credits/month',
       'Access to all features',
@@ -64,14 +51,12 @@ const pricingTiers = [
       'Highest priority queue',
     ],
     cta: 'Get Premium+',
-    ctaPath: 'https://rzp.io/l/magicpixa-premium',
+    ctaPath: '#',
     popular: false,
   },
    {
     name: 'VIP — Unlimited',
     price: '₹1999',
-    yearlyPrice: '₹19,999',
-    priceSuffix: '/ month',
     features: [
       'Unlimited credits/month',
       'Exclusive early access to new tools',
@@ -79,7 +64,7 @@ const pricingTiers = [
       'Top priority queue',
     ],
     cta: 'Go VIP',
-    ctaPath: 'https://rzp.io/l/magicpixa-vip', // Assuming a new Razorpay link
+    ctaPath: '#',
     popular: false,
   },
 ];
@@ -138,125 +123,20 @@ const categoryIcons = {
 };
 
 function HeaderUserSection() {
-    const { user, loading: isUserLoading } = useUser();
-    const auth = useAuth();
-    const { toast } = useToast();
-    const router = useRouter();
-
-    const handleLogout = async () => {
-        if (!auth) return;
-        try {
-            await signOut(auth);
-            toast({
-                title: 'Logged Out',
-                description: "You have been successfully logged out.",
-            });
-            router.push('/');
-        } catch (error) {
-            console.error('Logout failed:', error);
-            toast({
-                title: 'Logout Failed',
-                description: 'An unexpected error occurred during logout.',
-                variant: 'destructive',
-            });
-        }
-    };
-    
-    if (isUserLoading) {
-      return (
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-9 w-24 rounded-full" />
-          <Skeleton className="h-9 w-9 rounded-full" />
-        </div>
-      );
-    }
-
-    if (user) {
-        return (
-            <div className="flex items-center gap-2">
-                 <Button asChild className="hidden sm:flex">
-                    <Link href="/dashboard">Dashboard</Link>
-                </Button>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            className="overflow-hidden rounded-full"
-                        >
-                            <Avatar className="h-9 w-9">
-                                <AvatarImage src={user.photoURL || ''} alt={user.displayName || ''} />
-                                <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                        <DropdownMenuLabel>{user.displayName || 'My Account'}</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => router.push('/dashboard/creations')}>
-                            My Creations
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>My Profile</DropdownMenuItem>
-                         <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span>Settings</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleLogout}>
-                            <LogOut className="mr-2 h-4 w-4" />
-                            <span>Logout</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-        );
-    }
-
     return (
         <div className="flex items-center gap-2">
-            <Button variant="ghost" asChild>
-                <Link href="/login">Login</Link>
+            <Button variant="ghost" asChild disabled>
+                <span className="cursor-not-allowed">Login</span>
             </Button>
-            <Button asChild>
-                <Link href="/signup">Sign Up Free</Link>
+            <Button asChild disabled>
+                <span className="cursor-not-allowed">Sign Up Free</span>
             </Button>
         </div>
     );
 }
 
 export default function Home() {
-  const { user } = useUser();
-  const router = useRouter();
-  const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-
-  useEffect(() => {
-    const checkScroll = () => {
-      if (window.scrollY > 400) {
-        setShowScrollToTop(true);
-      } else {
-        setShowScrollToTop(false);
-      }
-    };
-
-    window.addEventListener('scroll', checkScroll);
-    return () => window.removeEventListener('scroll', checkScroll);
-  }, []);
-
-  const handleGoProClick = (path: string) => {
-    if (user) {
-      window.open(path, '_blank');
-    } else {
-      router.push('/signup');
-    }
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
 
   const categories = Object.values(featureCategories);
   const categorizedFeatures = useMemo(() => {
@@ -337,7 +217,7 @@ export default function Home() {
                 <TabsContent key={name} value={name} className="mt-8">
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {categoryFeatures.map((feature) => (
-                      <Link href={feature.isComingSoon || feature.isPremium ? '#' : feature.path} key={feature.name} className={cn("h-full", (feature.isComingSoon || feature.isPremium) && 'pointer-events-none')}>
+                      <Link href={feature.path} key={feature.name} className="h-full">
                         <Card className="h-full flex flex-col rounded-3xl transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-lg hover:shadow-brand-accent/20 group relative overflow-hidden">
                            {(feature.isComingSoon || feature.isPremium) && (
                             <Badge variant={feature.isPremium ? "default" : "secondary"} className={cn("absolute top-4 right-4 z-10", feature.isPremium && "bg-gradient-to-r from-yellow-400 to-orange-500 text-white")}>
@@ -354,7 +234,7 @@ export default function Home() {
                             {feature.description}
                           </CardContent>
                           <CardFooter className="mt-auto flex justify-center pb-4">
-                            <span className={cn("text-sm font-medium text-brand-accent group-hover:underline", (feature.isComingSoon || feature.isPremium) && 'opacity-50')}>Try Now →</span>
+                            <span className={cn("text-sm font-medium text-brand-accent group-hover:underline")}>Try Now →</span>
                           </CardFooter>
                         </Card>
                       </Link>
@@ -380,7 +260,7 @@ export default function Home() {
                       <CardContent className="p-0">
                           <div className="flex items-center mb-4">
                               {[...Array(5)].map((_, i) => (
-                                  <Star key={i} className={cn("w-5 h-5", i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground/50")} />
+                                  <StarIcon key={i} className={cn("w-5 h-5", i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground/50")} />
                               ))}
                           </div>
                           <blockquote className="text-base">"{testimonial.quote}"</blockquote>
@@ -418,8 +298,8 @@ export default function Home() {
                       {tier.popular && <div className="text-xs font-medium text-brand-accent bg-brand-accent/10 px-3 py-1 rounded-full">POPULAR</div>}
                     </CardTitle>
                      <CardDescription className="pt-2">
-                      <span className="text-4xl font-bold text-foreground">{billingCycle === 'monthly' ? tier.price : tier.yearlyPrice}</span>
-                      <span className="text-muted-foreground">{billingCycle === 'monthly' ? '/ month' : '/ year'}</span>
+                      <span className="text-4xl font-bold text-foreground">{tier.price}</span>
+                      <span className="text-muted-foreground">/ month</span>
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-1 p-6 pt-0">
@@ -432,12 +312,13 @@ export default function Home() {
                       ))}
                     </ul>
                     <Button
-                      onClick={() => handleGoProClick(tier.ctaPath)}
+                      onClick={() => {}}
                       className={cn(
                         "w-full rounded-2xl text-base py-6 transition-all",
                         tier.popular && "bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-lg hover:shadow-brand-primary/50"
                       )}
                       variant={tier.popular ? "default" : "outline"}
+                      disabled
                     >
                       {tier.cta}
                     </Button>
@@ -446,7 +327,7 @@ export default function Home() {
               ))}
             </div>
              <div className="text-center mt-4">
-                <p className="text-sm text-muted-foreground">Cancel anytime. No hidden fees. 7-day free trial on Pro plans.</p>
+                <p className="text-sm text-muted-foreground">Payments and subscriptions are currently disabled.</p>
             </div>
           </div>
         </section>
@@ -500,19 +381,6 @@ export default function Home() {
             </div>
         </div>
       </footer>
-
-      <Button
-        onClick={scrollToTop}
-        className={cn(
-          "fixed bottom-6 right-6 rounded-full p-2 h-12 w-12 transition-opacity duration-300 z-50",
-          "bg-gradient-to-tr from-brand-primary to-brand-secondary text-white",
-          showScrollToTop ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}
-        size="icon"
-        aria-label="Scroll to top"
-      >
-        <ChevronUp className="h-6 w-6" />
-      </Button>
     </div>
   );
 }

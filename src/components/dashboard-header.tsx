@@ -1,21 +1,14 @@
 
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { features } from '@/lib/features';
 import { Button } from './ui/button';
-import { User, LogOut, CreditCard, PanelLeft, Settings, ChevronRight } from 'lucide-react';
+import { CreditCard, PanelLeft, ChevronRight } from 'lucide-react';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
-import { Skeleton } from './ui/skeleton';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
 import Link from 'next/link';
 import { ThemeToggle } from './theme-toggle';
-import { useUser, useAuth } from '@/firebase';
-import { signOut } from 'firebase/auth';
-import { useToast } from '@/hooks/use-toast';
-import { useCredit } from '@/hooks/use-credit';
 import { DashboardSidebar } from './dashboard-sidebar';
-import Image from 'next/image';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -25,110 +18,65 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from './ui/dropdown-menu';
+import { LogOut, Settings } from 'lucide-react';
+
 
 function HeaderUserSection() {
-    const { user, isUserLoading } = useUser();
-    const { credits, isLoading: isCreditLoading } = useCredit();
-    const auth = useAuth();
-    const { toast } = useToast();
-    const router = useRouter();
-
-    const handleLogout = async () => {
-        if (!auth) return;
-        try {
-            await signOut(auth);
-            toast({
-                title: 'Logged Out',
-                description: "You have been successfully logged out.",
-            });
-            router.push('/');
-        } catch (error) {
-            console.error('Logout failed:', error);
-            toast({
-                title: 'Logout Failed',
-                description: 'An unexpected error occurred during logout.',
-                variant: 'destructive',
-            });
-        }
-    };
-    
-    if (isUserLoading) {
-        return (
-          <div className="flex items-center gap-4">
-            <Skeleton className="h-9 w-28 rounded-full" />
-            <Skeleton className="h-9 w-9 rounded-full" />
-          </div>
-        );
-    }
-
-    if (user) {
-        return (
-            <div className="flex items-center gap-4">
-                <Button variant="outline" className="hidden sm:flex items-center gap-2 rounded-2xl">
-                  <CreditCard className="h-4 w-4" /> 
-                   {isCreditLoading ? (
-                        <Skeleton className="h-4 w-6" />
-                    ) : (
-                        <span>{credits === Infinity ? 'VIP' : credits}</span>
-                    )}
-                   Credits
-                </Button>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                         <Button
-                            variant="outline"
-                            size="icon"
-                            className="overflow-hidden rounded-full"
-                        >
-                            <Avatar className="h-9 w-9">
-                                <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} />
-                                <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                        <DropdownMenuLabel>{user.displayName || 'My Account'}</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem disabled className="sm:hidden">
-                            <div className="flex items-center justify-between w-full">
-                                <span className="flex items-center">
-                                    <CreditCard className="mr-2 h-4 w-4" /> Credits
-                                </span>
-                                {isCreditLoading ? (
-                                    <Skeleton className="h-4 w-6" />
-                                ) : (
-                                    <span>{credits}</span>
-                                )}
-                            </div>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => router.push('/dashboard/creations')}>
-                            My Creations
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>My Profile</DropdownMenuItem>
-                         <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span>Settings</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleLogout}>
-                            <LogOut className="mr-2 h-4 w-4" />
-                            <span>Logout</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-        );
-    }
-
     return (
-        <nav className="flex items-center space-x-2">
-            <Button variant="ghost" asChild>
-                <Link href="/login">Login</Link>
+        <div className="flex items-center gap-4">
+            <Button variant="outline" className="hidden sm:flex items-center gap-2 rounded-2xl" disabled>
+              <CreditCard className="h-4 w-4" /> 
+               <span>0</span>
+               Credits
             </Button>
-            <Button asChild>
-                <Link href="/signup">Sign Up</Link>
-            </Button>
-        </nav>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                     <Button
+                        variant="outline"
+                        size="icon"
+                        className="overflow-hidden rounded-full"
+                    >
+                        <Avatar className="h-9 w-9">
+                            <AvatarImage src={'/placeholder-user.jpg'} alt={'User'} />
+                            <AvatarFallback>U</AvatarFallback>
+                        </Avatar>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem disabled className="sm:hidden">
+                        <div className="flex items-center justify-between w-full">
+                            <span className="flex items-center">
+                                <CreditCard className="mr-2 h-4 w-4" /> Credits
+                            </span>
+                            <span>0</span>
+                        </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled>
+                        My Creations
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled>My Profile</DropdownMenuItem>
+                     <DropdownMenuItem disabled>
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Settings</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem disabled>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Logout</span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
     );
 }
 

@@ -3,6 +3,7 @@
 
 /**
  * @fileOverview Generates a photo-realistic aged version of a user's photo.
+ * THIS FEATURE IS DISABLED.
  */
 
 import { ai } from '@/ai/genkit';
@@ -20,10 +21,9 @@ const aiFutureSelfFlow = ai.defineFlow(
     name: 'aiFutureSelfFlow',
     inputSchema: AIFutureSelfInputSchema,
     outputSchema: AIFutureSelfOutputSchema,
-    
   },
   async (input) => {
-    // Returning empty data to disable image generation.
+    // Feature disabled: returning empty data.
     return { agedPhotoDataUri: '' };
   }
 );

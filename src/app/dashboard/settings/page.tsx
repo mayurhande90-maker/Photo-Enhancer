@@ -3,48 +3,11 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@/firebase";
-import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function SettingsPage() {
-  const { user, isUserLoading } = useUser();
-
-  const handleUpdateProfile = () => {
-    // Redirect to profile page for editing
-    window.location.href = '/dashboard/profile';
-  };
-
-
-  if (isUserLoading) {
-    return (
-       <div className="space-y-6">
-          <Skeleton className="h-12 w-1/3" />
-          <Skeleton className="h-4 w-2/3" />
-          <Card className="rounded-2xl">
-            <CardHeader><Skeleton className="h-6 w-1/4" /></CardHeader>
-            <CardContent className="space-y-4">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-            </CardContent>
-          </Card>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return (
-      <div className="text-center">
-        <p>Please log in to view your settings.</p>
-        <Button asChild className="mt-4">
-          <Link href="/login">Login</Link>
-        </Button>
-      </div>
-    )
-  }
 
   return (
     <div className="space-y-8 max-w-2xl">
@@ -53,21 +16,26 @@ export default function SettingsPage() {
         <p className="text-muted-foreground mt-1">Manage your account, appearance, and notification settings.</p>
       </div>
 
-      <Card className="rounded-2xl">
+      <div className="text-center p-8 border-2 border-dashed rounded-3xl">
+        <h2 className="text-2xl font-bold">Feature Disabled</h2>
+        <p className="text-muted-foreground mt-2">User accounts and settings are currently disabled.</p>
+      </div>
+
+      <Card className="rounded-2xl opacity-50">
         <CardHeader>
           <CardTitle>Profile</CardTitle>
-          <CardDescription>This is how others will see you on the site. Click below to edit.</CardDescription>
+          <CardDescription>This is how others would see you on the site.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="displayName">Display Name</Label>
-            <Input id="displayName" value={user.displayName || ''} readOnly />
+            <Input id="displayName" value={'User Name'} readOnly />
           </div>
            <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={user.email || ''} readOnly />
+            <Input id="email" type="email" value={'user@example.com'} readOnly />
           </div>
-          <Button onClick={handleUpdateProfile}>Edit Profile</Button>
+          <Button disabled>Edit Profile</Button>
         </CardContent>
       </Card>
 
@@ -86,7 +54,8 @@ export default function SettingsPage() {
           </div>
         </CardContent>
       </Card>
-       <Card className="rounded-2xl border-destructive">
+
+       <Card className="rounded-2xl border-destructive opacity-50">
         <CardHeader>
           <CardTitle>Danger Zone</CardTitle>
         </CardHeader>
