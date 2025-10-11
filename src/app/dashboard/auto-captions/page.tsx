@@ -148,7 +148,7 @@ export default function AutoCaptionsPage() {
     const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
     const firestore = useFirestore();
     const app = useFirebaseApp();
-  const { user } = useUser();
+    const { user, loading: isUserLoading } = useUser();
 
     const [originalFile, setOriginalFile] = useState<File | null>(null);
     const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
@@ -212,7 +212,7 @@ export default function AutoCaptionsPage() {
     };
 
     const handleProcess = async () => {
-        if (!originalFile || !originalDataUri || !firestore || !app) {
+        if (!originalFile || !originalDataUri || !firestore || !app || !user) {
 
           toast({ title: 'Missing Information', description: `Please upload an image.`, variant: 'destructive' });
           return;
