@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -145,14 +146,10 @@ const ResultDisplay = ({ results }: { results: string }) => {
 export default function AutoCaptionsPage() {
     const feature = features.find(f => f.name === 'Auto Captions + Hashtags')!;
     const { toast } = useToast();
+    const { user, loading: isUserLoading } = useUser();
     const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
     const firestore = useFirestore();
     const app = useFirebaseApp();
-    import { getAuth } from "firebase/auth";
-import { useAuthState } from "react-firebase-hooks/auth";
-
-const auth = getAuth();
-const [user, isUserLoading, error] = useAuthState(auth);
 
     const [originalFile, setOriginalFile] = useState<File | null>(null);
     const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);

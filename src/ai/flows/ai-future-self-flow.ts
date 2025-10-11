@@ -7,26 +7,10 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-
-const AIFutureSelfInputSchema = z.object({
-  photoDataUri: z
-    .string()
-    .describe(
-      "A clear, front-facing mid-shot photo of the user, as a data URI."
-    ),
-  ageGap: z.number().describe('The number of years to age the person in the photo (e.g., 10, 20, 30, 40).'),
-});
-export type AIFutureSelfInput = z.infer<typeof AIFutureSelfInputSchema>;
-
-const AIFutureSelfOutputSchema = z.object({
-  agedPhotoDataUri: z
-    .string()
-    .describe('The generated photo of the aged user, as a data URI.'),
-});
-export type AIFutureSelfOutput = z.infer<typeof AIFutureSelfOutputSchema>;
+import { AIFutureSelfInputSchema, AIFutureSelfOutputSchema } from '@/lib/types';
 
 
-export async function generateFutureSelf(input: AIFutureSelfInput): Promise<AIFutureSelfOutput> {
+export async function generateFutureSelf(input: z.infer<typeof AIFutureSelfInputSchema>): Promise<z.infer<typeof AIFutureSelfOutputSchema>> {
   return aiFutureSelfFlow(input);
 }
 
