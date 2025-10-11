@@ -148,7 +148,11 @@ export default function AutoCaptionsPage() {
     const { credits, isLoading: isCreditLoading, consumeCredits } = useCredit();
     const firestore = useFirestore();
     const app = useFirebaseApp();
-    const { user, loading: isUserLoading } = useUser();
+    import { getAuth } from "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
+
+const auth = getAuth();
+const [user, isUserLoading, error] = useAuthState(auth);
 
     const [originalFile, setOriginalFile] = useState<File | null>(null);
     const [originalDataUri, setOriginalDataUri] = useState<string | null>(null);
