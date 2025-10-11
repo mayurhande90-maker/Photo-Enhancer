@@ -39,22 +39,7 @@ const aiFutureSelfFlow = ai.defineFlow(
     
   },
   async (input) => {
-    const prompt = `
-      You are a high-precision, identity-preserving image editor. Your ONLY task is to apply realistic aging effects to the provided photograph.
-
-      **CRITICAL DIRECTIVES (NON-NEGOTIABLE):**
-      1.  **IDENTITY LOCK:** You MUST NOT change the person's core identity, facial bone structure, proportions, ethnicity, or unique features. This is an image editing task, NOT a generation task. Use the provided photo as the base.
-      2.  **REALISTIC AGING:** Apply natural age-related changes for the selected age gap of ${input.ageGap} years. This includes wrinkles, skin texture changes, and realistic hair greying/thinning.
-      3.  **CONSISTENCY:** Match the original photo's lighting, shadows, and background.
-      4.  **WATERMARK:** Add a small, discreet watermark in the bottom-right corner that says 'Magicpixa'.
-
-      **NEGATIVE PROMPT (WHAT NOT TO DO):**
-      - NO FACE SWAPPING.
-      - NO changing the person's fundamental identity.
-      - NO exaggerated or caricature-like features.
-
-      Based on these strict instructions, edit the provided image to age the person by ${input.ageGap} years while maintaining their exact identity.
-    `;
+    const prompt = ``;
 
     const { media } = await ai.generate({
       prompt: [

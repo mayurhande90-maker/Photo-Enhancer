@@ -38,17 +38,7 @@ const celebrityPictureFlow = ai.defineFlow(
     
   },
   async (input) => {
-    const prompt = `
-      You are an expert photorealistic image editor. Create a single, new, authentic-looking candid mid-shot photograph featuring two people: the user from the provided image and the celebrity '${input.celebrityName}'.
-
-      **CRITICAL RULES (NON-NEGOTIABLE):**
-      1.  **IDENTITY LOCK:** You **MUST** perfectly preserve the facial and physical identity of both the user from their photo and the real-world appearance of **${input.celebrityName}**. Do not alter their core features, face shape, or ethnicity.
-      2.  **SEAMLESS INTEGRATION:** Blend both individuals naturally into the chosen location: "${input.locationName}". The final image must look like a real, unposed photograph with matching lighting, shadows, and perspective.
-      3.  **REALISM:** Adapt their clothing to be appropriate for the location. The final image must have realistic photographic qualities, including natural skin texture and subtle filmic grain.
-      4.  **WATERMARK:** Add a small, discreet watermark in the bottom-right corner that says 'Magicpixa'.
-
-      **NEGATIVE PROMPT:** NO face swapping, NO caricature, NO altering fundamental identities.
-    `;
+    const prompt = ``;
 
     const { media } = await ai.generate({
       prompt: [

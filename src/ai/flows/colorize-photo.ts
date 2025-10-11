@@ -36,15 +36,7 @@ const colorizePhotoFlow = ai.defineFlow(
     
   },
   async input => {
-    const prompt = `You are an expert photo restoration specialist. Restore and colourize the provided vintage photograph. 
-    
-    **CRITICAL RULES:**
-    1.  **COLORIZE REALISTICALLY:** Apply natural, lifelike colors to the scene, including skin tones, clothing, and background elements. The result should feel authentic and not artificial.
-    2.  **RESTORE & ENHANCE:** Repair any visible damage like cracks, dust, or fading. Enhance clarity and fine details while preserving the original's character.
-    3.  **PRESERVE IDENTITY:** Do not alter the facial features, expressions, or posture of any person in the photo.
-    4.  **WATERMARK:** Add a small, discreet watermark in a bottom corner that says 'Made by Magicpixa'.
-    
-    The final output should be a photo-realistic, high-quality restoration.`;
+    const prompt = ``;
 
     const {media} = await ai.generate({
       prompt: [
