@@ -14,13 +14,6 @@ import type { FirebaseApp } from 'firebase/app';
 import type { Firestore } from 'firebase/firestore';
 import { saveAIOutput } from '@/firebase/auth/client-update-profile';
 
-async function processImageWithAI(
-  photoUrl: string,
-  enhancementPrompt: string
-): Promise<{ enhancedPhotoDataUri: string }> {
-  const result = await enhanceFromPrompt({ photoDataUri: photoUrl, enhancementPrompt });
-  return result;
-}
 
 export async function analyzeImageAction(photoDataUri: string): Promise<AnalyzeImageOutput> {
     try {
@@ -34,14 +27,14 @@ export async function analyzeImageAction(photoDataUri: string): Promise<AnalyzeI
 
 export async function colorCorrectAction(app: FirebaseApp, firestore: Firestore, photoUrl: string, userId: string) {
   const prompt = '';
-  const result = await processImageWithAI(photoUrl, prompt);
+  const result = await enhanceFromPrompt({ photoDataUri: photoUrl, enhancementPrompt: prompt });
   await saveAIOutput(app, firestore, 'Photo Enhancement (Color)', result.enhancedPhotoDataUri, 'image/jpeg', userId);
   return result;
 }
 
 export async function restorePhotoAction(app: FirebaseApp, firestore: Firestore, photoUrl: string, userId: string) {
   const prompt = '';
-  const result = await processImageWithAI(photoUrl, prompt);
+  const result = await enhanceFromPrompt({ photoDataUri: photoUrl, enhancementPrompt: prompt });
   await saveAIOutput(app, firestore, 'Photo Enhancement (Restore)', result.enhancedPhotoDataUri, 'image/jpeg', userId);
   return result;
 }
@@ -49,14 +42,14 @@ export async function restorePhotoAction(app: FirebaseApp, firestore: Firestore,
 
 export async function removeBackgroundAction(app: FirebaseApp, firestore: Firestore, photoUrl: string, userId:string) {
   const prompt = "";
-  const result = await processImageWithAI(photoUrl, prompt);
+  const result = await enhanceFromPrompt({ photoDataUri: photoUrl, enhancementPrompt: prompt });
   await saveAIOutput(app, firestore, 'Background Removal', result.enhancedPhotoDataUri, 'image/png', userId);
   return result;
 }
 
 export async function studioEnhanceAction(app: FirebaseApp, firestore: Firestore, photoUrl: string, userId:string) {
   const prompt = '';
-  const result = await processImageWithAI(photoUrl, prompt);
+  const result = await enhanceFromPrompt({ photoDataUri: photoUrl, enhancementPrompt: prompt });
   await saveAIOutput(app, firestore, 'Photo Studio', result.enhancedPhotoDataUri, 'image/jpeg', userId);
   return result;
 }
